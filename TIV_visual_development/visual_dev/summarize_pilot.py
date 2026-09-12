@@ -13,11 +13,14 @@ from matplotlib import font_manager
 _cjk = [f.name for f in font_manager.fontManager.ttflist if any(k in f.name for k in ('WenQuanYi', 'Noto Sans CJK', 'Noto Sans SC'))]
 if _cjk: plt.rcParams['font.family'] = _cjk[0]; plt.rcParams['axes.unicode_minus'] = False
 ROOT = Path(__file__).resolve().parents[1]
-ARMS = ('frozen', 'supervised', 'joint'); ZH = {'frozen': 'F 冻结', 'supervised': 'S 仅监督', 'joint': 'J 联合'}
+ARMS = ('frozen', 'supervised', 'joint', 'joint_head'); ZH = {'frozen': 'F 冻结', 'supervised': 'S 仅监督', 'joint': 'J 联合', 'joint_head': 'JH 联合(冻结骨干)'}
+
+
+RUNS_SUB = ''
 
 
 def load_arm(tag, arm):
-    d = ROOT / 'runs' / tag / arm
+    d = ROOT / 'runs' / RUNS_SUB / tag / arm
     if not (d / 'evaluation.json').exists(): return None
     st = json.load(open(d / 'status.json')); ev = json.load(open(d / 'evaluation.json'))
     diag = completed = None
@@ -81,10 +84,11 @@ def main(tag):
     for x, t in zip(ax, ('critic TD 损失', '视觉监督损失', '编码器总梯度范数（TD+视觉）', '训练 episode 的 I_j（含探索噪声）')):
         x.set_title(t); x.grid(alpha=.3); x.legend(fontsize=8)
     ax[0].set_xlabel('更新数'); ax[1].set_xlabel('更新数'); ax[2].set_xlabel('更新数'); ax[2].set_yscale('symlog'); ax[3].set_xlabel('episode')
-    plt.tight_layout(); out = ROOT / 'runs' / tag; plt.savefig(out / 'diagnostics.png', dpi=120)
+    plt.tight_layout(); out = ROOT / 'runs' / RUNS_SUB / tag; plt.savefig(out / 'diagnostics.png', dpi=120)
     json.dump(summary, open(out / 'summary.json', 'w'), indent=1, ensure_ascii=False); (out / 'summary_zh.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
     print('\n'.join(lines)); print('已写入', out / 'summary_zh.md', out / 'diagnostics.png')
 
 
 if __name__ == '__main__':
-    ap = argparse.ArgumentParser(); ap.add_argument('--tag', default='pilot'); main(ap.parse_args().tag)
+    ap = argparse.ArgumentParser(); ap.add_argument('--tag', default='pilot'); ap.add_argument('--runs', default='', help='runs 子目录，如 v3'); a = ap.parse_args()
+    RUNS_SUB = a.runs; main(a.tag)

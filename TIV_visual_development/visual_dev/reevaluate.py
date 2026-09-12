@@ -31,9 +31,10 @@ def archive(path, suffix='_v2d_shared_camera'):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--tag', default='pilot_v2'); ap.add_argument('--arm', default=None); ap.add_argument('--swap-only', action='store_true'); ap.add_argument('--swap-update', action='store_true')
+    ap = argparse.ArgumentParser(); ap.add_argument('--tag', default='pilot_v2'); ap.add_argument('--arm', default=None); ap.add_argument('--swap-only', action='store_true'); ap.add_argument('--swap-update', action='store_true'); ap.add_argument('--runs', default='', help='runs 子目录，如 v3'); ap.add_argument('--pretrain', default='pretrain')
     a = ap.parse_args(); arms = [a.arm] if a.arm else ['frozen', 'supervised', 'joint']
-    es = torch.load(RUNS / 'pretrain' / 'eval_sets.pt', map_location='cpu', weights_only=False)
+    global RUNS; RUNS = ROOT / 'runs' / a.runs
+    es = torch.load(ROOT / 'runs' / a.pretrain / 'eval_sets.pt', map_location='cpu', weights_only=False)
     for arm in arms:
         out = RUNS / a.tag / arm; learner, ck = learner_from_final_nets(out / 'final_nets.pt'); old = json.load(open(out / 'evaluation.json'))
         t0 = time.monotonic(); sw = image_swap_sensitivity(learner)
