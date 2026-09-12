@@ -409,26 +409,39 @@ def image_swap_sensitivity(learner, seeds=(0, 1, 2), distances=range(40, 420, 20
                 cmd = S.command(u); rsum = 0.
                 for _ in range(4):
                     _, r, _, info = env.step(cmd); rsum += float(r)
+                tr = np.asarray(env.trace, np.float64)[-4:]
                 out[color] = dict(u=u, z=o['z'][0], pred=int(o['signal'][0, -1].argmax()), pred_z=int(o['signal_z'][0].argmax()),
                                   a=float(env.layer_log[0]['applied']), a_mean=float(np.mean([l['applied'] for l in env.layer_log])), r=rsum,
-                                  jerk_max=float(np.max(np.abs(np.asarray(env.trace, np.float64)[-4:, 9]))) if len(env.trace) >= 4 else None)
+                                  fallback_substeps=int(sum(l['fallback'] for l in env.layer_log)), jerk_max=float(np.abs(tr[:, 9]).max()),
+                                  stop_target_m=float(min([t[0] - x for t in env._stop_targets() if t[0] > x] or [np.inf])))
             truth_green = bool(S.R.signal_green(S.R.SIGNALS[0], t, off))
             rows.append(dict(seed=seed, d=float(d), truth_offset=float(off), truth_green=truth_green, u_red=out['red']['u'], u_green=out['green']['u'], du=out['green']['u'] - out['red']['u'],
                              cmd_red=S.command(out['red']['u']), cmd_green=S.command(out['green']['u']),
                              a_red=out['red']['a'], a_green=out['green']['a'], da=out['green']['a'] - out['red']['a'],
-                             a_mean_red=out['red']['a_mean'], a_mean_green=out['green']['a_mean'], r_red=out['red']['r'], r_green=out['green']['r'], dr=out['green']['r'] - out['red']['r'],
+                             a_mean_red=out['red']['a_mean'], a_mean_green=out['green']['a_mean'], da_mean=out['green']['a_mean'] - out['red']['a_mean'],
+                             r_red=out['red']['r'], r_green=out['green']['r'], dr=out['green']['r'] - out['red']['r'],
+                             fallback_red=out['red']['fallback_substeps'], fallback_green=out['green']['fallback_substeps'], jerk_max_red=out['red']['jerk_max'], jerk_max_green=out['green']['jerk_max'],
+                             feasible=bool(out['red']['fallback_substeps'] == 0 and out['green']['fallback_substeps'] == 0),
                              dz=float((out['green']['z'] - out['red']['z']).norm()), pred_red=out['red']['pred'], pred_green=out['green']['pred'],
                              predz_red=out['red']['pred_z'], predz_green=out['green']['pred_z']))
     def summ(rs):
-        du = np.array([r['du'] for r in rs]); dz = np.array([r['dz'] for r in rs]); da = np.array([r['da'] for r in rs]); dr = np.array([r['dr'] for r in rs])
-        return dict(n=len(rs), mean_abs_du=float(np.abs(du).mean()), max_abs_du=float(np.abs(du).max()), frac_abs_du_gt_0_05=float(np.mean(np.abs(du) > .05)),
+        du = np.array([r['du'] for r in rs]); dz = np.array([r['dz'] for r in rs]); da = np.array([r['da'] for r in rs]); dr = np.array([r['dr'] for r in rs]); dam = np.array([r['da_mean'] for r in rs])
+        return dict(n=len(rs), n_infeasible=int(sum(not r['feasible'] for r in rs)), max_jerk=float(max(max(r['jerk_max_red'], r['jerk_max_green']) for r in rs)),
+                    mean_abs_du=float(np.abs(du).mean()), max_abs_du=float(np.abs(du).max()), frac_abs_du_gt_0_05=float(np.mean(np.abs(du) > .05)),
                     mean_du_green_minus_red=float(du.mean()), mean_dz=float(dz.mean()),
+                    first_substep_mean_abs_da=float(np.abs(da).mean()), first_substep_frac_changed=float(np.mean(np.abs(da) > 1e-9)),
+                    mean_abs_da_4substep=float(np.abs(dam).mean()), max_abs_da_4substep=float(np.abs(dam).max()), frac_changed_4substep=float(np.mean(np.abs(dam) > 1e-9)), frac_abs_da_4substep_gt_0_05=float(np.mean(np.abs(dam) > .05)),
+                    mean_da_4substep_green_minus_red=float(dam.mean()),
                     mean_abs_da=float(np.abs(da).mean()), max_abs_da=float(np.abs(da).max()), frac_abs_da_gt_0_05=float(np.mean(np.abs(da) > .05)),
                     mean_da_green_minus_red=float(da.mean()), mean_dr_green_minus_red=float(dr.mean()), frac_dr_positive=float(np.mean(dr > 1e-9)), frac_dr_negative=float(np.mean(dr < -1e-9)),
                     roi_head_color_correct=float(np.mean([r['pred_red'] == 0 and r['pred_green'] == 2 for r in rs])),
                     z_head_color_correct=float(np.mean([r['predz_red'] == 0 and r['predz_green'] == 2 for r in rs])))
     res = summ(rows); res['truth_green_frac'] = float(np.mean([r['truth_green'] for r in rows]))
     res['by_truth'] = {'green': summ([r for r in rows if r['truth_green']]), 'red': summ([r for r in rows if not r['truth_green']])}
+    feas = [r for r in rows if r['feasible']]; res['feasible_only'] = summ(feas) if feas else None
+    res['note'] = ('a/da 为首子步实际动作；a_mean/da_mean 为四子步平均实际动作（指令保持四子步，执行约束可能只在首子步把差异压为 0）。'
+                   'feasible=False 的对（真值红、距灯 40 m、v=15 m/s：停车目标仅 24 m，执行层 stop_distance_infeasible 触发紧急回退，jerk 达 7）单列，feasible_only 为剔除后的汇总。'
+                   '真值相位只影响执行层与回报；actor 的输入在两种真值下相同（通道 7/8 被屏蔽），故 Δu 与真值无关是输入构造决定的，不能用来判断是否利用了灯色语义。')
     res['rows'] = rows; return res
 
 
