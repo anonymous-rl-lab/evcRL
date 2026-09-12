@@ -1,11 +1,4 @@
-/home/user/evcrl/TIV_visual_development/visual_dev/pretrain.py:112: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+/home/user/evcrl/TIV_visual_development/visual_dev/pretrain.py:130: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
   log.append(dict(step=step, loss=float(loss), dev_all=summ['all'], z_head_latest=zh, detection=det['all'], wall_s=time.monotonic() - t1))
-预训练 step 1 loss 3.7345 | ROI头 acc 0.048 unknown召回 0.0 | Z头(最新帧) acc 0.581 | 检测命中 0.0
-预训练 step 200 loss 1.6724 | ROI头 acc 0.895 unknown召回 0.16666666666666666 | Z头(最新帧) acc 0.710 | 检测命中 0.00847457627118644
-预训练 step 400 loss 0.4268 | ROI头 acc 0.927 unknown召回 0.16666666666666666 | Z头(最新帧) acc 0.903 | 检测命中 0.01694915254237288
-预训练 step 600 loss 0.3399 | ROI头 acc 0.944 unknown召回 0.5 | Z头(最新帧) acc 0.903 | 检测命中 0.05084745762711865
-预训练 step 800 loss 0.1358 | ROI头 acc 0.927 unknown召回 0.16666666666666666 | Z头(最新帧) acc 0.903 | 检测命中 0.0847457627118644
-预训练 step 1000 loss 0.0764 | ROI头 acc 0.919 unknown召回 0.16666666666666666 | Z头(最新帧) acc 0.935 | 检测命中 0.07627118644067797
-预训练 step 1200 loss 0.6080 | ROI头 acc 0.952 unknown召回 0.5 | Z头(最新帧) acc 0.935 | 检测命中 0.1016949152542373
-{"all": {"roi_head": {"n": 320, "acc": 0.928125, "red_to_green": 1, "green_to_nongreen": 5, "unknown_rate": 0.025, "known_acc": 0.9606557377049181, "unknown_recall": 0.26666666666666666, "n_known": 305, "n_unknown": 15}, "z_head": {"n": 320, "acc": 0.928125, "red_to_green": 0, "green_to_nongreen": 4, "unknown_rate": 0.025, "known_acc": 0.9639344262295082, "unknown_recall": 0.2, "n_known": 305, "n_unknown": 15}}, "z_head": {"n": 80, "acc": 0.925, "red_to_green": 0, "green_to_nongreen": 0, "unknown_rate": 0.0375, "known_acc": 0.9733333333333334, "unknown_recall": 0.2, "n_known": 75, "n_unknown": 5}, "detection": {"n": 305, "mean_iou": 0.008601656644741407, "hit_rate": 0.12459016393442623}, "grads": {"temporal_Z": 5.346018615335717, "signal_head": 8.384331735278245, "signal_z_head": 2.2766708881676823, "backbone_c2": 22.71740253760479}, "wall": 205.48149032499998}
+预训练 step 1 loss 4.7189 | ROI头 acc 0.048 unknown召回 0.0 | Z头(最新帧) acc 0.581 | 检测 格一致 0.0 ≤2px 0.0 误检 0.0

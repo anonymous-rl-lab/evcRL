@@ -13,6 +13,7 @@ v2 相对 v1 的修正（对应独立审计 v1 第 3–5 节）：
    另记 map_association、roi_pixels、visible、occluded。
 4. 同时记录名义灯箱像素高 housing_px_h 与实际渲染的亮灯光斑直径 lamp_px_d（含 bloom 下限），分层评估两者都报。
 5. capture(..., force_color=...) 可在同一位姿/外观下强制灯色，用于“同状态换图”的策略响应检查；不用于训练。
+6. v2c：格分配按最近卷积采样中心 (4i,4j)（审查发现原 floor 分配与采样中心有半格错位）；遮挡只清灯所在格的框监督；评估真值框为裁剪后的框。
 """
 import math
 import numpy as np
@@ -54,17 +55,19 @@ def encode_box(box):
     l, r = max(l, 0.), min(r, W - 1e-6); t, b = max(t, 0.), min(b, H - 1e-6)
     if r - l <= 1e-6 or b - t <= 1e-6: return None
     cx, cy = (l + r) / 2, (t + b) / 2
-    i, j = int(cy // CELL), int(cx // CELL)
+    # v2c：特征格 (i,j) 的卷积采样中心在像素 (4i,4j)（stem 与 c2 均为 3×3/stride 2/pad 1），
+    # 因此按最近采样中心分配格：i = floor(cy/4 + 0.5)，格内偏移 dx = (cx − 4j)/4 + 0.5 ∈ [0,1)。
+    i, j = int(math.floor(cy / CELL + .5)), int(math.floor(cx / CELL + .5))
     if not (0 <= i < P2[0] and 0 <= j < P2[1]): return None
-    target = np.array([(cx - j * CELL) / CELL, (cy - i * CELL) / CELL, min((r - l) / W, 1.), min((b - t) / H, 1.)], np.float32)
-    assert (target >= 0).all() and (target <= 1).all()
+    target = np.array([(cx - j * CELL) / CELL + .5, (cy - i * CELL) / CELL + .5, min((r - l) / W, 1.), min((b - t) / H, 1.)], np.float32)
+    if not ((target >= 0).all() and (target <= 1).all()): return None
     return i, j, target, (l, t, r, b)
 
 
 def decode_box(i, j, target):
     """encode_box 的逆：目标向量 → 像素框 (l,t,r,b)。"""
     dx, dy, w, h = [float(x) for x in target]
-    cx, cy = (j + dx) * CELL, (i + dy) * CELL; w, h = w * W, h * H
+    cx, cy = (j + dx - .5) * CELL, (i + dy - .5) * CELL; w, h = w * W, h * H
     return (cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2)
 
 
@@ -163,7 +166,9 @@ class SceneCamera:
             u, v = labels['_light_uv']; l, t, r, b = labels['_occ_box']
             if l <= u <= r and t <= v <= b:
                 labels['occluded'] = 1; labels['visible'] = 0; labels['signal'] = 4; labels['lamp_px_d'] = 0.
-                labels['heat'][0] = 0.; labels['box_valid'][:] = 0.; labels['light_box_px'] = None
+                labels['heat'][0] = 0.; labels['light_box_px'] = None
+                if labels.get('_light_cell'):   # v2c：只清灯所在格的框监督，不影响同帧其它类别
+                    ci, cj = labels['_light_cell']; labels['box_valid'][0, ci, cj] = 0.; labels['boxes'][:, ci, cj] = 0.
         # 由地图距离投影的 ROI（不用真值框），裁剪到画面；association_valid 要求 ROI 与画面相交
         roi = np.zeros((1, H, W), np.float32); d_map = None
         for xs in self.signals:
@@ -179,7 +184,7 @@ class SceneCamera:
                     map_association=int(d_map is not None), roi_pixels=roi_pixels,
                     association_valid=int(d_map is not None and roi_pixels > 0), map_distance_m=d_map,
                     forced_color=force_color)
-        for k in ('_light_uv', '_occ_box'):
+        for k in ('_light_uv', '_occ_box', '_light_cell'):
             labels.pop(k, None)
         self.frames_captured += 1
         return dict(rgb=rgb, labels=labels, roi=roi, meta=meta)
@@ -191,6 +196,7 @@ class SceneCamera:
         i, j, target, clipped = enc
         labels['heat'][cls, i, j] = 1.; labels['boxes'][:, i, j] = target; labels['box_valid'][0, i, j] = 1.
         if extra: labels.update(extra)
+        if cls == 0: labels['_light_cell'] = (i, j); labels['light_box_px'] = clipped   # 评估真值框用裁剪后的框（与训练目标一致）
         return True
 
     def _draw_light(self, dr, d, color, labels):
@@ -214,7 +220,7 @@ class SceneCamera:
         labels['_light_uv'] = (cu, cv)
         labels['housing_px_h'] = labels['light_px_h'] = float(2 * hh)
         labels['lamp_px_d'] = float(2 * glow_r) if visible else 0.
-        labels['light_box_px'] = box if in_frame else None
+        labels['light_box_px'] = None
         if visible and self._mark(labels, 0, box, dict(signal=COLOR_CLASSES.index(color), visible=1)):
             return
         labels['signal'] = 4; labels['visible'] = 0
