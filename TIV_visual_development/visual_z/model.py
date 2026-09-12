@@ -1,8 +1,19 @@
-"""Runnable lightweight FPN prototype, not an evaluated/pretrained vision model."""
+"""可运行的轻量 FPN 原型（交接框架原件 + v2 修正），不是已评估/预训练的视觉模型。
+
+相对交接框架原件的修改（对应独立审计 v1 第 4、6 节）：
+1. ROI 为空（地图关联不存在或投影出画面）的帧，灯色 ROI 头的输出被强制为 unknown（常量 logits，无梯度），
+   不再输出仅由偏置决定的颜色。
+2. 新增 signal_z 头：由 Z 直接预测最新帧的控制灯色。视觉监督损失因此训练到 Z 的末端投影（temporal），
+   使“灯色头正确”与“Z 保留灯色”不再脱钩；输出中同时给出两路预测，评估分别报告。
+3. 新增 decode_boxes()：与渲染器 v2 的框参数化（格内偏移 + 归一化尺寸）配套解码。
+"""
 import torch
 from torch import nn
 from torch.nn import functional as F
 from .contracts import *
+
+UNKNOWN_LOGITS = torch.tensor([-10., -10., -10., -10., 10.])
+
 
 def block(cin,cout,stride):
     return nn.Sequential(nn.Conv2d(cin,cin,3,stride,1,groups=cin,bias=False),
@@ -16,8 +27,9 @@ class VisualEncoder(nn.Module):
         self.c2=block(16,32,2);self.c3=block(32,48,2);self.c4=block(48,64,2)
         self.lat2=nn.Conv2d(32,32,1);self.lat3=nn.Conv2d(48,32,1);self.lat4=nn.Conv2d(64,32,1)
         self.heat=nn.Conv2d(32,classes,1);self.box=nn.Conv2d(32,4,1)
-        self.signal=nn.Linear(32,5)  # red/yellow/green/off/unknown, controlling light only
+        self.signal=nn.Linear(32,5)  # red/yellow/green/off/unknown, controlling light only（ROI 头）
         self.temporal=nn.Sequential(nn.Linear(stack*(64+2),128),nn.SiLU(),nn.Linear(128,zdim),nn.LayerNorm(zdim))
+        self.signal_z=nn.Linear(zdim,5)   # v2：由 Z 预测最新帧灯色，使视觉监督训练到 Z 末端
 
     def forward(self,obs):
         obs.validate(self.stack);b,t,c,h,w=obs.frames.shape
@@ -26,20 +38,22 @@ class VisualEncoder(nn.Module):
         p4=self.lat4(c4);p3=self.lat3(c3)+F.interpolate(p4,size=c3.shape[-2:],mode='nearest')
         p2=self.lat2(c2)+F.interpolate(p3,size=c2.shape[-2:],mode='nearest')
         logits=self.heat(p2);boxes=self.box(p2).sigmoid()
-        # All high-resolution cells participate: no top-k/NMS/argmax on the RL gradient path.
         att=logits.sigmoid().sum(1,keepdim=True)+1e-6
         event=(p2*att).sum((2,3))/att.sum((2,3))
         scene=p4.mean((2,3));f=torch.cat([scene,event],1).reshape(b,t,64)
         f=f*obs.valid.unsqueeze(-1)
         temporal=torch.cat([f,obs.valid.float().unsqueeze(-1),obs.age_s.clamp(0,10).unsqueeze(-1)],-1)
         z=self.temporal(temporal.flatten(1))
-        # Map geometry may specify an ROI; never use a ground-truth target box at inference.
         roi=F.interpolate(obs.signal_roi.reshape(b*t,1,h,w).float(),size=p2.shape[-2:],mode='area')
-        pooled=(p2*roi).sum((2,3))/roi.sum((2,3)).clamp_min(1e-6)
-        sl=self.signal(pooled).reshape(b,t,5)
+        roi_mass=roi.sum((2,3))                                   # [b*t,1]
+        pooled=(p2*roi).sum((2,3))/roi_mass.clamp_min(1e-6)
+        sl=self.signal(pooled)
+        roi_empty=(obs.signal_roi.reshape(b*t,-1).sum(1)<=0)     # v2：空 ROI 强制 unknown
+        sl=torch.where(roi_empty.unsqueeze(1),UNKNOWN_LOGITS.to(sl).expand_as(sl),sl).reshape(b,t,5)
         hh,ww=p2.shape[-2:]
         return {'z':z,'heat':logits.reshape(b,t,-1,hh,ww),
-                'boxes':boxes.reshape(b,t,4,hh,ww),'signal':sl}
+                'boxes':boxes.reshape(b,t,4,hh,ww),'signal':sl,'signal_z':self.signal_z(z),
+                'roi_empty':roi_empty.reshape(b,t)}
 
 class InputAdapter(nn.Module):
     def __init__(self,information_mode='camera_map'):
@@ -48,7 +62,6 @@ class InputAdapter(nn.Module):
         self.information_mode=information_mode
     def forward(self,obs,z):
         o=obs.legacy.clone()
-        # Signal phase MUST come from images through Z, not the old oracle channel.
         o[:,7]=-1.
         if self.information_mode=='camera_map':
             o[:,8]=1.;v2x=torch.zeros_like(obs.v2x_valid)
@@ -67,11 +80,6 @@ class MLP(nn.Module):
 
 @torch.no_grad()
 def load_legacy_weights(net,old_state,critic=False):
-    """Preserve old first 13 columns and critic action column; zero new Z/meta columns.
-
-    Algebraic equality holds when the first 13 inputs match. Online camera masking
-    changes those inputs, so this is NOT a claim of unchanged driving behavior.
-    """
     current=net.state_dict()
     for key,value in old_state.items():
         if key=='f.0.weight':
@@ -82,12 +90,15 @@ def load_legacy_weights(net,old_state,critic=False):
             current[key].copy_(value)
     net.load_state_dict(current)
 
-def perception_loss(output,labels,obs):
-    """Minimal focal/box/state losses. A real labeled-data loader must encode targets.
+def decode_boxes(heat,boxes,cls=0,cell=4):
+    """对每帧取类别 cls 热图的最大格，解码为像素框 (l,t,r,b)；返回 [b,t,4] 与该格得分 [b,t]。"""
+    b,t,_,hh,ww=heat.shape
+    score,idx=heat[:,:,cls].reshape(b,t,-1).max(-1); i=idx//ww; j=idx%ww
+    tgt=torch.stack([boxes[n,k,:,i[n,k],j[n,k]] for n in range(b) for k in range(t)]).reshape(b,t,4)
+    cx=(j.float()+tgt[...,0])*cell; cy=(i.float()+tgt[...,1])*cell; w=tgt[...,2]*ww*cell; h=tgt[...,3]*hh*cell
+    return torch.stack([cx-w/2,cy-h/2,cx+w/2,cy+h/2],-1),score.sigmoid()
 
-    Dense labels are center heatmaps; box target = normalized l,t,r,b at positives.
-    Label masks must include visibility, annotation completeness and frame validity.
-    """
+def perception_loss(output,labels,obs):
     zero=output['z'].sum()*0
     if not labels:return zero
     losses=[]
@@ -102,8 +113,9 @@ def perception_loss(output,labels,obs):
         err=F.smooth_l1_loss(output['boxes'],labels['boxes'],reduction='none')
         losses.append((err*mask).sum()/mask.expand_as(err).sum().clamp_min(1))
     if 'signal' in labels:
-        y=labels['signal'].clone();y[~obs.valid]=-100
-        # Labels must already be -100 when controlling-light association is unavailable.
+        y=labels['signal'].clone();y[~obs.valid]=-100;y[output['roi_empty']]=-100   # 空 ROI 帧由规则输出 unknown，不参与 ROI 头训练
         losses.append(F.cross_entropy(output['signal'].reshape(-1,5),y.reshape(-1),ignore_index=-100,
             reduction='sum')/(y!=-100).sum().clamp_min(1))
+        yz=labels['signal'][:,-1].clone();yz[~obs.valid[:,-1]]=-100                # v2：Z 头监督最新帧灯色（含 unknown）
+        losses.append(F.cross_entropy(output['signal_z'],yz,ignore_index=-100,reduction='sum')/(yz!=-100).sum().clamp_min(1))
     return sum(losses,zero)

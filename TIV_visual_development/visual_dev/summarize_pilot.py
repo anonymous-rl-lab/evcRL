@@ -38,15 +38,22 @@ def main(tag):
             violations=ev['summary']['violations'], fallback=ev['fallback'], intervened=ev['intervened'], mean_Ij=cm['Ij'], jerk_max=ev['summary']['max_jerk'], mean_time_s=cm['time_s'],
             mean_E_Wh=cm['E_Wh'], mean_R=cm['R'], z=ev['z'], visual=ev['visual'], per_condition=[dict(id=r['condition_id'], Ij=r['Ij'], time_s=r['time_s'], E_Wh=r['E_Wh'], R=r['R'], settled=r['settled'], violations=r['violations'], intervened=r['intervened_substeps'], gap=r['mean_abs_command_gap']) for r in ev['rows']])
         lines.append(f"| {ZH[a]} | {st['substeps']} | {st['updates']} | {st['episodes']}/{st['train_arrivals']} | {st['substeps_per_s']:.2f} | {st['updates_per_s']:.2f} | {st['frame_store_MiB']:.0f} | {ev['settled']} | {ev['summary']['violations']} | {ev['fallback']} | {ev['intervened']} | {cm['Ij']:.2f} | {ev['summary']['max_jerk']:.3f} | {cm['time_s']:.1f} | {cm['E_Wh']:.1f} | {cm['R']:.2f} | {ev['z']['z_drift']:.3f} | {ev['z']['z_std']:.3f} |")
-    lines.append("\n视觉（行驶中控制灯色识别，按灯箱像素高分层：n / 已知类正确率 / 红→绿 / unknown 率）\n")
+    lines.append("\n视觉（行驶中控制灯色识别；每格 = n / 已知类正确率 / unknown 召回 / 红→绿；ROI 头 ‖ Z 头）\n")
     bins = sorted({b for v in arms.values() for b in v['eval']['visual']})
     lines.append("| 臂 | " + " | ".join(bins) + " |"); lines.append("|---|" + "---|" * len(bins))
+    def cell(m):
+        if not m: return '—'
+        def one(h): return '—' if not h else f"{h['n']}/{('%.2f' % h['known_acc']) if h['known_acc'] is not None else '无已知'}/{('%.2f' % h['unknown_recall']) if h['unknown_recall'] is not None else '无unk'}/{h['red_to_green']}"
+        return one(m.get('roi_head')) + ' ‖ ' + one(m.get('z_head'))
     for a, v in arms.items():
-        cells = []
-        for b in bins:
-            m = v['eval']['visual'].get(b)
-            cells.append('—' if not m else f"{m['n']} / {('%.2f' % m['known_acc']) if m['known_acc'] is not None else '无已知类'} / {m['red_to_green']} / {m['unknown_rate']:.2f}")
-        lines.append(f"| {ZH[a]} | " + " | ".join(cells) + " |")
+        lines.append(f"| {ZH[a]} | " + " | ".join(cell(v['eval']['visual'].get(b)) for b in bins) + " |")
+    if all(v['eval'].get('z_decodability_dev') for v in arms.values()):
+        lines.append("\nZ 可解码性（dev 固定序列集，线性探针，一半训练一半测试）与同状态换图响应（红↔绿，同外观同噪声）\n")
+        lines.append("| 臂 | 探针测试准确率 | 已知类准确率 | 机会水平 | signal_z 头准确率 | 换图 \|Δu\| 均值 | 最大 | >0.05 比例 | Δu(绿−红) 均值 | ‖ΔZ‖ 均值 | ROI 头颜色对 | Z 头颜色对 |")
+        lines.append("|---|---|---|---|---|---|---|---|---|---|---|---|")
+        for a, v in arms.items():
+            zd = v['eval']['z_decodability_dev']; sw = v['eval']['image_swap']
+            lines.append(f"| {ZH[a]} | {zd['probe_test_acc']:.3f} | {zd['probe_test_known_acc'] if zd['probe_test_known_acc'] is None else '%.3f' % zd['probe_test_known_acc']} | {zd['chance']:.3f} | {zd['signal_z_head_acc']:.3f} | {sw['mean_abs_du']:.4f} | {sw['max_abs_du']:.4f} | {sw['frac_abs_du_gt_0_05']:.2f} | {sw['mean_du_green_minus_red']:+.4f} | {sw['mean_dz']:.3f} | {sw['roi_head_color_correct']:.2f} | {sw['z_head_color_correct']:.2f} |")
     lines.append("\n逐工况（I_j / 时间 s / 能耗 Wh，静止完赛=✓）\n")
     ids = sorted({r['id'] for v in summary.values() for r in v['per_condition']})
     lines.append("| 工况 | " + " | ".join(ZH[a] for a in arms) + " |"); lines.append("|---|" + "---|" * len(arms))

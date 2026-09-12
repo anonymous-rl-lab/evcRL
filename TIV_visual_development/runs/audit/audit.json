@@ -20,17 +20,17 @@
       "uninterrupted": [
         [
           142.0,
-          2235.327425873101,
-          15.146515848611728,
-          1.5429021120071411,
+          2235.394298449274,
+          15.305039458272288,
+          1.486324667930603,
           21.0,
           284.0
         ],
         [
           144.0,
-          2266.473879654568,
-          15.999937932855246,
-          1.5429021120071411,
+          2266.8672043954357,
+          16.16786648788934,
+          1.486324667930603,
           22.0,
           288.0
         ]
@@ -38,23 +38,26 @@
       "resumed": [
         [
           142.0,
-          2235.327425873101,
-          15.146515848611728,
-          1.5429021120071411,
+          2235.394298449274,
+          15.305039458272288,
+          1.486324667930603,
           21.0,
           284.0
         ],
         [
           144.0,
-          2266.473879654568,
-          15.999937932855246,
-          1.5429021120071411,
+          2266.8672043954357,
+          16.16786648788934,
+          1.486324667930603,
           22.0,
           288.0
         ]
       ]
     },
-    "executor_independent_of_arm": true
+    "executor_independent_of_arm": true,
+    "box_labels_in_unit_range": true,
+    "empty_roi_outputs_unknown": true,
+    "vision_loss_reaches_z_projection": true
   },
   "gradient_routes": {
     "frozen": {
@@ -69,21 +72,21 @@
       "td_to_encoder_at_fork_zero_columns": 0.0,
       "td_to_encoder_after_critic_updates": 0.0,
       "critic_updates_before_test": 20,
-      "vision_to_encoder": 0.8097694241390564,
+      "vision_to_encoder": 12.378907284542843,
       "actor_moves_encoder": 0.0,
       "targets_no_grad": true
     },
     "joint": {
       "td_to_encoder_at_fork_zero_columns": 0.0,
-      "td_to_encoder_after_critic_updates": 16.53187662513569,
+      "td_to_encoder_after_critic_updates": 19.824321947993372,
       "critic_updates_before_test": 20,
-      "vision_to_encoder": 0.8097694241390564,
+      "vision_to_encoder": 12.378907284542843,
       "actor_moves_encoder": 0.0,
       "targets_no_grad": true
     }
   },
   "identity": {
-    "sources": "2db67059621202a7d6aaaac036d734bb030cb0c4793c31680dd6c9611733062e",
+    "sources": "cf6c374eaf547db1d5ccf2e5b957a298c1878b0def8f6018d7d1ab32e700af63",
     "config": "617d0a74ce665c122bb99f8f4e967db3e924627495ee54e037f566a9707c11af"
   },
   "runtime": {

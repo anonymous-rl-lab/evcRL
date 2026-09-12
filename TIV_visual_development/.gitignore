@@ -1,5 +1,7 @@
-# 大文件不入库：离线标注池、编码器/训练断点、评估轨迹；JSON 报告与状态保留
-runs/**/*.pt
-runs/**/*.npz
+# 大文件不入库：离线标注池/评估集、训练断点、共同断点；小型权重（final_nets.pt、encoder.pt、common_nets.pt）与固定审计集保留
+runs/**/pool.pt
+runs/**/eval_sets.pt
+runs/**/resume*.pt
+runs/**/common.pt
 runs/**/*.tmp
 __pycache__/
