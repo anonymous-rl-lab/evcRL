@@ -1,0 +1,24 @@
+{
+ "passed": true,
+ "checks": {
+  "oracle_channels_masked": true,
+  "acceleration_channel_kept": true,
+  "policy_input_dim_81": true,
+  "actor_migration_exact": true,
+  "critic_migration_exact_action_last_column": true,
+  "no_future_frames": true,
+  "command_is_pre_projection": true,
+  "executor_intervention_logged": true,
+  "cross_episode_rejected": true,
+  "joint_td_reaches_encoder_after_critic_updates": true,
+  "joint_td_zero_at_fork_is_expected": true,
+  "supervised_frozen_td_blocked": true,
+  "vision_reaches_encoder": true,
+  "actor_never_moves_encoder": true,
+  "exact_resume": true,
+  "executor_independent_of_arm": true,
+  "box_labels_in_unit_range": true,
+  "empty_roi_outputs_unknown": true,
+  "vision_loss_reaches_z_projection": true
+ }
+}

@@ -25,6 +25,8 @@ DEV_FILES = ['renderer.py', 'pipeline.py', 'pretrain.py', 'run_stage.py']
 
 def source_identity(config):
     h = {f: S.digest(ROOT / 'v19_deps' / 'code' / f) for f in V19_FILES}
+    for extra in ('v19_deps/weights/short_route_A_nets.pt', config.get('pretrained_encoder', ''), config.get('pool_file', 'runs/pretrain/pool.pt')):
+        if extra and (ROOT / extra).exists(): h[extra] = S.digest(ROOT / extra)   # v2：池与权重内容进入身份
     h.update({'visual_dev/' + f: S.digest(ROOT / 'visual_dev' / f) for f in DEV_FILES if (ROOT / 'visual_dev' / f).exists()})
     h.update({'visual_z/' + f.name: S.digest(f) for f in sorted((ROOT / 'visual_z').glob('*.py'))})
     return dict(sources=hashlib.sha256(json.dumps(h, sort_keys=True).encode()).hexdigest(),
@@ -131,7 +133,7 @@ def labels_from_frames(frame_list):
     for i, seq in enumerate(frame_list):
         for j, f in enumerate(seq):
             L = f['labels']; heat[i, j] = L['heat']; boxes[i, j] = L['boxes']; bv[i, j] = L['box_valid']   # uint8/bool 存储在此处无损转回 float32
-            sig[i, j] = L['signal'] if f['meta']['association_valid'] else -100
+            sig[i, j] = L['signal'] if f['meta']['map_association'] else -100   # v2：地图有灯即给标签（不可见=unknown）；无灯 -100
     T = torch.as_tensor
     return dict(heat=T(heat), heat_valid=T(hv), boxes=T(boxes), box_valid=T(bv), signal=T(sig))
 
@@ -269,6 +271,7 @@ class VisualTrainer:
             camera=self.camera.state_dict(), env=copy.deepcopy(self.env.__dict__), episode_id=self.episode_id, episodes_started=self.episodes_started,
             ou=self.ou, counters=dict(used=self.used, decisions=self.decisions, updates=self.updates, episodes=self.episodes, train_arrivals=self.train_arrivals),
             diag=self.diag, wall=self.wall, completed=self.completed, pool_sampler=self.pool_sampler.state_dict(), audit_z0=self.audit_z0,
+            fork_origin=getattr(self, 'fork_origin', None),
             rng=dict(python=random.getstate(), numpy=np.random.get_state(), torch=torch.get_rng_state(),
                      env=self.env_rng.bit_generator.state, explore=self.explore_rng.bit_generator.state, replay=self.replay_rng.bit_generator.state),
             runtime=dict(torch=torch.__version__, numpy=np.__version__))
@@ -283,7 +286,9 @@ class VisualTrainer:
     def load(cls, path, pool):
         s = torch.load(path, map_location='cpu', weights_only=False)   # 仅信任本地生成的研究断点
         t = cls(s['cfg'], pool, Path(path).parent)
-        if s['identity'] != t.identity: raise ValueError('源码/配置身份不一致，拒绝恢复')
+        if s['identity'] != t.identity: raise ValueError('源码/配置/数据身份不一致，拒绝恢复')
+        if s['runtime'] != dict(torch=torch.__version__, numpy=np.__version__): raise ValueError('运行时版本不一致，拒绝恢复')
+        t.fork_origin = s.get('fork_origin')
         t.learner.load_state_dict(s['learner']); t.store.load_state_dict(s['store']); t.replay.load_state_dict(s['replay'])
         t.pending = deque(s['pending']); t.history = list(s['history']); t.camera.load_state_dict(s['camera'])
         t.env.__dict__ = s['env']; t.episode_id = s['episode_id']; t.episodes_started = s['episodes_started']; t.ou = s['ou']
@@ -312,8 +317,10 @@ def evaluate(learner, conditions, camera_seed=1000):
             with torch.no_grad():
                 out = learner.encoder(obs); u = float(learner.actor(learner.adapter(obs, out['z']))[0, 0])
             latest = store.frames[hist[-1]]['labels']
-            if latest['light_distance_m'] is not None and rec['association_valid']:
-                visual.append(dict(pred=int(out['signal'][0, -1].argmax()), truth=int(latest['signal']), px=float(latest['light_px_h']), d=float(latest['light_distance_m'])))
+            lm = store.frames[hist[-1]]['meta']
+            if lm['map_association']:
+                visual.append(dict(pred=int(out['signal'][0, -1].argmax()), pred_z=int(out['signal_z'][0].argmax()), truth=int(latest['signal']), px=float(latest['housing_px_h']),
+                                   lamp_px_d=float(latest['lamp_px_d']), d=float(latest['light_distance_m']), roi_nonempty=int(lm['roi_pixels'] > 0), visible=int(latest['visible']), occluded=int(latest['occluded'])))
             cmd = S.command(u)
             for _ in range(4):
                 if env.x >= 3999 and env.v <= .3: cmd = 0.
@@ -327,14 +334,83 @@ def evaluate(learner, conditions, camera_seed=1000):
     return rows, visual, traces
 
 
+def _bin_stats(rows, key='pred'):
+    known = [v for v in rows if v['truth'] != 4]; unk = [v for v in rows if v['truth'] == 4]
+    return dict(n=len(rows), acc=float(np.mean([v[key] == v['truth'] for v in rows])),
+        red_to_green=int(sum(v['truth'] == 0 and v[key] == 2 for v in rows)), green_to_nongreen=int(sum(v['truth'] == 2 and v[key] != 2 for v in rows)),
+        unknown_rate=float(np.mean([v[key] == 4 for v in rows])), known_acc=float(np.mean([v[key] == v['truth'] for v in known])) if known else None,
+        unknown_recall=float(np.mean([v[key] == 4 for v in unk])) if unk else None, n_known=len(known), n_unknown=len(unk))
+
+
 def visual_summary(visual):
-    """按灯箱像素高分层的灯色识别：正确率、红→绿误判、green→非绿、unknown 率。"""
-    bins = [(0, 4), (4, 8), (8, 16), (16, 1e9)]; out = {}
-    for lo, hi in bins:
-        rows = [v for v in visual if lo <= v['px'] < hi]
-        if not rows: continue
-        known = [v for v in rows if v['truth'] != 4]
-        out[f'{lo}-{hi if hi < 1e9 else "inf"}px'] = dict(n=len(rows), acc=float(np.mean([v['pred'] == v['truth'] for v in rows])),
-            red_to_green=int(sum(v['truth'] == 0 and v['pred'] == 2 for v in rows)), green_to_nongreen=int(sum(v['truth'] == 2 and v['pred'] != 2 for v in rows)),
-            unknown_rate=float(np.mean([v['pred'] == 4 for v in rows])), known_acc=float(np.mean([v['pred'] == v['truth'] for v in known])) if known else None)
+    """灯色识别分层报告（v2）：按名义灯箱像素高与按实际渲染光斑直径两种分层；ROI 头与 Z 头分别报告。"""
+    out = {}
+    for name, key, bins in (('housing_px_h', 'px', [(0, 4), (4, 8), (8, 16), (16, 1e9)]), ('lamp_px_d', 'lamp_px_d', [(0, 1e-9), (1e-9, 3), (3, 6), (6, 1e9)])):
+        for lo, hi in bins:
+            rows = [v for v in visual if lo <= v[key] < hi]
+            if not rows: continue
+            label = f"{name}:{lo:g}-{hi if hi < 1e9 else 'inf'}"
+            out[label] = dict(roi_head=_bin_stats(rows, 'pred'), z_head=_bin_stats(rows, 'pred_z') if 'pred_z' in rows[0] else None)
+    out['all'] = dict(roi_head=_bin_stats(visual, 'pred'), z_head=_bin_stats(visual, 'pred_z') if visual and 'pred_z' in visual[0] else None)
     return out
+
+
+# ------------------------------------------------------------------ v2 新增诊断
+def z_decodability(encoder, sequences, seed=0, steps=400):
+    """Z 是否保留灯色：在固定序列集上取 Z（最新帧有地图关联者），训练线性 softmax 探针（一半训练一半测试），并报告 signal_z 头的准确率。"""
+    seqs = [s for s in sequences if s[-1]['meta']['map_association']]
+    Z, y, yz = [], [], []
+    for i in range(0, len(seqs), 32):
+        chunk = seqs[i:i + 32]; obs = pool_observation(chunk)
+        with torch.no_grad(): out = encoder(obs)
+        Z.append(out['z']); yz.append(out['signal_z'].argmax(-1)); y += [int(s[-1]['labels']['signal']) for s in chunk]
+    Z = torch.cat(Z); y = torch.as_tensor(y); yz = torch.cat(yz); n = len(y)
+    g = torch.Generator().manual_seed(seed); perm = torch.randperm(n, generator=g); tr, te = perm[: n // 2], perm[n // 2:]
+    probe = torch.nn.Linear(Z.shape[1], 5); opt = torch.optim.Adam(probe.parameters(), lr=1e-2, weight_decay=1e-3)
+    for _ in range(steps):
+        loss = torch.nn.functional.cross_entropy(probe(Z[tr]), y[tr]); opt.zero_grad(); loss.backward(); opt.step()
+    with torch.no_grad(): pred = probe(Z[te]).argmax(-1)
+    known = y[te] != 4
+    return dict(n=n, probe_test_acc=float((pred == y[te]).float().mean()), probe_test_known_acc=float((pred[known] == y[te][known]).float().mean()) if known.any() else None,
+                probe_train_acc=float((probe(Z[tr]).argmax(-1) == y[tr]).float().mean()), signal_z_head_acc=float((yz == y).float().mean()),
+                chance=float(torch.bincount(y, minlength=5).max() / n), class_counts=torch.bincount(y, minlength=5).tolist())
+
+
+def image_swap_sensitivity(learner, seeds=(0, 1, 2), distances=range(40, 420, 20), v=15., t=100.):
+    """同一车辆状态、同一外观下把灯色强制为 red / green，比较 actor 指令与 Z：策略是否对图像灯色有响应。"""
+    rows = []
+    for seed in seeds:
+        cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=1000 + seed)
+        for d in distances:
+            x = S.R.SIGNALS[0] + 14. - d; env = S.StudyEnv(.85, 288.15, 0.); env.reset(v); env.x = x; env.t = t; env.a = 0.
+            out = {}
+            for color in ('red', 'green'):
+                cam.new_episode(f'swap{seed}_{d}_{color}'); cam.rng = np.random.default_rng(seed)   # 相同噪声种子
+                store = FrameStore(); fids = []
+                for k in range(STACK):
+                    f = cam.capture(episode_id=cam.episode_id, sim_time=t - (STACK - 1 - k) * S.E.DT, pose=dict(x=x - (STACK - 1 - k) * v * S.E.DT, v=v, offsets=[0.]), force_color=color)
+                    fid = f"{cam.episode_id}_{k}"; store.put(fid, f); fids.append(fid)
+                rec = dict(frame_ids=fids, episode_id=cam.episode_id, decision_time=t, legacy=np.asarray(env.obs(), np.float32), association_valid=int(store.frames[fids[-1]]['meta']['association_valid']))
+                obs = obs_from_frames(store, [rec])
+                with torch.no_grad():
+                    o = learner.encoder(obs); st = learner.adapter(obs, o['z']); u = float(learner.actor(st)[0, 0])
+                out[color] = dict(u=u, z=o['z'][0], pred=int(o['signal'][0, -1].argmax()), pred_z=int(o['signal_z'][0].argmax()))
+            rows.append(dict(seed=seed, d=float(d), u_red=out['red']['u'], u_green=out['green']['u'], du=out['green']['u'] - out['red']['u'],
+                             dz=float((out['green']['z'] - out['red']['z']).norm()), pred_red=out['red']['pred'], pred_green=out['green']['pred'],
+                             predz_red=out['red']['pred_z'], predz_green=out['green']['pred_z']))
+    du = np.array([r['du'] for r in rows]); dz = np.array([r['dz'] for r in rows])
+    return dict(n=len(rows), mean_abs_du=float(np.abs(du).mean()), max_abs_du=float(np.abs(du).max()), frac_abs_du_gt_0_05=float(np.mean(np.abs(du) > .05)),
+                mean_du_green_minus_red=float(du.mean()), mean_dz=float(dz.mean()), roi_head_color_correct=float(np.mean([r['pred_red'] == 0 and r['pred_green'] == 2 for r in rows])),
+                z_head_color_correct=float(np.mean([r['predz_red'] == 0 and r['predz_green'] == 2 for r in rows])), rows=rows)
+
+
+def executor_independence_check(n=50, seed=0):
+    """执行层只依赖环境状态与指令：同一状态的两个副本对随机指令给出相同动作；且 project 的代码不引用编码器/学习器。"""
+    import copy as _copy, dis
+    rng = np.random.default_rng(seed); env = SmoothEnv(.9, 263.15, 20.); env.reset(16.)
+    for _ in range(60): env.step(float(rng.uniform(-2, 2)))
+    twin = _copy.deepcopy(env); same = True
+    for _ in range(n):
+        cmd = float(rng.uniform(-3.5, 2.6)); same &= env.project(cmd) == twin.project(cmd)
+    names = set(SmoothEnv.project.__code__.co_names)
+    return dict(same_output_on_twin_state=bool(same), references_encoder_or_policy=bool(names & {'encoder', 'learner', 'actor', 'z'}))

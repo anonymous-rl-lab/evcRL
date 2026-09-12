@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'visual_dev'))
 import numpy as np, torch
 import pipeline as P
-from pipeline import S, VisualTrainer, evaluate, visual_summary, obs_from_frames, source_identity
+from pipeline import S, VisualTrainer, evaluate, visual_summary, obs_from_frames, source_identity, z_decodability, image_swap_sensitivity, executor_independence_check, pool_observation, labels_from_frames
 from visual_z.model import MLP, load_legacy_weights
 from visual_z.learner import grad_norm
 CFG = json.load(open(ROOT / 'configs' / 'pilot_cpu.json'))
@@ -88,8 +88,17 @@ def stage_audit():
     a1 = probe(t); t2 = VisualTrainer.load(p, pool); a2 = probe(t2)
     checks['exact_resume'] = a1 == a2
     checks['resume_detail'] = dict(uninterrupted=[list(map(float, filter(lambda v: v is not None, z))) for z in a1][:2], resumed=[list(map(float, filter(lambda v: v is not None, z))) for z in a2][:2])
-    # 6 三臂执行层信息一致：同一状态下执行层输出与臂无关（执行层不读编码器）
-    checks['executor_independent_of_arm'] = True
+    # 6 执行层独立性（v2 实测）：同一状态两个副本对随机指令输出相同；project 不引用编码器/策略
+    ex = executor_independence_check(); checks['executor_independent_of_arm'] = ex['same_output_on_twin_state'] and not ex['references_encoder_or_policy']
+    # 7 v2：标签可表示性（一批离线池样本的框分量都在 [0,1]）；空 ROI 帧 ROI 头输出 unknown；视觉监督梯度到达 Z 末端投影
+    vb = pool_observation(pool['sequences'][:64]); vl = labels_from_frames(pool['sequences'][:64])
+    bx = vl['boxes'][vl['box_valid'].expand_as(vl['boxes']) > 0]
+    checks['box_labels_in_unit_range'] = bool(bx.numel() > 0 and bx.min() >= 0 and bx.max() <= 1)
+    with torch.no_grad(): vo = t.learner.encoder(vb)
+    checks['empty_roi_outputs_unknown'] = bool((vo['signal'][vo['roi_empty']].argmax(-1) == 4).all()) if vo['roi_empty'].any() else True
+    enc = copy.deepcopy(t.learner.encoder); enc.zero_grad(); perception_loss_v = __import__('visual_z.model', fromlist=['perception_loss']).perception_loss
+    perception_loss_v(enc(vb), vl, vb).backward()
+    checks['vision_loss_reaches_z_projection'] = sum(float(p.grad.square().sum()) for p in enc.temporal.parameters() if p.grad is not None) > 0
     passed = all(v for k, v in checks.items() if isinstance(v, bool))
     out = dict(passed=passed, checks=checks, gradient_routes=routes, identity=t.identity, runtime=dict(torch=torch.__version__, numpy=np.__version__))
     json_save(RUNS / 'audit' / 'audit.json', out)
@@ -106,7 +115,7 @@ def stage_adapt():
         t.step()
         if time.monotonic() - last > 60: print(f"适配 {t.used}/{cfg['adapt_substeps']} 子步，更新 {t.updates}，episodes {t.episodes}", flush=True); last = time.monotonic()
     t.learner.actor_step = None; del t.learner.actor_step
-    t.save(out / 'common.pt')
+    t.save(out / 'common.pt'); torch.save(dict(nets={k: m.state_dict() for k, m in t.learner.named_nets().items()}, cfg=t.cfg, identity=t.identity), out / 'common_nets.pt')
     json_save(out / 'common.json', dict(substeps=t.used, decisions=t.decisions, critic_updates=t.updates, episodes=t.episodes, train_arrivals=t.train_arrivals,
         wall_s=time.monotonic() - t0, replay_size=t.replay.size, frames=len(t.store.frames), frame_store_MiB=t.store.nbytes / 2**20,
         last_diag=t.diag[-1] if t.diag else None, identity=t.identity))
@@ -151,6 +160,7 @@ def stage_train(a):
                   f"q_loss {d.get('q_loss', 0):.2f} vis {d.get('vision_loss', 0):.3f} enc_grad {d.get('encoder_grad', 0):.2e}", flush=True); last_print = time.monotonic()
         if a.stop_after and t.used - origin['substeps'] >= a.stop_after: reason = 'stop_after'; break
     t.save(ck); st = status(t, reason, start); json_save(out / 'status.json', st)
+    torch.save(dict(nets={k: m.state_dict() for k, m in t.learner.named_nets().items()}, cfg=t.cfg, identity=t.identity, substeps=t.used, updates=t.updates), out / 'final_nets.pt')
     if reason in ('substep_budget', 'wall_budget') and not a.no_eval:
         te = time.monotonic(); rows, visual, traces = evaluate(t.learner, S.conditions('development'))
         ev = dict(rows=rows, summary=S.summarize(rows), settled=sum(r['settled'] for r in rows), fallback=sum(r['fallback_substeps'] for r in rows),
@@ -158,7 +168,11 @@ def stage_train(a):
                   arm=a.arm, substeps_trained=t.used - origin['substeps'], updates=t.updates - origin['updates'])
         for r, (tr, log) in zip(rows, traces):
             S.save_trace(out / 'evaluation_traces' / f"dev_{r['condition_id']:02d}.npz", tr); json_save(out / 'evaluation_traces' / f"dev_{r['condition_id']:02d}_layer.json", log)
+        es = torch.load(RUNS / 'pretrain' / 'eval_sets.pt', map_location='cpu', weights_only=False)
+        ev['z_decodability_dev'] = z_decodability(t.learner.encoder, es['dev'])
+        sw = image_swap_sensitivity(t.learner); ev['image_swap'] = {k: v for k, v in sw.items() if k != 'rows'}; json_save(out / 'image_swap_rows.json', sw['rows'])
         json_save(out / 'evaluation.json', ev)
+        print(f"[{a.arm}] Z 可解码性（dev 线性探针测试集）{ev['z_decodability_dev']['probe_test_acc']:.3f}（机会 {ev['z_decodability_dev']['chance']:.3f}）；同状态换图 |Δu| 均值 {ev['image_swap']['mean_abs_du']:.4f} 最大 {ev['image_swap']['max_abs_du']:.4f}", flush=True)
         print(f"[{a.arm}] 评估：完赛(静止) {ev['settled']}/9 违规 {ev['summary']['violations']} 平均I_j {ev['summary']['completed_mean']['Ij']} 平均时间 {ev['summary']['completed_mean']['time_s']} 干预子步 {ev['intervened']} 回退 {ev['fallback']}", flush=True)
     print(json.dumps({k: st[k] for k in ('state', 'substeps', 'updates', 'episodes', 'train_arrivals', 'substeps_per_s', 'updates_per_s')}, ensure_ascii=False))
 
@@ -181,7 +195,8 @@ def stage_report(tag):
         rep[arm] = dict(substeps=st['substeps'], updates=st['updates'], episodes=st['episodes'], train_arrivals=st['train_arrivals'], substeps_per_s=st['substeps_per_s'],
                         updates_per_s=st['updates_per_s'], frame_store_MiB=st['frame_store_MiB'], settled=ev['settled'], violations=ev['summary']['violations'],
                         mean_Ij=ev['summary']['completed_mean']['Ij'], mean_time_s=ev['summary']['completed_mean']['time_s'], mean_E_Wh=ev['summary']['completed_mean']['E_Wh'],
-                        mean_R=ev['summary']['completed_mean']['R'], intervened=ev['intervened'], fallback=ev['fallback'], visual=ev['visual'], z=ev['z'], last_diag=st['last_diag'])
+                        mean_R=ev['summary']['completed_mean']['R'], intervened=ev['intervened'], fallback=ev['fallback'], visual=ev['visual'], z=ev['z'], last_diag=st['last_diag'],
+                        z_decodability_dev=ev.get('z_decodability_dev'), image_swap=ev.get('image_swap'))
     json_save(RUNS / tag / 'report.json', rep); print(json.dumps(rep, ensure_ascii=False, indent=1))
 
 

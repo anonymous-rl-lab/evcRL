@@ -1,9 +1,10 @@
-"""离线视觉标注池的生成与编码器监督预训练（三臂共同起点）。
+"""离线视觉标注池的生成与编码器监督预训练（三臂共同起点），v2。
 
-池：按 episode（外观种子）划分 train / dev / audit；每个样本是同一 episode 内连续 4 个 0.5 s 子步的帧序列
-（匀速行驶，位姿由环境几何推进），标签来自渲染器真值（灯色、灯箱/标志/终点框、可见性）。
-60% 样本从信号可见区（x∈[2200,3000]）起步，其余均匀覆盖全程，避免小目标样本过少。
-指标：按灯箱像素高 <4 / 4–8 / 8–16 / ≥16 px 分层的灯色正确率、红→绿误判、绿→非绿、unknown 率。
+池：按 episode（外观种子）划分 train / dev / audit；每个样本是同一 episode 内连续 4 个 0.5 s 子步的帧序列。
+60% 样本从信号可见区（x∈[2200,3000]）起步，其余均匀覆盖全程。
+v2 指标：灯色按“名义灯箱像素高”和“实际渲染光斑直径”两种分层，ROI 头与 Z 头分别报告；
+检测框：类别 0（控制灯）热图最大格解码框与真值框的 IoU、中心误差、命中率（按尺寸分层）；
+标签可表示性断言：全部框分量在 [0,1]。
 """
 import json, sys, time
 from pathlib import Path
@@ -12,22 +13,8 @@ sys.path.insert(0, str(ROOT / 'visual_dev'))
 import numpy as np, torch
 import pipeline as P
 from pipeline import S, SceneCamera, STACK, pool_observation, labels_from_frames
-from visual_z.model import VisualEncoder, perception_loss
+from visual_z.model import VisualEncoder, perception_loss, decode_boxes
 OUT = ROOT / 'runs' / 'pretrain'
-
-
-def make_sequences(n, seed, tag):
-    cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=seed); rng = np.random.default_rng(seed + 1)
-    seqs = []
-    for i in range(n):
-        eid = f'{tag}{i:05d}'; cam.new_episode(eid)
-        x = float(rng.uniform(2200., 3000.)) if rng.random() < .6 else float(rng.uniform(0., 3990.))
-        v = float(rng.uniform(4., 22.)); t = float(rng.uniform(0., 600.)); off = float(rng.uniform(0., 90.))
-        seq = []
-        for k in range(STACK):
-            seq.append(cam.capture(episode_id=eid, sim_time=t + k * S.E.DT, pose=dict(x=min(x + v * k * S.E.DT, 3999.), v=v, offsets=[off])))
-        seqs.append(seq)
-    return seqs
 
 
 def compact(seqs):
@@ -38,42 +25,104 @@ def compact(seqs):
             L = f['labels']; L['heat'] = L['heat'].astype(np.uint8); L['heat_valid'] = L['heat_valid'].astype(np.uint8); L['box_valid'] = L['box_valid'].astype(np.uint8)
 
 
-def evaluate_signal(encoder, seqs, batch=16):
+def make_sequences(n, seed, tag):
+    cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=seed); rng = np.random.default_rng(seed + 1)
+    seqs = []
+    for i in range(n):
+        eid = f'{tag}{i:05d}'; cam.new_episode(eid)
+        x = float(rng.uniform(2200., 3000.)) if rng.random() < .6 else float(rng.uniform(0., 3990.))
+        v = float(rng.uniform(4., 22.)); t = float(rng.uniform(0., 600.)); off = float(rng.uniform(0., 90.))
+        seqs.append([cam.capture(episode_id=eid, sim_time=t + k * S.E.DT, pose=dict(x=min(x + v * k * S.E.DT, 3999.), v=v, offsets=[off])) for k in range(STACK)])
+    return seqs
+
+
+def label_representability(seqs):
+    n = neg = over = 0; lo, hi = np.inf, -np.inf
+    for seq in seqs:
+        for f in seq:
+            m = f['labels']['box_valid'][0] > 0; v = f['labels']['boxes'][:, m]; n += v.shape[1]
+            if v.size: neg += int((v < 0).sum()); over += int((v > 1).sum()); lo = min(lo, float(v.min())); hi = max(hi, float(v.max()))
+    return dict(positive_box_cells=n, negative_components=neg, over_one_components=over, min_target=lo, max_target=hi)
+
+
+def iou(a, b):
+    ix = max(0., min(a[2], b[2]) - max(a[0], b[0])); iy = max(0., min(a[3], b[3]) - max(a[1], b[1])); inter = ix * iy
+    ua = (a[2] - a[0]) * (a[3] - a[1]) + (b[2] - b[0]) * (b[3] - b[1]) - inter
+    return inter / ua if ua > 0 else 0.
+
+
+def evaluate_vision(encoder, seqs, batch=16):
+    rows = []; det = []
+    for i in range(0, len(seqs), batch):
+        chunk = seqs[i:i + batch]; obs = pool_observation(chunk)
+        with torch.no_grad():
+            out = encoder(obs); pred = out['signal'].argmax(-1).numpy(); predz = out['signal_z'].argmax(-1).numpy()
+            boxes, score = decode_boxes(out['heat'], out['boxes'], cls=0)
+        for j, seq in enumerate(chunk):
+            for k, f in enumerate(seq):
+                L, M = f['labels'], f['meta']
+                if M['map_association']:
+                    rows.append(dict(pred=int(pred[j, k]), pred_z=int(predz[j]) if k == STACK - 1 else int(pred[j, k]), truth=int(L['signal']), px=float(L['housing_px_h']),
+                                     lamp_px_d=float(L['lamp_px_d']), d=L['light_distance_m'], roi_nonempty=int(M['roi_pixels'] > 0), visible=int(L['visible']), occluded=int(L['occluded'])))
+                if L['visible'] and L['light_box_px'] is not None:
+                    pb = [float(x) for x in boxes[j, k]]; tb = L['light_box_px']
+                    det.append(dict(px=float(L['housing_px_h']), iou=iou(pb, tb), center_err_px=float(np.hypot((pb[0] + pb[2]) / 2 - (tb[0] + tb[2]) / 2, (pb[1] + pb[3]) / 2 - (tb[1] + tb[3]) / 2)),
+                                    hit=int(iou(pb, tb) > .3 or np.hypot((pb[0] + pb[2]) / 2 - (tb[0] + tb[2]) / 2, (pb[1] + pb[3]) / 2 - (tb[1] + tb[3]) / 2) <= 2.)))
+    # Z 头只对最新帧有定义；rows 中非最新帧的 pred_z 用 ROI 头占位，因此 Z 头指标另算
+    z_rows = [r for r in rows]
+    summ = P.visual_summary(rows)
+    detection = {}
+    for lo, hi in [(0, 4), (4, 8), (8, 16), (16, 1e9)]:
+        d = [r for r in det if lo <= r['px'] < hi]
+        if d: detection[f'{lo:g}-{hi if hi < 1e9 else "inf"}px'] = dict(n=len(d), mean_iou=float(np.mean([r['iou'] for r in d])), mean_center_err_px=float(np.mean([r['center_err_px'] for r in d])), hit_rate=float(np.mean([r['hit'] for r in d])))
+    detection['all'] = dict(n=len(det), mean_iou=float(np.mean([r['iou'] for r in det])) if det else None, hit_rate=float(np.mean([r['hit'] for r in det])) if det else None)
+    return summ, detection, rows
+
+
+def z_head_on_latest(encoder, seqs, batch=16):
     rows = []
     for i in range(0, len(seqs), batch):
         chunk = seqs[i:i + batch]; obs = pool_observation(chunk)
-        with torch.no_grad(): pred = encoder(obs)['signal'].argmax(-1).numpy()
+        with torch.no_grad(): predz = encoder(obs)['signal_z'].argmax(-1).numpy()
         for j, seq in enumerate(chunk):
-            for k, f in enumerate(seq):
-                if f['meta']['association_valid']:
-                    rows.append(dict(pred=int(pred[j, k]), truth=int(f['labels']['signal']), px=float(f['labels']['light_px_h']), d=f['labels']['light_distance_m']))
-    return P.visual_summary(rows), rows
+            f = seq[-1]
+            if f['meta']['map_association']: rows.append(dict(pred=int(predz[j]), pred_z=int(predz[j]), truth=int(f['labels']['signal']), px=float(f['labels']['housing_px_h']), lamp_px_d=float(f['labels']['lamp_px_d'])))
+    return P.visual_summary(rows)['all']['roi_head'] if rows else None
 
 
 def main(n_train=1600, n_dev=240, n_audit=32, steps=1200, batch=16, seed=4242):
     OUT.mkdir(parents=True, exist_ok=True); t0 = time.monotonic()
     train = make_sequences(n_train, seed, 'tr'); dev = make_sequences(n_dev, seed + 100, 'dv'); audit = make_sequences(n_audit, seed + 200, 'au')
     gen_s = time.monotonic() - t0
-    for seqs in (train, dev, audit): compact(seqs)   # 无损压缩存储 dtype，降低三臂并行时的内存占用
-    torch.save(dict(sequences=train, dev=dev, audit=audit, seed=seed, hw=(P.H, P.W)), OUT / 'pool.pt')
+    rep = {k: label_representability(v) for k, v in (('train', train), ('dev', dev))}
+    assert all(r['negative_components'] == 0 and r['over_one_components'] == 0 for r in rep.values()), '框标签超出 [0,1]'
+    for seqs in (train, dev, audit): compact(seqs)
+    torch.save(dict(sequences=train, seed=seed, hw=(P.H, P.W)), OUT / 'pool.pt')
+    torch.save(dict(dev=dev, audit=audit, seed=seed), OUT / 'eval_sets.pt')
+    np.savez_compressed(OUT / 'audit_set.npz', rgb=np.stack([[f['rgb'] for f in s] for s in audit]), roi=np.stack([[f['roi'] for f in s] for s in audit]),
+                        signal=np.array([[f['labels']['signal'] for f in s] for s in audit]), map_association=np.array([[f['meta']['map_association'] for f in s] for s in audit]))
     torch.manual_seed(seed); enc = VisualEncoder(STACK); opt = torch.optim.Adam(enc.parameters(), lr=3e-4)
     rng = np.random.default_rng(seed); log = []; t1 = time.monotonic()
     for step in range(1, steps + 1):
         idx = rng.integers(0, len(train), batch); seqs = [train[i] for i in idx]
         obs = pool_observation(seqs); labels = labels_from_frames(seqs)
         loss = perception_loss(enc(obs), labels, obs); opt.zero_grad(); loss.backward(); opt.step()
-        if step % 100 == 0 or step == 1:
-            enc.eval(); summ, _ = evaluate_signal(enc, dev[:120]); enc.train()
-            log.append(dict(step=step, loss=float(loss), dev=summ, wall_s=time.monotonic() - t1))
-            print(f"预训练 step {step} loss {float(loss):.4f} | dev 灯色: " + ' '.join(f"{k}:acc={v['acc']:.2f}(n={v['n']})" for k, v in summ.items()), flush=True)
-    enc.eval(); summ, rows = evaluate_signal(enc, dev)
+        if step % 200 == 0 or step == 1:
+            enc.eval(); summ, det, _ = evaluate_vision(enc, dev[:120]); zh = z_head_on_latest(enc, dev[:120]); enc.train()
+            log.append(dict(step=step, loss=float(loss), dev_all=summ['all'], z_head_latest=zh, detection=det['all'], wall_s=time.monotonic() - t1))
+            print(f"预训练 step {step} loss {float(loss):.4f} | ROI头 acc {summ['all']['roi_head']['acc']:.3f} unknown召回 {summ['all']['roi_head']['unknown_recall']} | Z头(最新帧) acc {zh['acc'] if zh else None:.3f} | 检测命中 {det['all']['hit_rate']}", flush=True)
+    enc.eval(); summ, det, rows = evaluate_vision(enc, dev); zh = z_head_on_latest(enc, dev)
     torch.save(dict(encoder=enc.state_dict(), steps=steps, batch=batch, seed=seed, dev_metrics=summ, pool_seed=seed), OUT / 'encoder.pt')
-    report = dict(pool=dict(train=n_train, dev=n_dev, audit=n_audit, frames_each=STACK, hw=[P.H, P.W], generation_wall_s=gen_s,
-                            frame_bytes=int(train[0][0]['rgb'].nbytes)), training=dict(steps=steps, batch_sequences=batch, frames_per_step=batch * STACK,
-                            wall_s=time.monotonic() - t1, seconds_per_step=(time.monotonic() - t1) / steps), dev_signal_metrics=summ, log=log,
-                  note='随机初始化编码器的监督预训练，非预训练 MobileNetV3；dev 与 train 使用不同外观 episode 种子')
+    grads = {}
+    obs = pool_observation(dev[:4]); labels = labels_from_frames(dev[:4]); enc.zero_grad(); perception_loss(enc(obs), labels, obs).backward()
+    for name, mod in (('temporal_Z', enc.temporal), ('signal_head', enc.signal), ('signal_z_head', enc.signal_z), ('backbone_c2', enc.c2)):
+        grads[name] = sum(float(p.grad.square().sum()) for p in mod.parameters() if p.grad is not None) ** .5
+    report = dict(pool=dict(train=n_train, dev=n_dev, audit=n_audit, frames_each=STACK, hw=[P.H, P.W], generation_wall_s=gen_s, frame_bytes=int(train[0][0]['rgb'].nbytes)),
+                  label_representability=rep, training=dict(steps=steps, batch_sequences=batch, frames_per_step=batch * STACK, wall_s=time.monotonic() - t1, seconds_per_step=(time.monotonic() - t1) / steps),
+                  dev_signal_metrics=summ, dev_z_head_latest_frame=zh, dev_detection=det, supervised_gradient_norms=grads, log=log,
+                  note='随机初始化编码器的监督预训练，非预训练 MobileNetV3；dev 与 train 使用不同外观 episode 种子；分层同时给出名义灯箱高与实际光斑直径')
     json.dump(report, open(OUT / 'pretrain_report.json', 'w'), indent=1, ensure_ascii=False)
-    print(json.dumps(dict(dev=summ, wall=report['training']['wall_s']), ensure_ascii=False))
+    print(json.dumps(dict(all=summ['all'], z_head=zh, detection=det['all'], grads=grads, wall=report['training']['wall_s']), ensure_ascii=False))
 
 
 if __name__ == '__main__':
