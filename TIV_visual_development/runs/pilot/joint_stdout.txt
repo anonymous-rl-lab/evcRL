@@ -1,0 +1,8 @@
+[joint] 子步 313/9000 更新 79 eps 3 完赛 3 q_loss 8.00 vis 0.040 enc_grad 4.15e+02
+[joint] 子步 624/9000 更新 157 eps 4 完赛 4 q_loss 7.42 vis 0.230 enc_grad 7.75e+01
+[joint] 子步 940/9000 更新 236 eps 4 完赛 4 q_loss 3.86 vis 0.115 enc_grad 5.74e+01
+[joint] 子步 1251/9000 更新 314 eps 5 完赛 5 q_loss 5.20 vis 0.052 enc_grad 6.35e+01
+[joint] 子步 1563/9000 更新 392 eps 5 完赛 5 q_loss 4.10 vis 0.009 enc_grad 9.94e+01
+[joint] 子步 1869/9000 更新 469 eps 6 完赛 6 q_loss 6.04 vis 0.472 enc_grad 2.86e+02
+[joint] 子步 2176/9000 更新 546 eps 7 完赛 7 q_loss 3.72 vis 0.278 enc_grad 9.67e+01
+[joint] 子步 2476/9000 更新 621 eps 7 完赛 7 q_loss 6.84 vis 0.068 enc_grad 2.43e+02

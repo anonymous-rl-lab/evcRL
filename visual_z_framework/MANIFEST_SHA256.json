@@ -1,0 +1,20 @@
+{
+  "files": {
+    "CODEX_TASK.md": "903967216860dd2d4f6cdd12e585f40cbe3e910fec38b61115c7dbffbc6d197c",
+    "DESIGN_ZH.md": "a49b7e3dff3a00145e1b24cf1accdc2a44892879ccf9f0c9b896009ba48362d3",
+    "README.md": "82cc5a49ded0c5dcef237c210f78315e86b00b0ee847fa98a20af1639dd3814f",
+    "configs/pilot.json": "6a082e62d11494a506820a9a236a4a55b2679f5f2d30edd59e07732b74bda85b",
+    "requirements.txt": "1e569428afb86b14da7d71633ee5a2810376fcb46d6b957c34b8f995dc5bd8ea",
+    "tests/test_contracts.py": "dd7cb0a741cc56ab0887c982819bd5502f89c4fa9332e7d2f06878308fb86e00",
+    "verification/STATUS.md": "ea29f79308f06c7a94279ad762f8f1f60ce1b31e8e7eda9b27684ae3d9a3eab7",
+    "verification/test_results.json": "cf590f856d1b0ab5c9c342f7b0a9b2af88af9f9bac200b512c5cd2cb171d8b72",
+    "verification/tests.txt": "f999b17159bd4de09d634b43e351b1a721ffba0d4caf4a011cc1cae3435ca029",
+    "verification/v19_sources.json": "604e30c906b87d0d00e48e54b294ea0512d53099391ed02a26484c9ffe2130d0",
+    "visual_z/__init__.py": "96bfdeca42295bf9bf012436b706de6eb71cd3b08b445285268ffaa0a1a0a8cd",
+    "visual_z/checkpoint.py": "97ef42af080d7018735d72bbe35494069793c18672ecdee54c13863d7e165aec",
+    "visual_z/contracts.py": "a24d762d0f05381a200bcc858c1f909753e8c1b4d3dd4eb070b7e17856fec000",
+    "visual_z/learner.py": "df282d277094a87a1181ffe537c5572dde28305ec4ade177c9d66b2226c1d926",
+    "visual_z/model.py": "c05212a6cc717090dcd3753b3d55adbbeb0fe13ce356588681ed9c788f16ebd5",
+    "visual_z/replay.py": "d80223a1e9ccd4874ebb58a44aef9a01ed19917a3558ce18f7159d1dcefe8206"
+  }
+}

@@ -1,0 +1,12 @@
+[joint] 子步 325/2400 更新 82 eps 3 完赛 3 q_loss 8.00 vis 0.040 enc_grad 4.15e+02
+[joint] 子步 656/2400 更新 165 eps 4 完赛 4 q_loss 7.42 vis 0.230 enc_grad 7.75e+01
+{"state": "stop_after", "substeps": 800, "updates": 201, "episodes": 4, "train_arrivals": 4, "substeps_per_s": 5.444880701941703, "updates_per_s": 1.368026276362853}
+=== 强制中断后恢复 ===
+从断点恢复 3202
+[joint] 子步 1096/2400 更新 275 eps 4 完赛 4 q_loss 6.93 vis 0.010 enc_grad 4.98e+02
+[joint] 子步 1391/2400 更新 349 eps 5 完赛 5 q_loss 3.89 vis 0.191 enc_grad 4.14e+02
+[joint] 子步 1689/2400 更新 424 eps 6 完赛 6 q_loss 5.63 vis 0.073 enc_grad 6.22e+01
+[joint] 子步 1985/2400 更新 498 eps 6 完赛 6 q_loss 5.53 vis 0.272 enc_grad 1.34e+02
+[joint] 子步 2288/2400 更新 574 eps 7 完赛 7 q_loss 6.11 vis 0.015 enc_grad 3.91e+02
+[joint] 评估：完赛(静止) 9/9 违规 0 平均I_j 57.50061961790186 平均时间 211.33333333333334 干预子步 3611 回退 0
+{"state": "substep_budget", "substeps": 2400, "updates": 602, "episodes": 7, "train_arrivals": 7, "substeps_per_s": 5.111626016357303, "updates_per_s": 1.2821661924362902}

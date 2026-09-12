@@ -1,0 +1,8 @@
+{
+  "python": "3.12.14",
+  "torch": "2.14.0+cpu",
+  "numpy": "2.3.5",
+  "device": "cpu",
+  "integration_dt_seconds": 0.5,
+  "repeat": 4
+}

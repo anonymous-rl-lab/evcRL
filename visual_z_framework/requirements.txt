@@ -1,0 +1,4 @@
+numpy>=1.24
+torch>=2.0
+# A camera/renderer and a pretrained production detector are deliberately not installed here.
+# Freeze exact tested versions on the training machine before experiments.

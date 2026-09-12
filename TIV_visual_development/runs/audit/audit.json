@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "checks": {
+    "oracle_channels_masked": true,
+    "acceleration_channel_kept": true,
+    "policy_input_dim_81": true,
+    "actor_migration_exact": true,
+    "critic_migration_exact_action_last_column": true,
+    "no_future_frames": true,
+    "command_is_pre_projection": true,
+    "executor_intervention_logged": true,
+    "cross_episode_rejected": true,
+    "joint_td_reaches_encoder_after_critic_updates": true,
+    "joint_td_zero_at_fork_is_expected": true,
+    "supervised_frozen_td_blocked": true,
+    "vision_reaches_encoder": true,
+    "actor_never_moves_encoder": true,
+    "exact_resume": true,
+    "resume_detail": {
+      "uninterrupted": [
+        [
+          142.0,
+          2235.327425873101,
+          15.146515848611728,
+          1.5429021120071411,
+          21.0,
+          284.0
+        ],
+        [
+          144.0,
+          2266.473879654568,
+          15.999937932855246,
+          1.5429021120071411,
+          22.0,
+          288.0
+        ]
+      ],
+      "resumed": [
+        [
+          142.0,
+          2235.327425873101,
+          15.146515848611728,
+          1.5429021120071411,
+          21.0,
+          284.0
+        ],
+        [
+          144.0,
+          2266.473879654568,
+          15.999937932855246,
+          1.5429021120071411,
+          22.0,
+          288.0
+        ]
+      ]
+    },
+    "executor_independent_of_arm": true
+  },
+  "gradient_routes": {
+    "frozen": {
+      "td_to_encoder_at_fork_zero_columns": 0.0,
+      "td_to_encoder_after_critic_updates": 0.0,
+      "critic_updates_before_test": 20,
+      "vision_to_encoder": 0.0,
+      "actor_moves_encoder": 0.0,
+      "targets_no_grad": true
+    },
+    "supervised": {
+      "td_to_encoder_at_fork_zero_columns": 0.0,
+      "td_to_encoder_after_critic_updates": 0.0,
+      "critic_updates_before_test": 20,
+      "vision_to_encoder": 0.8097694241390564,
+      "actor_moves_encoder": 0.0,
+      "targets_no_grad": true
+    },
+    "joint": {
+      "td_to_encoder_at_fork_zero_columns": 0.0,
+      "td_to_encoder_after_critic_updates": 16.53187662513569,
+      "critic_updates_before_test": 20,
+      "vision_to_encoder": 0.8097694241390564,
+      "actor_moves_encoder": 0.0,
+      "targets_no_grad": true
+    }
+  },
+  "identity": {
+    "sources": "2db67059621202a7d6aaaac036d734bb030cb0c4793c31680dd6c9611733062e",
+    "config": "617d0a74ce665c122bb99f8f4e967db3e924627495ee54e037f566a9707c11af"
+  },
+  "runtime": {
+    "torch": "2.14.0+cu130",
+    "numpy": "2.4.6"
+  }
+}

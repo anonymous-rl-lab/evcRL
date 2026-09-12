@@ -1,0 +1,28 @@
+{
+ "A": {
+  "mean_Ij": 77.86137616330205,
+  "archived_mean_Ij": 77.86137616330205,
+  "max_abs_Ij_error": 0.0,
+  "checkpoint_runtime": {
+   "torch": "2.8.0+cpu",
+   "numpy": "2.3.5"
+  },
+  "lambda_c": 0.0,
+  "used_steps": 340000
+ },
+ "B": {
+  "mean_Ij": 49.08260473778821,
+  "archived_mean_Ij": 49.08260473778821,
+  "max_abs_Ij_error": 0.0,
+  "checkpoint_runtime": {
+   "torch": "2.8.0+cpu",
+   "numpy": "2.3.5"
+  },
+  "lambda_c": 0.1,
+  "used_steps": 340000
+ },
+ "runtime_here": {
+  "torch": "2.14.0+cu130",
+  "numpy": "2.4.6"
+ }
+}

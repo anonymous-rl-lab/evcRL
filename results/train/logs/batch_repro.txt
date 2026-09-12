@@ -1,0 +1,10 @@
+3 seeds, 5,000,000 integration steps each; repeat=4; 3 CPU jobs; wall-time cap 600 min. No epoch concept in online RL.
+start seed 0
+start seed 1
+start seed 2
+finish seed 0: exit 0
+finish seed 2: exit 0
+finish seed 1: exit 0
+repro_s0                 selected@ 3500002 REP  -176.342 arr 6/6 | last  -181.030 last3  -179.905 (n=3) | matching attentive -177.473
+repro_s1                 selected@ 2500003 REP  -175.093 arr 6/6 | last  -180.663 last3  -182.803 (n=3) | matching attentive -177.473
+repro_s2                 selected@ 3500000 REP  -174.550 arr 6/6 | last  -182.234 last3  -181.902 (n=3) | matching attentive -177.473
