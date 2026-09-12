@@ -1,0 +1,479 @@
+{
+ "frozen": {
+  "substeps": 9003,
+  "updates": 2259,
+  "episodes": 22,
+  "train_arrivals": 22,
+  "substeps_per_s": 6.360015556927463,
+  "updates_per_s": 1.5958319608018592,
+  "train_wall_s": 1415.562575188003,
+  "save_wall_s": 73.06429195400005,
+  "frame_store_MiB": 669.609375,
+  "settled": 9,
+  "violations": 0,
+  "fallback": 0,
+  "intervened": 3624,
+  "mean_Ij": 58.306771049421315,
+  "jerk_max": 2.000000000000007,
+  "mean_time_s": 211.33333333333334,
+  "mean_E_Wh": 670.1837244858314,
+  "mean_R": -41.03328074815654,
+  "z": {
+   "z_drift": 0.0,
+   "z_std": 0.14263379573822021
+  },
+  "visual": {
+   "0-4px": {
+    "n": 81,
+    "acc": 0.9876543209876543,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.024691358024691357,
+    "known_acc": 1.0
+   },
+   "4-8px": {
+    "n": 9,
+    "acc": 0.8888888888888888,
+    "red_to_green": 0,
+    "green_to_nongreen": 1,
+    "unknown_rate": 0.1111111111111111,
+    "known_acc": 0.8888888888888888
+   },
+   "8-16px": {
+    "n": 6,
+    "acc": 1.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": 1.0
+   },
+   "16-infpx": {
+    "n": 57,
+    "acc": 0.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": null
+   }
+  },
+  "per_condition": [
+   {
+    "id": 0,
+    "Ij": 65.66174262000673,
+    "time_s": 234.5,
+    "E_Wh": 596.2408764982285,
+    "R": -40.22467155393622,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.651623501198124
+   },
+   {
+    "id": 1,
+    "Ij": 65.66118121746501,
+    "time_s": 204.5,
+    "E_Wh": 594.6365388610062,
+    "R": -37.76691539899615,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.659500770289041
+   },
+   {
+    "id": 2,
+    "Ij": 43.61105725898733,
+    "time_s": 195.0,
+    "E_Wh": 549.4367780156437,
+    "R": -35.37972400856317,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.661377500020541
+   },
+   {
+    "id": 3,
+    "Ij": 65.65771367992969,
+    "time_s": 234.5,
+    "E_Wh": 728.0742912063173,
+    "R": -44.97067448342737,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.6530625011875175
+   },
+   {
+    "id": 4,
+    "Ij": 65.6583218622645,
+    "time_s": 204.5,
+    "E_Wh": 726.4695436996999,
+    "R": -42.51290357318911,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.6612001114777653
+   },
+   {
+    "id": 5,
+    "Ij": 43.61314592376601,
+    "time_s": 195.0,
+    "E_Wh": 634.2207352643125,
+    "R": -38.431946469515196,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.6633747960359626
+   },
+   {
+    "id": 6,
+    "Ij": 65.6433761308142,
+    "time_s": 234.5,
+    "E_Wh": 771.15185512355,
+    "R": -46.52146678444777,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.6498002087891988
+   },
+   {
+    "id": 7,
+    "Ij": 65.64409165068385,
+    "time_s": 204.5,
+    "E_Wh": 769.5492232181705,
+    "R": -44.063772035854036,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.6580708774202906
+   },
+   {
+    "id": 8,
+    "Ij": 43.610309100874524,
+    "time_s": 195.0,
+    "E_Wh": 661.8736784855544,
+    "R": -39.42745242547988,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.6611453947654145
+   }
+  ]
+ },
+ "supervised": {
+  "substeps": 9003,
+  "updates": 2259,
+  "episodes": 22,
+  "train_arrivals": 22,
+  "substeps_per_s": 6.816764536342137,
+  "updates_per_s": 1.7104377527043084,
+  "train_wall_s": 1320.714534292979,
+  "save_wall_s": 74.86531059299841,
+  "frame_store_MiB": 669.609375,
+  "settled": 9,
+  "violations": 0,
+  "fallback": 0,
+  "intervened": 3624,
+  "mean_Ij": 58.30757064042442,
+  "jerk_max": 2.000000000000007,
+  "mean_time_s": 211.33333333333334,
+  "mean_E_Wh": 670.1842360626687,
+  "mean_R": -41.03329916492268,
+  "z": {
+   "z_drift": 0.6579936146736145,
+   "z_std": 0.13877177238464355
+  },
+  "visual": {
+   "0-4px": {
+    "n": 81,
+    "acc": 0.9876543209876543,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.024691358024691357,
+    "known_acc": 1.0
+   },
+   "4-8px": {
+    "n": 9,
+    "acc": 0.8888888888888888,
+    "red_to_green": 0,
+    "green_to_nongreen": 1,
+    "unknown_rate": 0.1111111111111111,
+    "known_acc": 0.8888888888888888
+   },
+   "8-16px": {
+    "n": 6,
+    "acc": 1.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": 1.0
+   },
+   "16-infpx": {
+    "n": 57,
+    "acc": 0.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": null
+   }
+  },
+  "per_condition": [
+   {
+    "id": 0,
+    "Ij": 65.66353110840485,
+    "time_s": 234.5,
+    "E_Wh": 596.2418320401772,
+    "R": -40.224705953446374,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.6525902784709485
+   },
+   {
+    "id": 1,
+    "Ij": 65.66328303042533,
+    "time_s": 204.5,
+    "E_Wh": 594.6375083294644,
+    "R": -37.76695029986065,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.660539096841602
+   },
+   {
+    "id": 2,
+    "Ij": 43.61395419384526,
+    "time_s": 195.0,
+    "E_Wh": 549.4374607199835,
+    "R": -35.37974858591941,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.6629148786495898
+   },
+   {
+    "id": 3,
+    "Ij": 65.65676546424518,
+    "time_s": 234.5,
+    "E_Wh": 728.0745369824816,
+    "R": -44.9706833313693,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.653399325230483
+   },
+   {
+    "id": 4,
+    "Ij": 65.65702012571722,
+    "time_s": 204.5,
+    "E_Wh": 726.4697388202585,
+    "R": -42.51291059752921,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.6614119283727447
+   },
+   {
+    "id": 5,
+    "Ij": 43.6144847737171,
+    "time_s": 195.0,
+    "E_Wh": 634.2208749145486,
+    "R": -38.43195149692367,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.6636707084606854
+   },
+   {
+    "id": 6,
+    "Ij": 65.64469622227347,
+    "time_s": 234.5,
+    "E_Wh": 771.1526522904223,
+    "R": -46.52149548245517,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.6509096092760944
+   },
+   {
+    "id": 7,
+    "Ij": 65.64223523110837,
+    "time_s": 204.5,
+    "E_Wh": 769.5496469974316,
+    "R": -44.06378729190744,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.6585762288576236
+   },
+   {
+    "id": 8,
+    "Ij": 43.61216561408307,
+    "time_s": 195.0,
+    "E_Wh": 661.8738734692495,
+    "R": -39.427459444892904,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.6615751188229297
+   }
+  ]
+ },
+ "joint": {
+  "substeps": 9003,
+  "updates": 2259,
+  "episodes": 22,
+  "train_arrivals": 22,
+  "substeps_per_s": 4.933613165552185,
+  "updates_per_s": 1.2379242631325542,
+  "train_wall_s": 1824.82892312299,
+  "save_wall_s": 101.06629073299837,
+  "frame_store_MiB": 669.609375,
+  "settled": 9,
+  "violations": 0,
+  "fallback": 0,
+  "intervened": 3624,
+  "mean_Ij": 58.24079440551658,
+  "jerk_max": 2.000000000000007,
+  "mean_time_s": 211.33333333333334,
+  "mean_E_Wh": 670.1775714609431,
+  "mean_R": -41.03305923926056,
+  "z": {
+   "z_drift": 1.7773363590240479,
+   "z_std": 0.2321447730064392
+  },
+  "visual": {
+   "0-4px": {
+    "n": 81,
+    "acc": 0.9876543209876543,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.024691358024691357,
+    "known_acc": 1.0
+   },
+   "4-8px": {
+    "n": 9,
+    "acc": 0.7777777777777778,
+    "red_to_green": 0,
+    "green_to_nongreen": 2,
+    "unknown_rate": 0.1111111111111111,
+    "known_acc": 0.7777777777777778
+   },
+   "8-16px": {
+    "n": 6,
+    "acc": 1.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": 1.0
+   },
+   "16-infpx": {
+    "n": 57,
+    "acc": 0.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": null
+   }
+  },
+  "per_condition": [
+   {
+    "id": 0,
+    "Ij": 65.51664168255105,
+    "time_s": 234.5,
+    "E_Wh": 596.2302532650758,
+    "R": -40.22428911754271,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.641750722551651
+   },
+   {
+    "id": 1,
+    "Ij": 65.56397387706448,
+    "time_s": 204.5,
+    "E_Wh": 594.6290706561438,
+    "R": -37.7666465436211,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.644779802243109
+   },
+   {
+    "id": 2,
+    "Ij": 43.55656521241937,
+    "time_s": 195.0,
+    "E_Wh": 549.408801250435,
+    "R": -35.378716845015674,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.489148899836418
+   },
+   {
+    "id": 3,
+    "Ij": 65.58059454029242,
+    "time_s": 234.5,
+    "E_Wh": 728.0714569452794,
+    "R": -44.97057245003004,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.6479626893488835
+   },
+   {
+    "id": 4,
+    "Ij": 65.58536452928887,
+    "time_s": 204.5,
+    "E_Wh": 726.4666250541077,
+    "R": -42.51279850194778,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.6551705109752475
+   },
+   {
+    "id": 5,
+    "Ij": 43.61255915567072,
+    "time_s": 195.0,
+    "E_Wh": 634.2206556913943,
+    "R": -38.43194360489013,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.657319553815402
+   },
+   {
+    "id": 6,
+    "Ij": 65.55133879368606,
+    "time_s": 234.5,
+    "E_Wh": 771.1493732610396,
+    "R": -46.52137743739739,
+    "settled": true,
+    "violations": 0,
+    "intervened": 444,
+    "gap": 2.646088773609479
+   },
+   {
+    "id": 7,
+    "Ij": 65.58670786681719,
+    "time_s": 204.5,
+    "E_Wh": 769.5479233611679,
+    "R": -44.06372524100195,
+    "settled": true,
+    "violations": 0,
+    "intervened": 384,
+    "gap": 2.654040788030275
+   },
+   {
+    "id": 8,
+    "Ij": 43.61340399185907,
+    "time_s": 195.0,
+    "E_Wh": 661.8739836638446,
+    "R": -39.427463411898316,
+    "settled": true,
+    "violations": 0,
+    "intervened": 380,
+    "gap": 2.657355164014376
+   }
+  ]
+ }
+}
