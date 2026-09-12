@@ -1,3 +1,4 @@
+复用已有 runs/common/common.pt
 joint 退出码 0
 supervised 退出码 0
 frozen 退出码 0
