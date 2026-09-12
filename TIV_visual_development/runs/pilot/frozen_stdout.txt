@@ -8,3 +8,18 @@
 [frozen] 子步 3010/9000 更新 756 eps 9 完赛 9 q_loss 3.56 vis 0.170 enc_grad 0.00e+00
 [frozen] 子步 3378/9000 更新 848 eps 9 完赛 9 q_loss 7.09 vis 0.028 enc_grad 0.00e+00
 [frozen] 子步 3738/9000 更新 938 eps 10 完赛 10 q_loss 6.89 vis 0.161 enc_grad 0.00e+00
+[frozen] 子步 4095/9000 更新 1028 eps 11 完赛 11 q_loss 5.26 vis 0.881 enc_grad 0.00e+00
+[frozen] 子步 4474/9000 更新 1123 eps 12 完赛 12 q_loss 9.25 vis 0.135 enc_grad 0.00e+00
+[frozen] 子步 4855/9000 更新 1219 eps 13 完赛 13 q_loss 8.90 vis 0.567 enc_grad 0.00e+00
+[frozen] 子步 5231/9000 更新 1313 eps 13 完赛 13 q_loss 4.67 vis 0.003 enc_grad 0.00e+00
+[frozen] 子步 5616/9000 更新 1410 eps 14 完赛 14 q_loss 4.18 vis 0.023 enc_grad 0.00e+00
+[frozen] 子步 5996/9000 更新 1505 eps 15 完赛 15 q_loss 5.88 vis 0.012 enc_grad 0.00e+00
+[frozen] 子步 6384/9000 更新 1602 eps 16 完赛 16 q_loss 4.29 vis 0.025 enc_grad 0.00e+00
+[frozen] 子步 6771/9000 更新 1699 eps 17 完赛 17 q_loss 5.42 vis 0.119 enc_grad 0.00e+00
+[frozen] 子步 7156/9000 更新 1796 eps 18 完赛 18 q_loss 4.30 vis 0.054 enc_grad 0.00e+00
+[frozen] 子步 7537/9000 更新 1892 eps 19 完赛 19 q_loss 7.47 vis 0.306 enc_grad 0.00e+00
+[frozen] 子步 7949/9000 更新 1995 eps 20 完赛 20 q_loss 2.47 vis 0.031 enc_grad 0.00e+00
+[frozen] 子步 8369/9000 更新 2100 eps 20 完赛 20 q_loss 6.50 vis 0.009 enc_grad 0.00e+00
+[frozen] 子步 8771/9000 更新 2201 eps 21 完赛 21 q_loss 2.02 vis 0.026 enc_grad 0.00e+00
+[frozen] 评估：完赛(静止) 9/9 违规 0 平均I_j 58.306771049421315 平均时间 211.33333333333334 干预子步 3624 回退 0
+{"state": "substep_budget", "substeps": 9003, "updates": 2259, "episodes": 22, "train_arrivals": 22, "substeps_per_s": 6.360015556927463, "updates_per_s": 1.5958319608018592}

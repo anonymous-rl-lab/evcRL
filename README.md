@@ -103,7 +103,8 @@ TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.
 
 - 同步只读程序化渲染器（v19 无 RGB 传感器，本机无 3D 引擎）：由原环境位姿与同一时刻信号相位驱动，2 Hz、96×160，逐 episode 随机光照/雾/噪声/遮挡；真值只进标签。
 - 训练环境执行层换成 comfort_v2 r2 的完整 jerk 可行执行层（环境感知 + 动作平滑一起进入训练），信息访问三臂相同；`lambda_c` 可配置，首阶段为 0。
-- 审计 16/16 通过；随机初始化编码器的监督预训练；共同适配后分叉出 frozen / supervised / joint 三臂；10 分钟烟测含强制中断恢复；三臂小规模同预算并行。
+- 审计 16/16 通过；随机初始化编码器的监督预训练；共同适配后分叉出 frozen / supervised / joint 三臂；10 分钟烟测含强制中断恢复；三臂小规模同预算并行（各 9003 子步 / 2259 次更新）。
+- 小规模结论：三臂均 9/9 静止完赛、0 违规、最坏 jerk 2.0，但控制指标逐工况相同——actor 饱和于最大指令（≥2.5 m/s² 占 92–99.5% 子步），特权执行层把它投影为限速巡航，Z 的差异被执行层吸收；编码层面 TD 梯度确实到达联合臂、Z 漂移 J 1.78 > S 0.66 > F 0。判断：当前设置下不值得扩大规模，需先把执行器信息接口改为感知输出（报告第 8.2 节）。
 - 一键：`cd TIV_visual_development && python3 visual_dev/pretrain.py && python3 visual_dev/run_stage.py audit && bash runs/run_pilot.sh && python3 visual_dev/run_stage.py report --tag pilot`。
 
 ### 8.1 交接包原状态（接入前）
