@@ -31,7 +31,7 @@ def archive(path, suffix='_v2d_shared_camera'):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--tag', default='pilot_v2'); ap.add_argument('--arm', default=None); ap.add_argument('--swap-only', action='store_true')
+    ap = argparse.ArgumentParser(); ap.add_argument('--tag', default='pilot_v2'); ap.add_argument('--arm', default=None); ap.add_argument('--swap-only', action='store_true'); ap.add_argument('--swap-update', action='store_true')
     a = ap.parse_args(); arms = [a.arm] if a.arm else ['frozen', 'supervised', 'joint']
     es = torch.load(RUNS / 'pretrain' / 'eval_sets.pt', map_location='cpu', weights_only=False)
     for arm in arms:
@@ -39,6 +39,9 @@ def main():
         t0 = time.monotonic(); sw = image_swap_sensitivity(learner)
         print(f"[{arm}] 换图 |Δu| {sw['mean_abs_du']:.4f} Δu(绿−红) {sw['mean_du_green_minus_red']:+.4f} | 投影后 |Δa| {sw['mean_abs_da']:.4f} Δa(绿−红) {sw['mean_da_green_minus_red']:+.4f} Δr(绿−红) {sw['mean_dr_green_minus_red']:+.4f} 真值绿灯占比 {sw['truth_green_frac']:.2f} ({time.monotonic() - t0:.0f}s)", flush=True)
         if a.swap_only: json.dump(sw['rows'], open(out / 'image_swap_rows_smoke.json', 'w'), indent=1); continue
+        if a.swap_update:   # 只更新换图检查字段（闭环评估不变）
+            old['image_swap'] = {k: v for k, v in sw.items() if k != 'rows'}; json.dump(sw['rows'], open(out / 'image_swap_rows.json', 'w'), indent=1)
+            json.dump(old, open(out / 'evaluation.json', 'w'), indent=1, ensure_ascii=False); continue
         te = time.monotonic(); rows, visual, traces = evaluate(learner, S.conditions('development'))
         ev = dict(rows=rows, summary=S.summarize(rows), settled=sum(r['settled'] for r in rows), fallback=sum(r['fallback_substeps'] for r in rows),
                   intervened=sum(r['intervened_substeps'] for r in rows), visual=visual_summary(visual), z=old['z'], eval_wall_s=time.monotonic() - te,
