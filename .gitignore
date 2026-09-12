@@ -8,3 +8,10 @@ evsim_v9/out/*
 !evsim_v9/out/.gitkeep
 evsim_v9/logs/*
 !evsim_v9/logs/.gitkeep
+# 视觉实验归档权重与固定审计样本（小文件，明确入库；池/回放/断点仍忽略）
+!TIV_visual_development/runs/pretrain/encoder.pt
+!TIV_visual_development/runs/pretrain/audit_set.npz
+!TIV_visual_development/runs/common/common_nets.pt
+!TIV_visual_development/runs/pilot_v2/*/final_nets.pt
+!TIV_visual_development/runs/pilot_v2/*/evaluation_traces/*.npz
+!TIV_visual_development/runs/smoke_v2/joint/final_nets.pt

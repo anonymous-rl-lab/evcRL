@@ -6,7 +6,9 @@
 2. 新增 signal_z 头：由 Z 直接预测最新帧的控制灯色。视觉监督损失因此训练到 Z 的末端投影（temporal），
    使“灯色头正确”与“Z 保留灯色”不再脱钩；输出中同时给出两路预测，评估分别报告。
 3. 新增 decode_boxes()：与渲染器 v2 的框参数化（格内偏移 + 归一化尺寸）配套解码。
-4. 热图焦点损失改为按正样本格点数归一化，且热图头偏置按先验 π=0.01 初始化。受控实验（同种子 500 步）：原按全部格点归一化命中率 0.017；仅改归一化不加先验初始损失 2086、特征塌缩、命中率 0.008；先验偏置+正样本归一化命中率 0.788、中心误差 2.29 px（runs/pretrain/heat_loss_probe_*.json）。
+4. 热图焦点损失改为按正样本格点数归一化，且热图头偏置按先验 π=0.01 初始化。受控实验（同种子 500 步）：原按全部格点归一化命中率 0.017；仅改归一化不加先验初始损失 2086、特征塌缩、命中率 0.008；先验偏置+正样本归一化命中率 0.788、中心误差 2.29 px（visual_dev/heat_loss_probe.py，输出 runs/probes/）。
+5. event 注意力权重 att 对热图 logits 取 detach：热图头只由检测损失训练；Z 头 CE 与联合臂的 TD 梯度仍经 p2/p4 特征进入骨干与 temporal（Z 路径），
+   但不再改写热图头。标签格分配规则固定为 floor(c/4)（visual_dev/cell_assign_probe.py 受控对比，见 renderer.CELL_ASSIGN 注释）。
 """
 import math
 import torch
@@ -41,7 +43,7 @@ class VisualEncoder(nn.Module):
         p4=self.lat4(c4);p3=self.lat3(c3)+F.interpolate(p4,size=c3.shape[-2:],mode='nearest')
         p2=self.lat2(c2)+F.interpolate(p3,size=c2.shape[-2:],mode='nearest')
         logits=self.heat(p2);boxes=self.box(p2).sigmoid()
-        att=logits.sigmoid().sum(1,keepdim=True)+1e-6
+        att=logits.detach().sigmoid().sum(1,keepdim=True)+1e-6   # v2d：注意力权重与热图头切断梯度——热图只由检测监督塑形，Z 侧损失/TD 梯度经 p2 特征进入骨干，不再改写热图头（对抗式审查发现该耦合初始占检测梯度约 25%）
         event=(p2*att).sum((2,3))/att.sum((2,3))
         scene=p4.mean((2,3));f=torch.cat([scene,event],1).reshape(b,t,64)
         f=f*obs.valid.unsqueeze(-1)
@@ -98,7 +100,8 @@ def decode_boxes(heat,boxes,cls=0,cell=4):
     b,t,_,hh,ww=heat.shape
     score,idx=heat[:,:,cls].reshape(b,t,-1).max(-1); i=idx//ww; j=idx%ww
     tgt=torch.stack([boxes[n,k,:,i[n,k],j[n,k]] for n in range(b) for k in range(t)]).reshape(b,t,4)
-    cx=(j.float()+tgt[...,0]-.5)*cell; cy=(i.float()+tgt[...,1]-.5)*cell; w=tgt[...,2]*ww*cell; h=tgt[...,3]*hh*cell   # v2c：格中心为采样中心 (4i,4j)
+    import os; off=.5 if os.environ.get('RENDER_CELL_ASSIGN','floor')=='nearest' else 0.
+    cx=(j.float()+tgt[...,0]-off)*cell; cy=(i.float()+tgt[...,1]-off)*cell; w=tgt[...,2]*ww*cell; h=tgt[...,3]*hh*cell   # 与 renderer.CELL_ASSIGN 一致
     return torch.stack([cx-w/2,cy-h/2,cx+w/2,cy+h/2],-1),score.sigmoid()
 
 def perception_loss(output,labels,obs):

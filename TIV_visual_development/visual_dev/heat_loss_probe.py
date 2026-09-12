@@ -1,5 +1,6 @@
 """热图损失变体受控实验：定位“检测框定位学不会”的根因。同种子、同数据、同步数，只改热图损失归一化/先验偏置/梯度裁剪。
-变体：all=按全部格点归一化（v2a）；pos=按正样本归一化（v2b）；pos_prior=pos+热图头偏置先验 π=0.01；pos_prior_clip=pos_prior+梯度范数裁剪 10。
+指标口径为 v2c（格一致率、逐帧中心误差、≤2 px 命中、阈值召回、误检率），输出 runs/probes/heat_loss_probe_<variant>.json。
+变体：all=按全部格点归一化、无先验（v2a）；pos=按正样本归一化、无先验；all_prior=全部格点归一化+先验 π=0.01；pos_prior=正样本归一化+先验（现行配置）；pos_prior_clip=pos_prior+梯度范数裁剪 10。
 用法：python visual_dev/heat_loss_probe.py --variant pos_prior_clip --steps 500
 """
 import argparse, json, math, sys, time
@@ -44,27 +45,30 @@ def selftest_decode():
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--variant', required=True, choices=('all', 'pos', 'pos_prior', 'pos_prior_clip')); ap.add_argument('--steps', type=int, default=500)
+    ap = argparse.ArgumentParser(); ap.add_argument('--variant', required=True, choices=('all', 'pos', 'all_prior', 'pos_prior', 'pos_prior_clip')); ap.add_argument('--steps', type=int, default=500)
     a = ap.parse_args(); v = a.variant
     print('解码自检中心误差', selftest_decode(), flush=True)
     pool = torch.load(ROOT / 'runs/pretrain/pool.pt', map_location='cpu', weights_only=False)['sequences']
     dev = torch.load(ROOT / 'runs/pretrain/eval_sets.pt', map_location='cpu', weights_only=False)['dev']
     torch.manual_seed(4242); enc = VisualEncoder(4)
     if 'prior' in v: torch.nn.init.constant_(enc.heat.bias, -math.log((1 - .01) / .01))
+    else: torch.nn.init.zeros_(enc.heat.bias)   # 现版 VisualEncoder 默认已带先验偏置；无先验变体在此显式清零
     opt = torch.optim.Adam(enc.parameters(), lr=3e-4); rng = np.random.default_rng(4242); log = []; t0 = time.monotonic()
     for step in range(1, a.steps + 1):
         seqs = [pool[i] for i in rng.integers(0, len(pool), 16)]; obs = pool_observation(seqs); lab = labels_from_frames(seqs)
-        out = enc(obs); hf = heat_focal(out, lab, obs, 'all' if v == 'all' else 'pos'); loss = hf + other_terms(out, lab, obs)
+        out = enc(obs); hf = heat_focal(out, lab, obs, 'all' if v.startswith('all') else 'pos'); loss = hf + other_terms(out, lab, obs)
         opt.zero_grad(); loss.backward()
         gn = float(torch.nn.utils.clip_grad_norm_(enc.parameters(), 10. if 'clip' in v else 1e9)); opt.step()
         if step in (1, 50) or step % 250 == 0:
             enc.eval(); s, d, _ = evaluate_vision(enc, dev[:120]); enc.train()
             with torch.no_grad(): p = out['heat'].sigmoid(); ppos = float(p[lab['heat'] > 0].mean()); pneg = float(p[lab['heat'] == 0].mean())
             rec = dict(step=step, loss=float(loss), heat_term=float(hf), grad_norm=gn, roi_acc=s['all']['roi_head']['acc'], roi_known_acc=s['all']['roi_head']['known_acc'],
-                       det_hit=d['all']['hit_rate'], det_center_err=float(np.mean([b['mean_center_err_px'] for k, b in d.items() if k != 'all'])) if len(d) > 1 else None,
+                       det_hit=d['all']['hit_le2px'], det_cell_ok=d['all']['cell_ok_rate'], det_center_err=d['all']['mean_center_err_px'], det_median_err=d['all']['median_center_err_px'],
+                       det_recall_thr=d['all']['recall_at_thr'], false_alarm=d['no_visible_light_frames']['false_alarm_rate'],
                        p_pos=ppos, p_neg=pneg, wall_s=time.monotonic() - t0)
             log.append(rec); print(json.dumps(rec), flush=True)
-    json.dump(dict(variant=v, log=log), open(ROOT / 'runs/pretrain' / f'heat_loss_probe_{v}.json', 'w'), indent=1)
+    (ROOT / 'runs/probes').mkdir(parents=True, exist_ok=True)
+    json.dump(dict(variant=v, log=log), open(ROOT / 'runs/probes' / f'heat_loss_probe_{v}.json', 'w'), indent=1)
 
 
 if __name__ == '__main__':

@@ -35,6 +35,8 @@ COLOR_CLASSES = ('red', 'yellow', 'green', 'off', 'unknown')
 LAMP_RGB = {'red': (255, 40, 30), 'yellow': (255, 200, 40), 'green': (40, 230, 90)}
 CELL = 4
 P2 = (H // CELL, W // CELL)
+import os as _os
+CELL_ASSIGN = _os.environ.get('RENDER_CELL_ASSIGN', 'floor')   # 'floor'：按 floor(c/4)（默认）；'nearest'：按最近卷积采样中心 (4i,4j)。受控对比（cell_assign_probe，2 种子×600 步）floor 格一致 0.78/0.77、阈值召回 0.48/0.36 均优于 nearest 0.65/0.71、0.09/0.14，故固定为 floor
 
 
 def signal_color(t, offset, cycle=90., green=30., yellow=4.):
@@ -57,17 +59,20 @@ def encode_box(box):
     cx, cy = (l + r) / 2, (t + b) / 2
     # v2c：特征格 (i,j) 的卷积采样中心在像素 (4i,4j)（stem 与 c2 均为 3×3/stride 2/pad 1），
     # 因此按最近采样中心分配格：i = floor(cy/4 + 0.5)，格内偏移 dx = (cx − 4j)/4 + 0.5 ∈ [0,1)。
-    i, j = int(math.floor(cy / CELL + .5)), int(math.floor(cx / CELL + .5))
+    if CELL_ASSIGN == 'nearest':
+        i, j = int(math.floor(cy / CELL + .5)), int(math.floor(cx / CELL + .5)); off = .5
+    else:   # floor：格 [4i,4i+4) 内的目标归该格，格内偏移 (c−4j)/4 ∈ [0,1)
+        i, j = int(math.floor(cy / CELL)), int(math.floor(cx / CELL)); off = 0.
     if not (0 <= i < P2[0] and 0 <= j < P2[1]): return None
-    target = np.array([(cx - j * CELL) / CELL + .5, (cy - i * CELL) / CELL + .5, min((r - l) / W, 1.), min((b - t) / H, 1.)], np.float32)
+    target = np.array([(cx - j * CELL) / CELL + off, (cy - i * CELL) / CELL + off, min((r - l) / W, 1.), min((b - t) / H, 1.)], np.float32)
     if not ((target >= 0).all() and (target <= 1).all()): return None
     return i, j, target, (l, t, r, b)
 
 
 def decode_box(i, j, target):
     """encode_box 的逆：目标向量 → 像素框 (l,t,r,b)。"""
-    dx, dy, w, h = [float(x) for x in target]
-    cx, cy = (j + dx - .5) * CELL, (i + dy - .5) * CELL; w, h = w * W, h * H
+    dx, dy, w, h = [float(x) for x in target]; off = .5 if CELL_ASSIGN == 'nearest' else 0.
+    cx, cy = (j + dx - off) * CELL, (i + dy - off) * CELL; w, h = w * W, h * H
     return (cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2)
 
 
