@@ -302,9 +302,12 @@ class VisualTrainer:
 
 # ------------------------------------------------------------------ 评估（固定 actor，相机驱动，平滑执行层）
 def evaluate(learner, conditions, camera_seed=1000):
-    rows = []; visual = []; traces = []
-    camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=camera_seed); store = FrameStore()
+    """固定工况闭环评估。v2e：每个工况用独立的相机外观种子（camera_seed*1000+i）与独立噪声流（camera_seed*1000+500+i），
+    外观不再依赖之前工况采了多少帧——三臂在同一工况下看到的光照/雾/噪声/遮挡逐位相同（v2d 及以前共用一个生成器，
+    轨迹长度不同的臂从第 3 个工况起外观不同）。"""
+    rows = []; visual = []; traces = []; store = FrameStore()
     for i, (soc, temp, v0, off) in enumerate(conditions):
+        camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=camera_seed * 1000 + i, noise_seed=camera_seed * 1000 + 500 + i)
         env = SmoothEnv(soc, temp, off); env.reset(v0); eid = f"eval{i:02d}"; camera.new_episode(eid); hist = []
         def cap():
             f = camera.capture(episode_id=eid, sim_time=env.t, pose=dict(x=env.x, v=env.v, offsets=env.offsets))
@@ -329,7 +332,8 @@ def evaluate(learner, conditions, camera_seed=1000):
                 if done: break
         m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6),
             fallback_substeps=sum(l['fallback'] for l in env.layer_log), intervened_substeps=sum(l['intervened'] for l in env.layer_log),
-            mean_abs_command_gap=float(np.mean([abs(l['applied'] - l['command']) for l in env.layer_log])))
+            mean_abs_command_gap=float(np.mean([abs(l['applied'] - l['command']) for l in env.layer_log])),
+            camera_appearance_seed=camera_seed * 1000 + i, camera_appearance={k: (list(v) if isinstance(v, tuple) else v) for k, v in camera.appearance.items()})
         rows.append(m); traces.append((np.asarray(env.trace, np.float64), list(env.layer_log))); store.frames.clear(); store.refs.clear()
     return rows, visual, traces
 
@@ -378,32 +382,54 @@ def z_decodability(encoder, sequences, seed=0, steps=400):
                 chance=float(torch.bincount(y, minlength=5).max() / n), class_counts=torch.bincount(y, minlength=5).tolist())
 
 
-def image_swap_sensitivity(learner, seeds=(0, 1, 2), distances=range(40, 420, 20), v=15., t=100.):
-    """同一车辆状态、同一外观下把灯色强制为 red / green，比较 actor 指令与 Z：策略是否对图像灯色有响应。"""
+def image_swap_sensitivity(learner, seeds=(0, 1, 2), distances=range(40, 420, 20), v=15., t=100., truth_offsets=(0., 30.)):
+    """同一车辆状态、同一外观、同一噪声下把灯色强制为 red / green，比较 actor 指令、Z，以及经同一执行层投影后的实际动作
+    与随后一个决策周期（4 子步）的回报：策略是否对图像灯色有响应，响应经执行层后是否保留。仿真真值相位取两种（offset 0 → 真值绿，offset 30 → 真值红），
+    按真值分层汇总（by_truth），共 3 种子 × 19 距离 × 2 相位 = 114 对。
+    v2e：每个 (seed, d) 只调用一次 new_episode（外观），两种颜色各自把噪声流重置到同一种子；v2d 及以前先 new_episode 再重置噪声，
+    第一对（40 m）的外观在两色之间不同。仿真真值信号相位对两色相同（由 offset=0、t 决定），记录在 truth_green 字段。"""
     rows = []
     for seed in seeds:
-        cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=1000 + seed)
+      for off in truth_offsets:   # 仿真真值相位：offset 0 → t=100 s 时真值绿灯；offset 30 → 真值红灯。图像灯色与真值无关地被强制
+        cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=1000 + seed, noise_seed=seed)
         for d in distances:
-            x = S.R.SIGNALS[0] + 14. - d; env = S.StudyEnv(.85, 288.15, 0.); env.reset(v); env.x = x; env.t = t; env.a = 0.
+            x = S.R.SIGNALS[0] + 14. - d; cam.new_episode(f'swap{seed}_{d}')
             out = {}
             for color in ('red', 'green'):
-                cam.new_episode(f'swap{seed}_{d}_{color}'); cam.rng = np.random.default_rng(seed)   # 相同噪声种子
+                cam.noise_rng = np.random.default_rng(seed)   # 相同噪声种子；外观由本 (seed, d) 的 new_episode 固定
+                env = SmoothEnv(.85, 288.15, off); env.reset(v); env.x = x; env.t = t; env.a = 0.
                 store = FrameStore(); fids = []
                 for k in range(STACK):
-                    f = cam.capture(episode_id=cam.episode_id, sim_time=t - (STACK - 1 - k) * S.E.DT, pose=dict(x=x - (STACK - 1 - k) * v * S.E.DT, v=v, offsets=[0.]), force_color=color)
-                    fid = f"{cam.episode_id}_{k}"; store.put(fid, f); fids.append(fid)
+                    f = cam.capture(episode_id=cam.episode_id, sim_time=t - (STACK - 1 - k) * S.E.DT, pose=dict(x=x - (STACK - 1 - k) * v * S.E.DT, v=v, offsets=[off]), force_color=color)
+                    fid = f"{cam.episode_id}_{color}_{k}"; store.put(fid, f); fids.append(fid)
                 rec = dict(frame_ids=fids, episode_id=cam.episode_id, decision_time=t, legacy=np.asarray(env.obs(), np.float32), association_valid=int(store.frames[fids[-1]]['meta']['association_valid']))
                 obs = obs_from_frames(store, [rec])
                 with torch.no_grad():
                     o = learner.encoder(obs); st = learner.adapter(obs, o['z']); u = float(learner.actor(st)[0, 0])
-                out[color] = dict(u=u, z=o['z'][0], pred=int(o['signal'][0, -1].argmax()), pred_z=int(o['signal_z'][0].argmax()))
-            rows.append(dict(seed=seed, d=float(d), u_red=out['red']['u'], u_green=out['green']['u'], du=out['green']['u'] - out['red']['u'],
+                cmd = S.command(u); rsum = 0.
+                for _ in range(4):
+                    _, r, _, info = env.step(cmd); rsum += float(r)
+                out[color] = dict(u=u, z=o['z'][0], pred=int(o['signal'][0, -1].argmax()), pred_z=int(o['signal_z'][0].argmax()),
+                                  a=float(env.layer_log[0]['applied']), a_mean=float(np.mean([l['applied'] for l in env.layer_log])), r=rsum,
+                                  jerk_max=float(np.max(np.abs(np.asarray(env.trace, np.float64)[-4:, 9]))) if len(env.trace) >= 4 else None)
+            truth_green = bool(S.R.signal_green(S.R.SIGNALS[0], t, off))
+            rows.append(dict(seed=seed, d=float(d), truth_offset=float(off), truth_green=truth_green, u_red=out['red']['u'], u_green=out['green']['u'], du=out['green']['u'] - out['red']['u'],
+                             cmd_red=S.command(out['red']['u']), cmd_green=S.command(out['green']['u']),
+                             a_red=out['red']['a'], a_green=out['green']['a'], da=out['green']['a'] - out['red']['a'],
+                             a_mean_red=out['red']['a_mean'], a_mean_green=out['green']['a_mean'], r_red=out['red']['r'], r_green=out['green']['r'], dr=out['green']['r'] - out['red']['r'],
                              dz=float((out['green']['z'] - out['red']['z']).norm()), pred_red=out['red']['pred'], pred_green=out['green']['pred'],
                              predz_red=out['red']['pred_z'], predz_green=out['green']['pred_z']))
-    du = np.array([r['du'] for r in rows]); dz = np.array([r['dz'] for r in rows])
-    return dict(n=len(rows), mean_abs_du=float(np.abs(du).mean()), max_abs_du=float(np.abs(du).max()), frac_abs_du_gt_0_05=float(np.mean(np.abs(du) > .05)),
-                mean_du_green_minus_red=float(du.mean()), mean_dz=float(dz.mean()), roi_head_color_correct=float(np.mean([r['pred_red'] == 0 and r['pred_green'] == 2 for r in rows])),
-                z_head_color_correct=float(np.mean([r['predz_red'] == 0 and r['predz_green'] == 2 for r in rows])), rows=rows)
+    def summ(rs):
+        du = np.array([r['du'] for r in rs]); dz = np.array([r['dz'] for r in rs]); da = np.array([r['da'] for r in rs]); dr = np.array([r['dr'] for r in rs])
+        return dict(n=len(rs), mean_abs_du=float(np.abs(du).mean()), max_abs_du=float(np.abs(du).max()), frac_abs_du_gt_0_05=float(np.mean(np.abs(du) > .05)),
+                    mean_du_green_minus_red=float(du.mean()), mean_dz=float(dz.mean()),
+                    mean_abs_da=float(np.abs(da).mean()), max_abs_da=float(np.abs(da).max()), frac_abs_da_gt_0_05=float(np.mean(np.abs(da) > .05)),
+                    mean_da_green_minus_red=float(da.mean()), mean_dr_green_minus_red=float(dr.mean()), frac_dr_positive=float(np.mean(dr > 1e-9)), frac_dr_negative=float(np.mean(dr < -1e-9)),
+                    roi_head_color_correct=float(np.mean([r['pred_red'] == 0 and r['pred_green'] == 2 for r in rs])),
+                    z_head_color_correct=float(np.mean([r['predz_red'] == 0 and r['predz_green'] == 2 for r in rs])))
+    res = summ(rows); res['truth_green_frac'] = float(np.mean([r['truth_green'] for r in rows]))
+    res['by_truth'] = {'green': summ([r for r in rows if r['truth_green']]), 'red': summ([r for r in rows if not r['truth_green']])}
+    res['rows'] = rows; return res
 
 
 def executor_independence_check(n=50, seed=0):

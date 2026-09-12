@@ -77,9 +77,12 @@ def decode_box(i, j, target):
 
 
 class SceneCamera:
-    def __init__(self, curves, signals, length, seed=0):
+    def __init__(self, curves, signals, length, seed=0, noise_seed=None):
         self.curves, self.signals, self.length = list(curves), list(signals), float(length)
         self.rng = np.random.default_rng(seed)
+        # v2e：noise_seed 给定时，逐帧传感器噪声用独立的随机数流，外观（new_episode）只由 seed 决定，
+        # 不再随之前采过多少帧而变；未给定时噪声与外观共用 self.rng（训练/池生成保持原行为，逐位不变）
+        self.noise_rng = self.rng if noise_seed is None else np.random.default_rng(noise_seed)
         self.appearance = None
         self.episode_id = None
         self.frames_captured = 0
@@ -100,11 +103,15 @@ class SceneCamera:
 
     def state_dict(self):
         return dict(rng=self.rng.bit_generator.state, appearance=self.appearance, episode_id=self.episode_id,
-                    frames_captured=self.frames_captured)
+                    frames_captured=self.frames_captured,
+                    noise_rng=None if self.noise_rng is self.rng else self.noise_rng.bit_generator.state)
 
     def load_state_dict(self, s):
         self.rng.bit_generator.state = s['rng']; self.appearance = s['appearance']
         self.episode_id = s['episode_id']; self.frames_captured = s['frames_captured']
+        if s.get('noise_rng') is not None:
+            if self.noise_rng is self.rng: self.noise_rng = np.random.default_rng(0)
+            self.noise_rng.bit_generator.state = s['noise_rng']
 
     # ------------------------------------------------------------ helpers
     def _fog(self, rgb, d):
@@ -165,7 +172,7 @@ class SceneCamera:
         for d, fn in sorted(objects, key=lambda z: -z[0]):
             fn()
         arr = np.asarray(img).astype(np.float32)
-        arr += self.rng.normal(0., ap['noise'], arr.shape)
+        arr += self.noise_rng.normal(0., ap['noise'], arr.shape)
         rgb = np.clip(arr, 0, 255).astype(np.uint8)
         if light is not None and occ is not None and occ < light[0] and labels.get('_light_uv') and labels.get('_occ_box'):
             u, v = labels['_light_uv']; l, t, r, b = labels['_occ_box']

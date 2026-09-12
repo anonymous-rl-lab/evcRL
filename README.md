@@ -105,8 +105,9 @@ TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.
 - 训练环境执行层换成 comfort_v2 r2 的完整 jerk 可行执行层（环境感知 + 动作平滑一起进入训练），信息访问三臂相同，执行层独立性为实测审计项。
 - 按审计修复：框标签“格内偏移 + 归一化尺寸”参数化（可表示性 0 违例）、空 ROI 强制 unknown、`association_valid` 与地图关联/ROI 分开、`signal_z` 头使视觉监督训练到 Z 末端、源码/数据/权重哈希进入断点、权重与固定审计样本入库。对抗式代码审查（3 视角 + 逐条反驳核验）又修了检测链路：热图焦点损失按正样本归一化 + 先验偏置 π=0.01、检测评估口径（格一致率/中心误差/≤2 px 命中/阈值召回/误检率）、格分配规则受控对比后固定 floor、事件注意力对热图 detach；受控探针结果在 `runs/probes/`。
 - 分级门禁 `runs/run_v2_gated.sh`：门 1 预训练（≤2 px 命中 0.846、格一致 0.754、ROI 已知 0.951、Z 已知 0.973）→ 门 2 审计 19/19 → 门 3 共同适配 + 联合臂烟测 → 门 4 三臂 9000 子步。
-- 三臂小规模结论（单种子）：三臂均 9/9 静止完赛、0 违规；ROI 头行驶中已知类 ≥0.99，Z 探针 0.925–0.950；actor 对图像的依赖只有联合臂明显（同状态换图 |Δu| 0.28 vs 冻结 0.03、监督 0.08），联合臂闭环轨迹在 9 个工况上全部不同但不是增益（I_j +17、能耗 −5.4 Wh、R +0.11，换图方向与信号语义相反）；执行层仍主导实际动作（三臂实际动作分布相同，名义限制占 87–93%）。判断：先改执行层信息接口与两项几何/尺寸修正，再扩大规模。
-- 一键：`cd TIV_visual_development && STOP_BEFORE_ARMS=1 bash runs/run_v2_gated.sh pilot_v2`（门 1–3），通过后 `bash runs/run_pilot.sh pilot_v2 9000`；汇总 `python3 visual_dev/summarize_pilot.py --tag pilot_v2`。
+- 第二轮专家复核指出两处评估随机数问题（九工况共用相机生成器导致外观随轨迹长度漂移；换图检查第一对外观不同），已修并用三臂已导出权重重新评估（`visual_dev/reevaluate.py`），未重训。
+- 三臂小规模结论（单种子，公平评估）：三臂均 9/9 静止完赛、0 违规；ROI 头行驶中已知类 ≥0.975，Z 探针 0.925–0.950；actor 对图像的依赖只有联合臂明显（同状态换图 |Δu| 0.37 vs 冻结 0.03、监督 0.08），且只有联合臂的响应能穿过执行层（投影后 |Δa| 0.38 vs 0/0）；但联合臂没有性能改善（I_j +25.6 即 +44%，9 工况全部更差，时间 +1.4 s，能耗 +1.3 Wh，R −0.16），换图响应方向与真值相位无关。执行层仍读取真值信号并主导实际动作（三臂实际动作分布相同，名义限制占 86–93%），`lambda_c=0`。可写进论文的表述：TD 反馈能够进入视觉编码器并伴随更强的灯色相关指令响应；当前单种子开发实验尚未建立驾驶性能、舒适性或训练效率的改善。下一步是公平比较与作用归因（执行层信息接口改为感知输出、加 `lambda_c>0` 臂、多种子），不是扩大规模。
+- 一键：`cd TIV_visual_development && STOP_BEFORE_ARMS=1 bash runs/run_v2_gated.sh pilot_v2`（门 1–3），通过后 `bash runs/run_pilot.sh pilot_v2 9000`；重评估 `python3 visual_dev/reevaluate.py --tag pilot_v2`；汇总 `python3 visual_dev/summarize_pilot.py --tag pilot_v2`。
 
 ### 8.1 交接包原状态（接入前）
 
@@ -117,4 +118,4 @@ TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.
 1. 若目标是**精确复现论文数字**：只需第 4 节前 9 行的流程，不需要重训。
 2. 若目标是**在同一协议下增加种子**：用 `scripts/train_repro.sh` 换 `SEEDS/TAG`，每种子 4 核约 100 分钟；用 `compare_curves.py` 按论文规则计分并与 `bench_results.json` 的种子分布比较。
 3. 若目标是**改善后期退化**：先在小规模（≤100 万步、固定种子对照）验证，候选方向为带重要性修正或截断的多步目标、按完赛分层的回放采样（`--balance` 已实现但未在正式协议使用）；冻结包 README 第 5 节列出的负结果不要重跑。
-4. 视觉分支：先把执行层的信号信息接口改为感知输出、落实骨干下采样偶数核对齐与尺寸目标修正（`TIV_visual_development/reports/REPORT_zh.md` 第 9 节），再做 3 种子 × 更长预算的三臂实验。
+4. 视觉分支：先做公平比较与作用归因——执行层的信号信息接口改为感知输出、同一执行层下加 `lambda_c>0` 臂、多种子（`TIV_visual_development/reports/REPORT_zh.md` 第 8 节）；检测几何/尺寸修正为可选，不是前置条件。
