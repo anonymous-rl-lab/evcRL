@@ -15,14 +15,15 @@ import pipeline as P
 from pipeline import S, VisualTrainer, evaluate, visual_summary, obs_from_frames, source_identity, z_decodability, image_swap_sensitivity, executor_independence_check, pool_observation, labels_from_frames
 from visual_z.model import MLP, load_legacy_weights
 from visual_z.learner import grad_norm
-CFG = json.load(open(ROOT / 'configs' / 'pilot_cpu.json'))
-RUNS = ROOT / 'runs'
+CFG = json.load(open(ROOT / 'configs' / os.environ.get('VISUAL_CONFIG', 'pilot_cpu.json')))   # v3：VISUAL_CONFIG=v3_cpu.json
+RUNS = ROOT / 'runs' / CFG.get('runs_subdir', '')
+PRETRAIN = ROOT / 'runs' / CFG.get('pretrain_subdir', 'pretrain')   # 预训练池/编码器/评估集目录（v3：pretrain_v3）
 
 
 def load_pool():
-    pool = torch.load(RUNS / 'pretrain' / 'pool.pt', map_location='cpu', weights_only=False)
+    pool = torch.load(PRETRAIN / 'pool.pt', map_location='cpu', weights_only=False)
     if 'audit' not in pool:   # v2：固定审计图像集存放在 eval_sets.pt
-        pool['audit'] = torch.load(RUNS / 'pretrain' / 'eval_sets.pt', map_location='cpu', weights_only=False)['audit']
+        pool['audit'] = torch.load(PRETRAIN / 'eval_sets.pt', map_location='cpu', weights_only=False)['audit']
     return pool
 
 
@@ -64,7 +65,7 @@ def stage_audit():
     for _ in range(40): t.step()
     assert t.learner.updates > 0, '审计训练器尚未发生更新'
     b = t.batch(); routes = {}
-    for mode in ('frozen', 'supervised', 'joint'):
+    for mode in tuple(m for m in ('frozen', 'supervised', 'joint', 'joint_head') if m in ('frozen', 'supervised', 'joint') or m in CFG.get('arms', [])):
         tm = VisualTrainer(dict(CFG, mode=mode), pool, RUNS / 'audit')
         q0, _ = tm.learner.losses(b); tm.learner.encoder.zero_grad(); q0.backward(); g_fork = grad_norm(tm.learner.encoder); tm.learner.encoder.zero_grad()
         tm.learner.q1.load_state_dict(t.learner.q1.state_dict()); tm.learner.q2.load_state_dict(t.learner.q2.state_dict())
@@ -76,6 +77,14 @@ def stage_audit():
         moved = max(float((before[k] - tm.learner.encoder.state_dict()[k]).abs().max()) for k in before)
         routes[mode] = dict(td_to_encoder_at_fork_zero_columns=g_fork, td_to_encoder_after_critic_updates=g_td, critic_updates_before_test=t.learner.updates, vision_to_encoder=g_vis, actor_moves_encoder=moved,
                             targets_no_grad=all(p.grad is None for m in tm.learner.targets() for p in m.parameters()))
+        if mode == 'joint_head':   # v3：TD 只到达时序融合层/signal_z，骨干与检测/ROI 头无梯度且不在优化器中
+            q, v = tm.learner.losses(b); tm.learner.encoder.zero_grad(); q.backward()
+            head = set(id(p) for m in (tm.learner.encoder.temporal, tm.learner.encoder.signal_z) for p in m.parameters())
+            g_head = sum(float(p.grad.square().sum()) for p in tm.learner.encoder.parameters() if p.grad is not None and id(p) in head) ** .5
+            g_backbone = sum(float(p.grad.square().sum()) for p in tm.learner.encoder.parameters() if p.grad is not None and id(p) not in head) ** .5
+            opt_ids = set(id(p) for g in tm.learner.oe.param_groups for p in g['params'])
+            routes[mode].update(td_to_temporal=g_head, td_to_backbone=g_backbone, optimizer_params_only_head=opt_ids <= head and len(opt_ids) == len(head))
+            tm.learner.encoder.zero_grad()
     checks['joint_td_reaches_encoder_after_critic_updates'] = routes['joint']['td_to_encoder_after_critic_updates'] > 0
     checks['joint_td_zero_at_fork_is_expected'] = routes['joint']['td_to_encoder_at_fork_zero_columns'] == 0
     checks['supervised_frozen_td_blocked'] = routes['supervised']['td_to_encoder_after_critic_updates'] == 0 and routes['frozen']['td_to_encoder_after_critic_updates'] == 0
@@ -102,6 +111,28 @@ def stage_audit():
     enc = copy.deepcopy(t.learner.encoder); enc.zero_grad(); perception_loss_v = __import__('visual_z.model', fromlist=['perception_loss']).perception_loss
     perception_loss_v(enc(vb), vl, vb).backward()
     checks['vision_loss_reaches_z_projection'] = sum(float(p.grad.square().sum()) for p in enc.temporal.parameters() if p.grad is not None) > 0
+    # 8 v3：结构对齐开关的实测
+    if 'joint_head' in routes:
+        checks['joint_head_td_reaches_temporal_only'] = routes['joint_head']['td_to_temporal'] > 0 and routes['joint_head']['td_to_backbone'] == 0 and routes['joint_head']['optimizer_params_only_head']
+    if CFG.get('signal_source', 'truth') == 'perceived':
+        xs = S.R.SIGNALS[0]
+        e1 = P.SmoothEnv(.85, 288.15, 30., signal_source='perceived'); e1.reset(15.); e1.x = xs - 200.; e1.t = 100.; e1.set_perceived('green')   # 真值红、感知绿
+        e2 = P.SmoothEnv(.85, 288.15, 0., signal_source='perceived'); e2.reset(15.); e2.x = xs - 200.; e2.t = 100.; e2.set_perceived('red')     # 真值绿、感知红
+        e3 = P.SmoothEnv(.85, 288.15, 0., signal_source='perceived'); e3.reset(15.); e3.x = xs - 200.; e3.t = 100.; e3.set_perceived('unknown')
+        checks['executor_uses_perceived_not_truth'] = ((xs - 2.) not in [g[0] for g in e1._stop_targets()]) and ((xs - 2.) in [g[0] for g in e2._stop_targets()]) and ((xs - 2.) in [g[0] for g in e3._stop_targets()])
+        checks['judge_uses_truth'] = 'red_crossing' in __import__('inspect').getsource(P.S.E.Route20.step) and 'R.signal_green' in __import__('inspect').getsource(P.S.E.Route20.step)
+        checks['perception_updated_every_substep'] = all('perceived' in l and l['perceived'] in P.PHASES for l in t.env.layer_log) and t.perception is not None
+    if CFG.get('critic_action', 'command') == 'applied':
+        recs = t.replay.records
+        checks['critic_trained_on_applied_action'] = t.learner.cfg.critic_action == 'applied' and any(abs(r['u_applied'] - r['u_command']) > 1e-6 for r in recs) and all(-1. <= r['u_applied'] <= 1. for r in recs)
+    if CFG.get('actor_clip_ste', False):
+        st = t.learner.adapter(b.obs, t.learner.encoder(b.obs)['z']).detach(); u = t.learner.actor(st)
+        uq = u + (torch.maximum(torch.minimum(u, b.u_hi), b.u_lo) - u).detach()
+        checks['actor_ste_clip_active'] = t.learner.cfg.actor_clip_ste and bool((uq != u).any()) and bool(torch.autograd.grad(uq.sum(), u)[0].eq(1).all())
+    if float(CFG.get('actor_output_scale', 1.)) != 1.:
+        st = t.learner.adapter(b.obs, t.learner.encoder(b.obs)['z']).detach(); pre = t.learner.actor.f[:-1](st).abs()
+        checks['actor_desaturated_at_fork'] = bool(pre.mean() < 1.5); checks['actor_pre_activation_mean'] = float(pre.mean())
+    checks['lambda_c_positive_all_arms'] = float(CFG.get('lambda_c', 0.)) > 0 if CFG.get('runs_subdir') == 'v3' else True
     passed = all(v for k, v in checks.items() if isinstance(v, bool))
     out = dict(passed=passed, checks=checks, gradient_routes=routes, identity=t.identity, runtime=dict(torch=torch.__version__, numpy=np.__version__))
     json_save(RUNS / 'audit' / 'audit.json', out)
@@ -165,13 +196,13 @@ def stage_train(a):
     t.save(ck); st = status(t, reason, start); json_save(out / 'status.json', st)
     torch.save(dict(nets={k: m.state_dict() for k, m in t.learner.named_nets().items()}, cfg=t.cfg, identity=t.identity, substeps=t.used, updates=t.updates), out / 'final_nets.pt')
     if reason in ('substep_budget', 'wall_budget') and not a.no_eval:
-        te = time.monotonic(); rows, visual, traces = evaluate(t.learner, S.conditions('development'))
+        te = time.monotonic(); rows, visual, traces = evaluate(t.learner, S.conditions('development'), signal_source=t.signal_source, perception=t.perception, assumed_green_remaining=t.cfg.get('assumed_green_remaining', 30.))
         ev = dict(rows=rows, summary=S.summarize(rows), settled=sum(r['settled'] for r in rows), fallback=sum(r['fallback_substeps'] for r in rows),
                   intervened=sum(r['intervened_substeps'] for r in rows), visual=visual_summary(visual), z=t.z_drift(), eval_wall_s=time.monotonic() - te,
                   arm=a.arm, substeps_trained=t.used - origin['substeps'], updates=t.updates - origin['updates'])
         for r, (tr, log) in zip(rows, traces):
             S.save_trace(out / 'evaluation_traces' / f"dev_{r['condition_id']:02d}.npz", tr); json_save(out / 'evaluation_traces' / f"dev_{r['condition_id']:02d}_layer.json", log)
-        es = torch.load(RUNS / 'pretrain' / 'eval_sets.pt', map_location='cpu', weights_only=False)
+        es = torch.load(PRETRAIN / 'eval_sets.pt', map_location='cpu', weights_only=False)
         ev['z_decodability_dev'] = z_decodability(t.learner.encoder, es['dev'])
         sw = image_swap_sensitivity(t.learner); ev['image_swap'] = {k: v for k, v in sw.items() if k != 'rows'}; json_save(out / 'image_swap_rows.json', sw['rows'])
         json_save(out / 'evaluation.json', ev)
@@ -205,7 +236,7 @@ def stage_report(tag):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('stage', choices=('audit', 'adapt', 'train', 'report'))
-    ap.add_argument('--arm', choices=('frozen', 'supervised', 'joint'), default='joint'); ap.add_argument('--tag', default='smoke')
+    ap.add_argument('--arm', choices=('frozen', 'supervised', 'joint', 'joint_head'), default='joint'); ap.add_argument('--tag', default='smoke')
     ap.add_argument('--substeps', type=int, default=4000); ap.add_argument('--seconds', type=float, default=600.)
     ap.add_argument('--resume', action='store_true'); ap.add_argument('--stop-after', type=int, default=0); ap.add_argument('--no-eval', action='store_true')
     a = ap.parse_args()

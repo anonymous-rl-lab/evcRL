@@ -34,11 +34,39 @@ def source_identity(config):
 
 
 # ------------------------------------------------------------------ 平滑执行层环境
+PHASES = ('red', 'yellow', 'green', 'off', 'unknown')   # 与 renderer.COLOR_CLASSES / ROI 头类别顺序一致
+
+
+def inv_command(a):
+    """S.command 的逆：m/s² → 归一化指令 [-1,1]。"""
+    a = float(a); return float(np.clip(a / 2.6 if a > 0 else a / 3.5, -1., 1.))
+
+
 class SmoothEnv(S.StudyEnv):
-    """StudyEnv + comfort_v2 r2 执行层（与 rollout_layer.CurveEnv.project 逐行同义）。记录指令与实际动作。"""
-    def __init__(self, *args, **kw):
-        self.layer_log = []
+    """StudyEnv + comfort_v2 r2 执行层（与 rollout_layer.CurveEnv.project 逐行同义）。记录指令与实际动作。
+
+    v3：signal_source 决定执行层的相位来源。'truth'：原行为，读仿真真值相位与倒计时（特权执行层）。
+    'perceived'：只读 set_perceived() 给的感知相位（红/黄/绿/灭/未知），没有倒计时——绿灯按 assumed_green_remaining 规划通过，
+    非绿或未知一律按不可通行（在停止线前设停车目标，保守）。红灯裁判（Route20.step 的 red_crossing）始终用真值，不受此开关影响。
+    """
+    def __init__(self, *args, signal_source='truth', assumed_green_remaining=30., **kw):
+        self.layer_log = []; self.signal_source = signal_source; self.assumed_green_remaining = float(assumed_green_remaining)
+        self.perceived = dict(phase='unknown', age_s=0., source='none')
+        if signal_source not in ('truth', 'perceived'): raise ValueError(signal_source)
         super().__init__(*args, **kw)
+
+    def set_perceived(self, phase, age_s=0., source='perception'):
+        if phase not in PHASES: raise ValueError(phase)
+        self.perceived = dict(phase=str(phase), age_s=float(age_s), source=source)
+
+    def _passable(self, k, xs):   # 基类 a_safe/_stop_targets 用它决定是否在停止线前设停车目标
+        if self.signal_source == 'truth': return super()._passable(k, xs)
+        return self.perceived['phase'] == 'green'
+
+    def _green_now_and_remaining(self, k, xs):
+        if self.signal_source == 'truth':
+            return S.R.signal_green(xs, self.t, self.offsets[k]), S.R.time_to_change(xs, self.t, self.offsets[k])
+        return self.perceived['phase'] == 'green', self.assumed_green_remaining
 
     def project(self, cmd):
         fallback = super().project(cmd)
@@ -46,18 +74,54 @@ class SmoothEnv(S.StudyEnv):
         limit = S.R.V_FREE
         result, info = C.project(self.v, self.a, cmd, targets, fallback, vmax=limit)
         result = min(result, C.brake_bound(max(limit - self.v, 0.)))
+        lower = info.get('lower'); upper = None if info.get('upper') is None else min(info['upper'], C.brake_bound(max(limit - self.v, 0.)))
         if not info['fallback']:
             for k, xs in enumerate(S.R.SIGNALS):
-                if self.x < xs and S.R.signal_green(xs, self.t, self.offsets[k]):
-                    remaining = S.R.time_to_change(xs, self.t, self.offsets[k])
-                    action, extra = C.signal_project(self.v, self.a, cmd,
-                        (info['lower'], min(info['upper'], C.brake_bound(max(limit - self.v, 0.)))), xs - self.x, remaining, limit)
+                green, remaining = self._green_now_and_remaining(k, xs)
+                if self.x < xs and green:
+                    action, extra = C.signal_project(self.v, self.a, cmd, (lower, upper), xs - self.x, remaining, limit)
                     info.update(extra)
                     if action is None: info['fallback'] = True; result = fallback
                     else: result = action
+        truth_green = all(S.R.signal_green(xs, self.t, self.offsets[k]) for k, xs in enumerate(S.R.SIGNALS) if self.x < xs) if any(self.x < xs for xs in S.R.SIGNALS) else None
         self.layer_log.append(dict(t=float(self.t), x=float(self.x), command=float(cmd), applied=float(result),
-                                   fallback=bool(info['fallback']), intervened=bool(abs(result - cmd) > 1e-9)))
+                                   fallback=bool(info['fallback']), intervened=bool(abs(result - cmd) > 1e-9),
+                                   lower=None if lower is None else float(lower), upper=None if upper is None else float(upper),
+                                   perceived=self.perceived['phase'], truth_green=truth_green, signal_source=self.signal_source,
+                                   perceived_detail=self.perceived.get('detail')))
         return result
+
+
+class Perception:
+    """v3 执行层的相位来源：冻结的预训练编码器 ROI 灯色头（与臂无关、训练中不更新），只看最新帧。
+    无地图关联（不知道灯在哪）或 ROI 为空时给 unknown。source='oracle' 时直接给真值颜色（用于分离规则效应与识别误差的探针）。"""
+    def __init__(self, path=None, source='roi_head', green_threshold=0., min_consecutive=1):
+        """green_threshold：只有 P(green) ≥ 阈值才判为 green（否则判为 argmax 的非绿类或 'unknown'）；
+        min_consecutive：连续 ≥ 该帧数满足绿灯条件才对执行层报 green（迟滞，只对绿→通行方向保守，非绿立即生效）。"""
+        self.source = source; self.last = None; self.green_threshold = float(green_threshold); self.min_consecutive = int(min_consecutive); self._green_run = 0
+        if source == 'roi_head':
+            ck = torch.load(path, map_location='cpu', weights_only=False); self.enc = VisualEncoder(STACK)
+            self.enc.load_state_dict(ck['encoder']); self.enc.eval(); self.enc.requires_grad_(False)
+
+    def phase(self, store, history, episode_id, t, env=None):
+        latest = store.frames[history[-1]]
+        if self.source == 'oracle':
+            from renderer import signal_color
+            return signal_color(t, env.offsets[0]) if latest['meta']['map_association'] and latest['labels'].get('visible') else 'unknown'
+        if not latest['meta']['map_association']: return 'unknown'
+        rec = dict(frame_ids=list(history), episode_id=episode_id, decision_time=float(t), legacy=np.zeros(LEGACY_DIM, np.float32),
+                   association_valid=int(latest['meta']['association_valid']))
+        obs = obs_from_frames(store, [rec])
+        with torch.no_grad(): out = self.enc(obs); pr = out['signal'][0, -1].softmax(0)
+        self.last = dict(probs=pr.tolist(), conf=float(pr.max()), roi_empty=bool(out['roi_empty'][0, -1]), px=float(latest['labels'].get('housing_px_h', 0.)),
+                         d=float(latest['labels'].get('light_distance_m', -1.)), visible=int(latest['labels'].get('visible', 0)), occluded=int(latest['labels'].get('occluded', 0)))
+        raw = PHASES[int(pr.argmax())]; p_green = float(pr[2])
+        green_ok = raw == 'green' and p_green >= self.green_threshold
+        self._green_run = self._green_run + 1 if green_ok else 0
+        self.last['raw'] = raw; self.last['p_green'] = p_green; self.last['green_run'] = self._green_run
+        if green_ok and self._green_run >= self.min_consecutive: return 'green'
+        if raw == 'green': return 'unknown'   # 绿灯证据不足：按未知（不可通行）处理
+        return raw
 
 
 # ------------------------------------------------------------------ 帧存储（内存 + 引用计数）
@@ -172,13 +236,20 @@ class VisualTrainer:
         self.learner = VisualTD3(Config(mode=cfg['mode'], information_mode='camera_map', stack=STACK,
             actor_lr=cfg['actor_lr'], critic_lr=cfg['critic_lr'], encoder_lr=cfg['encoder_lr'],
             vision_weight=cfg['vision_weight'], lambda_c=cfg['lambda_c'], tau=cfg['tau'],
-            policy_delay=cfg['policy_delay'], target_noise=cfg['target_noise'], target_clip=cfg['target_clip']))
+            policy_delay=cfg['policy_delay'], target_noise=cfg['target_noise'], target_clip=cfg['target_clip'],
+            critic_action=cfg.get('critic_action', 'command'), actor_clip_ste=bool(cfg.get('actor_clip_ste', False))))
+        self.signal_source = cfg.get('signal_source', 'truth')
+        self.perception = Perception(ROOT / cfg['pretrained_encoder'], cfg.get('perception_source', 'roi_head'), green_threshold=cfg.get('green_threshold', 0.), min_consecutive=cfg.get('min_consecutive', 1)) if self.signal_source == 'perceived' else None
         # 共同起点：预训练编码器 + 冻结 4 km A 臂 actor/critic 的第一层迁移（新增 Z/元信息列初始化为零）
         enc = torch.load(ROOT / cfg['pretrained_encoder'], map_location='cpu', weights_only=False)
         self.learner.encoder.load_state_dict(enc['encoder'])
         nets = torch.load(ROOT / 'v19_deps' / 'weights' / 'short_route_A_nets.pt', map_location='cpu', weights_only=False)['networks']
         load_legacy_weights(self.learner.actor, nets['actor']); load_legacy_weights(self.learner.q1, nets['q1'], critic=True)
-        load_legacy_weights(self.learner.q2, nets['q2'], critic=True); self.learner.synchronize_targets()
+        load_legacy_weights(self.learner.q2, nets['q2'], critic=True)
+        scale = float(cfg.get('actor_output_scale', 1.))   # v3：缩小 tanh 前的预激活，使迁移来的饱和 actor 回到有梯度的区域（1.0 = 原行为）
+        if scale != 1.:
+            with torch.no_grad(): self.learner.actor.f[4].weight.mul_(scale); self.learner.actor.f[4].bias.mul_(scale)
+        self.learner.synchronize_targets()
         if cfg['mode'] == 'frozen': self.learner.encoder.requires_grad_(False)
         self.store = FrameStore(); self.replay = Replay(cfg['replay_capacity'], self.store)
         self.pool_sampler = PoolSampler(pool, cfg.get('pool_batch', 8), seed=cfg['pool_seed']); self.pool = pool
@@ -193,7 +264,8 @@ class VisualTrainer:
     def new_episode(self):
         soc, temp = S.PACKS[int(self.env_rng.integers(0, 3))]
         v0 = float(self.env_rng.uniform(12., 20.)); off = float(self.env_rng.uniform(0., 90.))
-        self.env = SmoothEnv(soc, temp, off); self.env.reset(v0); self.episodes_started = getattr(self, 'episodes_started', 0) + 1
+        self.env = SmoothEnv(soc, temp, off, signal_source=self.signal_source, assumed_green_remaining=self.cfg.get('assumed_green_remaining', 30.))
+        self.env.reset(v0); self.episodes_started = getattr(self, 'episodes_started', 0) + 1
         self.episode_id = f"ep{self.episodes_started:06d}"; self.camera.new_episode(self.episode_id)
         self.history = []; self.ou = 0.; self.capture()
 
@@ -201,6 +273,8 @@ class VisualTrainer:
         f = self.camera.capture(episode_id=self.episode_id, sim_time=self.env.t, pose=dict(x=self.env.x, v=self.env.v, offsets=self.env.offsets))
         fid = f"{self.episode_id}_{f['meta']['frame_index']:05d}"; self.store.put(fid, f)
         self.history.append(fid); self.history = self.history[-STACK:]
+        if self.perception is not None:   # v3：每采一帧就更新执行层的感知相位
+            self.env.set_perceived(self.perception.phase(self.store, self.history, self.episode_id, self.env.t, self.env), 0., self.perception.source)
 
     def current_obs_record(self):
         latest = self.store.frames[self.history[-1]]
@@ -219,18 +293,25 @@ class VisualTrainer:
         with torch.no_grad(): u = float(self.learner.actor(state)[0, 0])
         self.ou += -c['ou_theta'] * self.ou + c['ou_sigma'] * self.explore_rng.normal()
         u = float(np.clip(u + self.ou, -1., 1.)); reward = 0.; n = 0
+        n0 = len(self.env.layer_log); t0_trace = len(self.env.trace)
         for _ in range(c['repeat']):
             _, r, done, info = self.env.step(S.command(u)); reward += r; self.used += 1; n += 1
             self.capture()
             if done: break
+        jw = float(c.get('jerk_weight', 0.))
+        if jw > 0.:   # v3 可选：学习信号加累计 jerk 惩罚（环境回报与轨迹记录不变）
+            reward -= jw * float(sum(row[9] ** 2 * (row[1] - row[0]) for row in self.env.trace[t0_trace:]))
+        lg = self.env.layer_log[n0]   # 决策首子步的执行层记录：实际动作与可行区间（归一化到指令空间）
+        u_applied = inv_command(lg['applied']); u_lo = -1. if lg['lower'] is None else inv_command(lg['lower']); u_hi = 1. if lg['upper'] is None else inv_command(lg['upper'])
         nxt = self.current_obs_record()
-        self.pending.append(dict(obs=rec, u=u, r=reward, nxt=nxt, done=float(done), n=n))
+        self.pending.append(dict(obs=rec, u=u, r=reward, nxt=nxt, done=float(done), n=n, u_applied=u_applied, u_lo=u_lo, u_hi=u_hi))
         if len(self.pending) >= c['nstep'] or done:
             while self.pending:
                 first, last = self.pending[0], self.pending[-1]
                 self.replay.add(dict(obs=first['obs'], next_obs=last['nxt'], u_command=first['u'], return_n=sum(p['r'] for p in self.pending),
                                      bootstrap_discount=(1. - last['done']) * c['gamma'] ** sum(p['n'] for p in self.pending),
-                                     actual_n=len(self.pending), executed_trace_ref=f"{self.episode_id}:{len(self.env.trace)}"),
+                                     actual_n=len(self.pending), executed_trace_ref=f"{self.episode_id}:{len(self.env.trace)}",
+                                     u_applied=first['u_applied'], u_lo=first['u_lo'], u_hi=first['u_hi']),
                                 protected=set(self.history))
                 self.pending.popleft()
                 if not done: break
@@ -250,8 +331,10 @@ class VisualTrainer:
         T = torch.as_tensor
         u = T(np.array([[r['u_command']] for r in recs], np.float32)); ret = T(np.array([[r['return_n']] for r in recs], np.float32))
         bd = T(np.array([[r['bootstrap_discount']] for r in recs], np.float32))
+        ua = T(np.array([[r.get('u_applied', r['u_command'])] for r in recs], np.float32))
+        lo = T(np.array([[r.get('u_lo', -1.)] for r in recs], np.float32)); hi = T(np.array([[r.get('u_hi', 1.)] for r in recs], np.float32))
         vis_obs, labels = self.pool_sampler.next()
-        return TransitionBatch(obs, nxt, u, ret, bd, labels, vis_obs)
+        return TransitionBatch(obs, nxt, u, ret, bd, labels, vis_obs, ua, lo, hi)
 
     def update(self):
         b = self.batch(); d = self.learner.update(b); d['step'] = self.used; self.updates = self.learner.updates
@@ -301,17 +384,20 @@ class VisualTrainer:
 
 
 # ------------------------------------------------------------------ 评估（固定 actor，相机驱动，平滑执行层）
-def evaluate(learner, conditions, camera_seed=1000):
+def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perception=None, assumed_green_remaining=30.):
     """固定工况闭环评估。v2e：每个工况用独立的相机外观种子（camera_seed*1000+i）与独立噪声流（camera_seed*1000+500+i），
     外观不再依赖之前工况采了多少帧——三臂在同一工况下看到的光照/雾/噪声/遮挡逐位相同（v2d 及以前共用一个生成器，
     轨迹长度不同的臂从第 3 个工况起外观不同）。"""
     rows = []; visual = []; traces = []; store = FrameStore()
     for i, (soc, temp, v0, off) in enumerate(conditions):
         camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=camera_seed * 1000 + i, noise_seed=camera_seed * 1000 + 500 + i)
-        env = SmoothEnv(soc, temp, off); env.reset(v0); eid = f"eval{i:02d}"; camera.new_episode(eid); hist = []
+        env = SmoothEnv(soc, temp, off, signal_source=signal_source, assumed_green_remaining=assumed_green_remaining); env.reset(v0); eid = f"eval{i:02d}"; camera.new_episode(eid); hist = []
         def cap():
             f = camera.capture(episode_id=eid, sim_time=env.t, pose=dict(x=env.x, v=env.v, offsets=env.offsets))
-            fid = f"{eid}_{f['meta']['frame_index']:05d}"; store.put(fid, f); hist.append(fid); del hist[:-STACK]; return f
+            fid = f"{eid}_{f['meta']['frame_index']:05d}"; store.put(fid, f); hist.append(fid); del hist[:-STACK]
+            if perception is not None:
+                env.set_perceived(perception.phase(store, hist, eid, env.t, env), 0., perception.source); env.perceived['detail'] = perception.last
+            return f
         cap(); done = False
         while not done and env.t < 600:
             rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=np.asarray(env.obs(), np.float32),
@@ -333,6 +419,10 @@ def evaluate(learner, conditions, camera_seed=1000):
         m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6),
             fallback_substeps=sum(l['fallback'] for l in env.layer_log), intervened_substeps=sum(l['intervened'] for l in env.layer_log),
             mean_abs_command_gap=float(np.mean([abs(l['applied'] - l['command']) for l in env.layer_log])),
+            signal_source=signal_source, perception_source=None if perception is None else perception.source,
+            perceived_counts={ph: int(sum(l['perceived'] == ph for l in env.layer_log)) for ph in PHASES},
+            perceived_green_truth_red_substeps=int(sum(l['perceived'] == 'green' and l['truth_green'] is False for l in env.layer_log)),
+            perceived_nongreen_truth_green_substeps=int(sum(l['perceived'] != 'green' and l['truth_green'] is True for l in env.layer_log)),
             camera_appearance_seed=camera_seed * 1000 + i, camera_appearance={k: (list(v) if isinstance(v, tuple) else v) for k, v in camera.appearance.items()})
         rows.append(m); traces.append((np.asarray(env.trace, np.float64), list(env.layer_log))); store.frames.clear(); store.refs.clear()
     return rows, visual, traces

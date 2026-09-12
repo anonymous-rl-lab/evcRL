@@ -18,6 +18,8 @@ class Config:
     policy_delay: int=2
     target_noise: float=.2
     target_clip: float=.5
+    critic_action: str='command'   # v3：'command'（投影前指令，原行为）或 'applied'（执行层投影后的实际动作）
+    actor_clip_ste: bool=False     # v3：actor 更新时把指令直通裁剪到执行层可行区间（前向裁剪、反向恒等）
 
 def grad_norm(module):
     return sum(float(p.grad.detach().square().sum()) for p in module.parameters() if p.grad is not None)**.5
@@ -25,7 +27,8 @@ def grad_norm(module):
 class VisualTD3:
     def __init__(self,cfg=None,device='cpu'):
         self.cfg=cfg or Config();self.device=torch.device(device);self.updates=0
-        if self.cfg.mode not in ('frozen','supervised','joint'):raise ValueError(self.cfg.mode)
+        if self.cfg.mode not in ('frozen','supervised','joint','joint_head'):raise ValueError(self.cfg.mode)
+        if self.cfg.critic_action not in ('command','applied'):raise ValueError(self.cfg.critic_action)
         self.encoder=VisualEncoder(self.cfg.stack).to(device)
         self.adapter=InputAdapter(self.cfg.information_mode).to(device)
         self.actor=MLP(POLICY_DIM,True).to(device)
@@ -34,9 +37,11 @@ class VisualTD3:
         self.encoder_t=copy.deepcopy(self.encoder)
         for m in self.targets():m.requires_grad_(False)
         if self.cfg.mode=='frozen':self.encoder.requires_grad_(False)
+        if self.cfg.mode=='joint_head':   # v3：冻结视觉骨干与检测/ROI 头，只有时序融合层（Z 投影）与 signal_z 头可训练
+            self.encoder.requires_grad_(False);self.encoder.temporal.requires_grad_(True);self.encoder.signal_z.requires_grad_(True)
         self.oa=torch.optim.Adam(self.actor.parameters(),lr=self.cfg.actor_lr)
         self.oq=torch.optim.Adam(list(self.q1.parameters())+list(self.q2.parameters()),lr=self.cfg.critic_lr)
-        self.oe=None if self.cfg.mode=='frozen' else torch.optim.Adam(self.encoder.parameters(),lr=self.cfg.encoder_lr)
+        self.oe=None if self.cfg.mode=='frozen' else torch.optim.Adam([p for p in self.encoder.parameters() if p.requires_grad],lr=self.cfg.encoder_lr)
     def targets(self):return (self.actor_t,self.q1t,self.q2t,self.encoder_t)
     def named_nets(self):
         return {k:getattr(self,k) for k in ('actor','q1','q2','encoder','actor_t','q1t','q2t','encoder_t')}
@@ -48,25 +53,30 @@ class VisualTD3:
         if self.cfg.mode=='supervised' and not batch.labels:raise ValueError('S arm requires visual labels')
         out=self.encoder(batch.obs)
         state=self.adapter(batch.obs,out['z'])
-        qstate=state if self.cfg.mode=='joint' else state.detach()
+        qstate=state if self.cfg.mode in ('joint','joint_head') else state.detach()
         with torch.no_grad():
             nxt=self.adapter(batch.nxt,self.encoder_t(batch.nxt)['z'])
             noise=(torch.randn_like(batch.u_command)*self.cfg.target_noise).clamp(-self.cfg.target_clip,self.cfg.target_clip)
             u2=(self.actor_t(nxt)+noise).clamp(-1,1)
             target=batch.return_n+batch.bootstrap_discount*torch.minimum(
                 self.q1t(torch.cat([nxt,u2],1)),self.q2t(torch.cat([nxt,u2],1)))
-        x=torch.cat([qstate,batch.u_command],1)
+        u_c=batch.u_applied if (self.cfg.critic_action=='applied' and batch.u_applied is not None) else batch.u_command
+        x=torch.cat([qstate,u_c],1)
         qloss=(self.q1(x)-target).square().mean()+(self.q2(x)-target).square().mean()
         aux_obs=batch.visual_obs if batch.visual_obs is not None else batch.obs
         aux_out=self.encoder(aux_obs) if batch.visual_obs is not None else out
         vis=perception_loss(aux_out,batch.labels,aux_obs)
         return qloss,vis
-    def actor_step(self,obs):
+    def actor_step(self,obs,u_lo=None,u_hi=None):
         # Critic parameters frozen, but dQ/du remains live. Actor never moves the encoder.
         with torch.no_grad():state=self.adapter(obs,self.encoder(obs)['z'])
         self.q1.requires_grad_(False)
         try:
-            u=self.actor(state);task=-self.q1(torch.cat([state,u],1)).mean()
+            u=self.actor(state)
+            if self.cfg.actor_clip_ste and u_lo is not None:   # v3：直通裁剪到执行层可行区间——Q 在实际会被执行的动作处取值，梯度按恒等回传
+                uq=u+(torch.maximum(torch.minimum(u,u_hi),u_lo)-u).detach()
+            else:uq=u
+            task=-self.q1(torch.cat([state,uq],1)).mean()
             a=torch.where(u>0,2.6*u,3.5*u)
             smooth=(a-3.5*obs.legacy[:,1:2]).square().mean()
             loss=task+self.cfg.lambda_c*smooth
@@ -85,7 +95,7 @@ class VisualTD3:
         if self.oe:self.oe.step()
         self.updates+=1;actor_loss=None
         if self.updates%self.cfg.policy_delay==0:
-            actor_loss=self.actor_step(batch.obs)
+            actor_loss=self.actor_step(batch.obs,batch.u_lo,batch.u_hi)
             with torch.no_grad():
                 for src,dst in ((self.actor,self.actor_t),(self.q1,self.q1t),(self.q2,self.q2t),(self.encoder,self.encoder_t)):
                     for p,t in zip(src.parameters(),dst.parameters()):t.lerp_(p,self.cfg.tau)

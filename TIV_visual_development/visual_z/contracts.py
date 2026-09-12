@@ -43,12 +43,16 @@ class TransitionBatch:
     bootstrap_discount: torch.Tensor # (1-true_terminal)*gamma**actual_n
     labels: dict[str,torch.Tensor]   # labels for visual_obs (or obs when absent); never actor inputs
     visual_obs: VisualObservation | None = None # common offline supervised batch for S/J
+    u_applied: torch.Tensor | None = None   # v3：执行层投影后的实际动作（归一化），critic_action='applied' 时作 critic 的动作输入
+    u_lo: torch.Tensor | None = None        # v3：决策时刻执行层可行区间下界（归一化），actor 直通裁剪用
+    u_hi: torch.Tensor | None = None
 
     def to(self,device):
+        f=lambda x:None if x is None else x.to(device)
         return TransitionBatch(self.obs.to(device),self.nxt.to(device),self.u_command.to(device),
             self.return_n.to(device),self.bootstrap_discount.to(device),
             {k:v.to(device) for k,v in self.labels.items()},
-            self.visual_obs.to(device) if self.visual_obs is not None else None)
+            self.visual_obs.to(device) if self.visual_obs is not None else None,f(self.u_applied),f(self.u_lo),f(self.u_hi))
 
 class CameraProvider(Protocol):
     """Policy-dependent synchronized rendering/capture; fixed driving videos are insufficient."""
