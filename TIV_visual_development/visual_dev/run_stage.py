@@ -20,7 +20,10 @@ RUNS = ROOT / 'runs'
 
 
 def load_pool():
-    return torch.load(RUNS / 'pretrain' / 'pool.pt', map_location='cpu', weights_only=False)
+    pool = torch.load(RUNS / 'pretrain' / 'pool.pt', map_location='cpu', weights_only=False)
+    if 'audit' not in pool:   # v2：固定审计图像集存放在 eval_sets.pt
+        pool['audit'] = torch.load(RUNS / 'pretrain' / 'eval_sets.pt', map_location='cpu', weights_only=False)['audit']
+    return pool
 
 
 def json_save(p, obj):

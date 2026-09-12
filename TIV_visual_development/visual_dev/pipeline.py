@@ -335,6 +335,8 @@ def evaluate(learner, conditions, camera_seed=1000):
 
 
 def _bin_stats(rows, key='pred'):
+    rows = [v for v in rows if v.get(key) is not None]   # v2c：Z 头只对最新帧有定义（None 跳过）
+    if not rows: return None
     known = [v for v in rows if v['truth'] != 4]; unk = [v for v in rows if v['truth'] == 4]
     return dict(n=len(rows), acc=float(np.mean([v[key] == v['truth'] for v in rows])),
         red_to_green=int(sum(v['truth'] == 0 and v[key] == 2 for v in rows)), green_to_nongreen=int(sum(v['truth'] == 2 and v[key] != 2 for v in rows)),
@@ -350,8 +352,8 @@ def visual_summary(visual):
             rows = [v for v in visual if lo <= v[key] < hi]
             if not rows: continue
             label = f"{name}:{lo:g}-{hi if hi < 1e9 else 'inf'}"
-            out[label] = dict(roi_head=_bin_stats(rows, 'pred'), z_head=_bin_stats(rows, 'pred_z') if 'pred_z' in rows[0] else None)
-    out['all'] = dict(roi_head=_bin_stats(visual, 'pred'), z_head=_bin_stats(visual, 'pred_z') if visual and 'pred_z' in visual[0] else None)
+            out[label] = dict(roi_head=_bin_stats(rows, 'pred'), z_head=_bin_stats(rows, 'pred_z'))
+    out['all'] = dict(roi_head=_bin_stats(visual, 'pred'), z_head=_bin_stats(visual, 'pred_z'))
     return out
 
 

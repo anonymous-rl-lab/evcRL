@@ -6,7 +6,9 @@
 2. 新增 signal_z 头：由 Z 直接预测最新帧的控制灯色。视觉监督损失因此训练到 Z 的末端投影（temporal），
    使“灯色头正确”与“Z 保留灯色”不再脱钩；输出中同时给出两路预测，评估分别报告。
 3. 新增 decode_boxes()：与渲染器 v2 的框参数化（格内偏移 + 归一化尺寸）配套解码。
+4. 热图焦点损失改为按正样本格点数归一化，且热图头偏置按先验 π=0.01 初始化。受控实验（同种子 500 步）：原按全部格点归一化命中率 0.017；仅改归一化不加先验初始损失 2086、特征塌缩、命中率 0.008；先验偏置+正样本归一化命中率 0.788、中心误差 2.29 px（runs/pretrain/heat_loss_probe_*.json）。
 """
+import math
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -30,6 +32,7 @@ class VisualEncoder(nn.Module):
         self.signal=nn.Linear(32,5)  # red/yellow/green/off/unknown, controlling light only（ROI 头）
         self.temporal=nn.Sequential(nn.Linear(stack*(64+2),128),nn.SiLU(),nn.Linear(128,zdim),nn.LayerNorm(zdim))
         self.signal_z=nn.Linear(zdim,5)   # v2：由 Z 预测最新帧灯色，使视觉监督训练到 Z 末端
+        nn.init.constant_(self.heat.bias,-math.log((1-.01)/.01))   # v2b：热图头偏置先验 π=0.01（RetinaNet/CenterNet 口径），配合按正样本归一化的焦点损失
 
     def forward(self,obs):
         obs.validate(self.stack);b,t,c,h,w=obs.frames.shape
@@ -95,7 +98,7 @@ def decode_boxes(heat,boxes,cls=0,cell=4):
     b,t,_,hh,ww=heat.shape
     score,idx=heat[:,:,cls].reshape(b,t,-1).max(-1); i=idx//ww; j=idx%ww
     tgt=torch.stack([boxes[n,k,:,i[n,k],j[n,k]] for n in range(b) for k in range(t)]).reshape(b,t,4)
-    cx=(j.float()+tgt[...,0])*cell; cy=(i.float()+tgt[...,1])*cell; w=tgt[...,2]*ww*cell; h=tgt[...,3]*hh*cell
+    cx=(j.float()+tgt[...,0]-.5)*cell; cy=(i.float()+tgt[...,1]-.5)*cell; w=tgt[...,2]*ww*cell; h=tgt[...,3]*hh*cell   # v2c：格中心为采样中心 (4i,4j)
     return torch.stack([cx-w/2,cy-h/2,cx+w/2,cy+h/2],-1),score.sigmoid()
 
 def perception_loss(output,labels,obs):
@@ -107,7 +110,7 @@ def perception_loss(output,labels,obs):
         mask=labels['heat_valid']*obs.valid[:,:,None,None,None]
         pt=p*y+(1-p)*(1-y);alpha=.25*y+.75*(1-y)
         focal=alpha*(1-pt).square()*F.binary_cross_entropy_with_logits(logit,y,reduction='none')
-        losses.append((focal*mask).sum()/mask.expand_as(focal).sum().clamp_min(1))
+        losses.append((focal*mask).sum()/(y*mask).sum().clamp_min(1))   # v2b：按正样本格点数归一化（CenterNet 口径）；原按全部格点数归一化会淹没 1/960 的正样本梯度
     if 'boxes' in labels:
         mask=labels['box_valid']*obs.valid[:,:,None,None,None]
         err=F.smooth_l1_loss(output['boxes'],labels['boxes'],reduction='none')

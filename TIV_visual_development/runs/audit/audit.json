@@ -20,16 +20,16 @@
       "uninterrupted": [
         [
           142.0,
-          2235.394298449274,
-          15.305039458272288,
+          2235.320313334379,
+          15.19297366163998,
           1.486324667930603,
           21.0,
           284.0
         ],
         [
           144.0,
-          2266.8672043954357,
-          16.16786648788934,
+          2266.549763909123,
+          16.036476913104565,
           1.486324667930603,
           22.0,
           288.0
@@ -38,16 +38,16 @@
       "resumed": [
         [
           142.0,
-          2235.394298449274,
-          15.305039458272288,
+          2235.320313334379,
+          15.19297366163998,
           1.486324667930603,
           21.0,
           284.0
         ],
         [
           144.0,
-          2266.8672043954357,
-          16.16786648788934,
+          2266.549763909123,
+          16.036476913104565,
           1.486324667930603,
           22.0,
           288.0
@@ -72,21 +72,21 @@
       "td_to_encoder_at_fork_zero_columns": 0.0,
       "td_to_encoder_after_critic_updates": 0.0,
       "critic_updates_before_test": 20,
-      "vision_to_encoder": 12.378907284542843,
+      "vision_to_encoder": 10.245307636128974,
       "actor_moves_encoder": 0.0,
       "targets_no_grad": true
     },
     "joint": {
       "td_to_encoder_at_fork_zero_columns": 0.0,
-      "td_to_encoder_after_critic_updates": 19.824321947993372,
+      "td_to_encoder_after_critic_updates": 42.090446455970536,
       "critic_updates_before_test": 20,
-      "vision_to_encoder": 12.378907284542843,
+      "vision_to_encoder": 10.245307636128974,
       "actor_moves_encoder": 0.0,
       "targets_no_grad": true
     }
   },
   "identity": {
-    "sources": "cf6c374eaf547db1d5ccf2e5b957a298c1878b0def8f6018d7d1ab32e700af63",
+    "sources": "db3dcfc6b254be2ca9fa21d60a99e7ed8305041f9f3e9d16fbd67bc1e46d6201",
     "config": "617d0a74ce665c122bb99f8f4e967db3e924627495ee54e037f566a9707c11af"
   },
   "runtime": {

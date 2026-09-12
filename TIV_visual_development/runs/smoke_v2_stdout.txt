@@ -1,0 +1,4 @@
+[joint] 子步 332/600 更新 83 eps 3 完赛 3 q_loss 2.86 vis 0.226 enc_grad 1.73e+02
+[joint] Z 可解码性（dev 线性探针测试集）0.900（机会 0.538）；同状态换图 |Δu| 均值 0.6747 最大 0.9598
+[joint] 评估：完赛(静止) 9/9 违规 0 平均I_j 142.441313760707 平均时间 282.72222222222223 干预子步 1332 回退 0
+{"state": "substep_budget", "substeps": 600, "updates": 150, "episodes": 3, "train_arrivals": 3, "substeps_per_s": 5.488025313620681, "updates_per_s": 1.3720063284051702}

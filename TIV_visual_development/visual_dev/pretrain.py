@@ -51,31 +51,49 @@ def iou(a, b):
     return inter / ua if ua > 0 else 0.
 
 
-def evaluate_vision(encoder, seqs, batch=16):
-    rows = []; det = []
+def evaluate_vision(encoder, seqs, batch=16, score_thr=0.5):
+    """灯色分层指标 + 控制灯检测指标（v2c 口径）。
+    检测：对每帧取类别 0 热图最大格解码框。可见灯帧报告：格一致率 cell_ok（最大格 == 真值格）、逐帧中心误差、
+    中心误差 ≤2 px 命中率、阈值召回（最大格得分 > score_thr 且格正确）；无可见灯的帧报告误检率（最大格得分 > score_thr）。
+    IoU 只作辅助（1 px 量级目标下 IoU 分支不可达，不作定位能力度量）。分层按名义灯箱高 0–1/1–2/2–4/4–8/8–16 px。"""
+    rows = []; det = []; neg = []
     for i in range(0, len(seqs), batch):
         chunk = seqs[i:i + batch]; obs = pool_observation(chunk)
         with torch.no_grad():
             out = encoder(obs); pred = out['signal'].argmax(-1).numpy(); predz = out['signal_z'].argmax(-1).numpy()
             boxes, score = decode_boxes(out['heat'], out['boxes'], cls=0)
+            hh, ww = out['heat'].shape[-2:]; idx = out['heat'][:, :, 0].reshape(out['heat'].shape[0], out['heat'].shape[1], -1).argmax(-1)
         for j, seq in enumerate(chunk):
             for k, f in enumerate(seq):
                 L, M = f['labels'], f['meta']
                 if M['map_association']:
-                    rows.append(dict(pred=int(pred[j, k]), pred_z=int(predz[j]) if k == STACK - 1 else int(pred[j, k]), truth=int(L['signal']), px=float(L['housing_px_h']),
+                    rows.append(dict(pred=int(pred[j, k]), pred_z=int(predz[j]) if k == STACK - 1 else None, truth=int(L['signal']), px=float(L['housing_px_h']),
                                      lamp_px_d=float(L['lamp_px_d']), d=L['light_distance_m'], roi_nonempty=int(M['roi_pixels'] > 0), visible=int(L['visible']), occluded=int(L['occluded'])))
+                sc = float(score[j, k])
                 if L['visible'] and L['light_box_px'] is not None:
-                    pb = [float(x) for x in boxes[j, k]]; tb = L['light_box_px']
-                    det.append(dict(px=float(L['housing_px_h']), iou=iou(pb, tb), center_err_px=float(np.hypot((pb[0] + pb[2]) / 2 - (tb[0] + tb[2]) / 2, (pb[1] + pb[3]) / 2 - (tb[1] + tb[3]) / 2)),
-                                    hit=int(iou(pb, tb) > .3 or np.hypot((pb[0] + pb[2]) / 2 - (tb[0] + tb[2]) / 2, (pb[1] + pb[3]) / 2 - (tb[1] + tb[3]) / 2) <= 2.)))
-    # Z 头只对最新帧有定义；rows 中非最新帧的 pred_z 用 ROI 头占位，因此 Z 头指标另算
-    z_rows = [r for r in rows]
+                    pb = [float(x) for x in boxes[j, k]]; tb = L['light_box_px']; cell_true = np.argwhere(L['heat'][0] > 0)
+                    ti, tj = (int(cell_true[0][0]), int(cell_true[0][1])) if len(cell_true) else (-1, -1)
+                    pi, pj = int(idx[j, k]) // ww, int(idx[j, k]) % ww
+                    cerr = float(np.hypot((pb[0] + pb[2]) / 2 - (tb[0] + tb[2]) / 2, (pb[1] + pb[3]) / 2 - (tb[1] + tb[3]) / 2))
+                    det.append(dict(px=float(L['housing_px_h']), iou=iou(pb, tb), center_err_px=cerr, cell_ok=int((pi, pj) == (ti, tj)), hit_le2px=int(cerr <= 2.),
+                                    recall_thr=int(sc > score_thr and (pi, pj) == (ti, tj)), score=sc))
+                else:
+                    neg.append(dict(score=sc, false_alarm=int(sc > score_thr), map_association=int(M['map_association'])))
     summ = P.visual_summary(rows)
+    def agg(d):
+        return dict(n=len(d), cell_ok_rate=float(np.mean([r['cell_ok'] for r in d])), mean_center_err_px=float(np.mean([r['center_err_px'] for r in d])),
+                    median_center_err_px=float(np.median([r['center_err_px'] for r in d])), hit_le2px=float(np.mean([r['hit_le2px'] for r in d])),
+                    recall_at_thr=float(np.mean([r['recall_thr'] for r in d])), mean_score=float(np.mean([r['score'] for r in d])), aux_mean_iou=float(np.mean([r['iou'] for r in d])),
+                    sequences=None)
     detection = {}
-    for lo, hi in [(0, 4), (4, 8), (8, 16), (16, 1e9)]:
+    for lo, hi in [(0, 1), (1, 2), (2, 4), (4, 8), (8, 16), (16, 1e9)]:
         d = [r for r in det if lo <= r['px'] < hi]
-        if d: detection[f'{lo:g}-{hi if hi < 1e9 else "inf"}px'] = dict(n=len(d), mean_iou=float(np.mean([r['iou'] for r in d])), mean_center_err_px=float(np.mean([r['center_err_px'] for r in d])), hit_rate=float(np.mean([r['hit'] for r in d])))
-    detection['all'] = dict(n=len(det), mean_iou=float(np.mean([r['iou'] for r in det])) if det else None, hit_rate=float(np.mean([r['hit'] for r in det])) if det else None)
+        if d: detection[f'{lo:g}-{hi if hi < 1e9 else "inf"}px'] = agg(d)
+    detection['all'] = agg(det) if det else dict(n=0)
+    detection['all']['hit_rate'] = detection['all'].get('hit_le2px')   # 兼容旧字段名：命中率 = 中心误差 ≤2 px
+    detection['no_visible_light_frames'] = dict(n=len(neg), false_alarm_rate=float(np.mean([r['false_alarm'] for r in neg])) if neg else None,
+                                                mean_score=float(np.mean([r['score'] for r in neg])) if neg else None,
+                                                n_with_map_association=int(sum(r['map_association'] for r in neg)), score_threshold=score_thr)
     return summ, detection, rows
 
 
@@ -110,7 +128,7 @@ def main(n_train=1600, n_dev=240, n_audit=32, steps=1200, batch=16, seed=4242):
         if step % 200 == 0 or step == 1:
             enc.eval(); summ, det, _ = evaluate_vision(enc, dev[:120]); zh = z_head_on_latest(enc, dev[:120]); enc.train()
             log.append(dict(step=step, loss=float(loss), dev_all=summ['all'], z_head_latest=zh, detection=det['all'], wall_s=time.monotonic() - t1))
-            print(f"预训练 step {step} loss {float(loss):.4f} | ROI头 acc {summ['all']['roi_head']['acc']:.3f} unknown召回 {summ['all']['roi_head']['unknown_recall']} | Z头(最新帧) acc {zh['acc'] if zh else None:.3f} | 检测命中 {det['all']['hit_rate']}", flush=True)
+            print(f"预训练 step {step} loss {float(loss):.4f} | ROI头 acc {summ['all']['roi_head']['acc']:.3f} unknown召回 {summ['all']['roi_head']['unknown_recall']} | Z头(最新帧) acc {zh['acc'] if zh else None:.3f} | 检测 格一致 {det['all'].get('cell_ok_rate')} ≤2px {det['all'].get('hit_le2px')} 误检 {det['no_visible_light_frames']['false_alarm_rate']}", flush=True)
     enc.eval(); summ, det, rows = evaluate_vision(enc, dev); zh = z_head_on_latest(enc, dev)
     torch.save(dict(encoder=enc.state_dict(), steps=steps, batch=batch, seed=seed, dev_metrics=summ, pool_seed=seed), OUT / 'encoder.pt')
     grads = {}
