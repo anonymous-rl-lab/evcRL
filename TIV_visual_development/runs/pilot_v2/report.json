@@ -1,0 +1,698 @@
+{
+  "frozen": {
+    "substeps": 9001,
+    "updates": 2257,
+    "episodes": 21,
+    "train_arrivals": 21,
+    "substeps_per_s": 6.390667508810648,
+    "updates_per_s": 1.6024593453378106,
+    "frame_store_MiB": 669.43359375,
+    "settled": 9,
+    "violations": 0,
+    "mean_Ij": 57.567606570132156,
+    "mean_time_s": 211.33333333333334,
+    "mean_E_Wh": 670.1138639173909,
+    "mean_R": -41.030765767692685,
+    "intervened": 3613,
+    "fallback": 0,
+    "visual": {
+      "housing_px_h:0-4": {
+        "roi_head": {
+          "n": 87,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.034482758620689655,
+          "known_acc": 1.0,
+          "unknown_recall": 1.0,
+          "n_known": 84,
+          "n_unknown": 3
+        },
+        "z_head": {
+          "n": 87,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.034482758620689655,
+          "known_acc": 1.0,
+          "unknown_recall": 1.0,
+          "n_known": 84,
+          "n_unknown": 3
+        }
+      },
+      "housing_px_h:4-8": {
+        "roi_head": {
+          "n": 9,
+          "acc": 0.8888888888888888,
+          "red_to_green": 1,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 0.8888888888888888,
+          "unknown_recall": null,
+          "n_known": 9,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 9,
+          "acc": 0.5555555555555556,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.4444444444444444,
+          "known_acc": 0.5555555555555556,
+          "unknown_recall": null,
+          "n_known": 9,
+          "n_unknown": 0
+        }
+      },
+      "housing_px_h:8-16": {
+        "roi_head": {
+          "n": 63,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 63,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 63,
+          "acc": 0.2698412698412698,
+          "red_to_green": 0,
+          "green_to_nongreen": 5,
+          "unknown_rate": 0.7301587301587301,
+          "known_acc": 0.2698412698412698,
+          "unknown_recall": null,
+          "n_known": 63,
+          "n_unknown": 0
+        }
+      },
+      "lamp_px_d:0-1e-09": {
+        "roi_head": {
+          "n": 3,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 1.0,
+          "known_acc": null,
+          "unknown_recall": 1.0,
+          "n_known": 0,
+          "n_unknown": 3
+        },
+        "z_head": {
+          "n": 3,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 1.0,
+          "known_acc": null,
+          "unknown_recall": 1.0,
+          "n_known": 0,
+          "n_unknown": 3
+        }
+      },
+      "lamp_px_d:1e-09-3": {
+        "roi_head": {
+          "n": 150,
+          "acc": 0.9933333333333333,
+          "red_to_green": 1,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 0.9933333333333333,
+          "unknown_recall": null,
+          "n_known": 150,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 150,
+          "acc": 0.6666666666666666,
+          "red_to_green": 0,
+          "green_to_nongreen": 5,
+          "unknown_rate": 0.3333333333333333,
+          "known_acc": 0.6666666666666666,
+          "unknown_recall": null,
+          "n_known": 150,
+          "n_unknown": 0
+        }
+      },
+      "lamp_px_d:3-6": {
+        "roi_head": {
+          "n": 6,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 6,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 6,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 6,
+          "n_unknown": 0
+        }
+      },
+      "all": {
+        "roi_head": {
+          "n": 159,
+          "acc": 0.9937106918238994,
+          "red_to_green": 1,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.018867924528301886,
+          "known_acc": 0.9935897435897436,
+          "unknown_recall": 1.0,
+          "n_known": 156,
+          "n_unknown": 3
+        },
+        "z_head": {
+          "n": 159,
+          "acc": 0.6855345911949685,
+          "red_to_green": 0,
+          "green_to_nongreen": 5,
+          "unknown_rate": 0.3333333333333333,
+          "known_acc": 0.6794871794871795,
+          "unknown_recall": 1.0,
+          "n_known": 156,
+          "n_unknown": 3
+        }
+      }
+    },
+    "z": {
+      "z_drift": 0.0,
+      "z_std": 0.7303686738014221
+    },
+    "last_diag": {
+      "q_loss": 3.0378174781799316,
+      "vision_loss": 0.5899456739425659,
+      "encoder_grad": 0.0,
+      "actor_loss": 25.331266403198242,
+      "updates": 2750,
+      "step": 11363
+    },
+    "z_decodability_dev": {
+      "n": 80,
+      "probe_test_acc": 0.949999988079071,
+      "probe_test_known_acc": 0.9736841917037964,
+      "probe_train_acc": 1.0,
+      "signal_z_head_acc": 0.925000011920929,
+      "chance": 0.5375000238418579,
+      "class_counts": [
+        43,
+        1,
+        31,
+        0,
+        5
+      ]
+    },
+    "image_swap": {
+      "n": 57,
+      "mean_abs_du": 0.02951771439167491,
+      "max_abs_du": 0.12060391902923584,
+      "frac_abs_du_gt_0_05": 0.19298245614035087,
+      "mean_du_green_minus_red": 0.027048212394379732,
+      "mean_dz": 14.492803924962095,
+      "roi_head_color_correct": 0.9824561403508771,
+      "z_head_color_correct": 1.0
+    }
+  },
+  "supervised": {
+    "substeps": 9002,
+    "updates": 2258,
+    "episodes": 21,
+    "train_arrivals": 21,
+    "substeps_per_s": 6.739377270247888,
+    "updates_per_s": 1.6904592175316298,
+    "frame_store_MiB": 669.4921875,
+    "settled": 9,
+    "violations": 0,
+    "mean_Ij": 58.295505046835515,
+    "mean_time_s": 211.33333333333334,
+    "mean_E_Wh": 670.1826555622698,
+    "mean_R": -41.03324226690833,
+    "intervened": 3624,
+    "fallback": 0,
+    "visual": {
+      "housing_px_h:0-4": {
+        "roi_head": {
+          "n": 87,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.034482758620689655,
+          "known_acc": 1.0,
+          "unknown_recall": 1.0,
+          "n_known": 84,
+          "n_unknown": 3
+        },
+        "z_head": {
+          "n": 87,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.034482758620689655,
+          "known_acc": 1.0,
+          "unknown_recall": 1.0,
+          "n_known": 84,
+          "n_unknown": 3
+        }
+      },
+      "housing_px_h:4-8": {
+        "roi_head": {
+          "n": 9,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 9,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 9,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 9,
+          "n_unknown": 0
+        }
+      },
+      "housing_px_h:8-16": {
+        "roi_head": {
+          "n": 63,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 63,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 63,
+          "acc": 0.2857142857142857,
+          "red_to_green": 0,
+          "green_to_nongreen": 6,
+          "unknown_rate": 0.7142857142857143,
+          "known_acc": 0.2857142857142857,
+          "unknown_recall": null,
+          "n_known": 63,
+          "n_unknown": 0
+        }
+      },
+      "lamp_px_d:0-1e-09": {
+        "roi_head": {
+          "n": 3,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 1.0,
+          "known_acc": null,
+          "unknown_recall": 1.0,
+          "n_known": 0,
+          "n_unknown": 3
+        },
+        "z_head": {
+          "n": 3,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 1.0,
+          "known_acc": null,
+          "unknown_recall": 1.0,
+          "n_known": 0,
+          "n_unknown": 3
+        }
+      },
+      "lamp_px_d:1e-09-3": {
+        "roi_head": {
+          "n": 150,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 150,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 150,
+          "acc": 0.7066666666666667,
+          "red_to_green": 0,
+          "green_to_nongreen": 5,
+          "unknown_rate": 0.29333333333333333,
+          "known_acc": 0.7066666666666667,
+          "unknown_recall": null,
+          "n_known": 150,
+          "n_unknown": 0
+        }
+      },
+      "lamp_px_d:3-6": {
+        "roi_head": {
+          "n": 6,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 6,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 6,
+          "acc": 0.8333333333333334,
+          "red_to_green": 0,
+          "green_to_nongreen": 1,
+          "unknown_rate": 0.16666666666666666,
+          "known_acc": 0.8333333333333334,
+          "unknown_recall": null,
+          "n_known": 6,
+          "n_unknown": 0
+        }
+      },
+      "all": {
+        "roi_head": {
+          "n": 159,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.018867924528301886,
+          "known_acc": 1.0,
+          "unknown_recall": 1.0,
+          "n_known": 156,
+          "n_unknown": 3
+        },
+        "z_head": {
+          "n": 159,
+          "acc": 0.7169811320754716,
+          "red_to_green": 0,
+          "green_to_nongreen": 6,
+          "unknown_rate": 0.3018867924528302,
+          "known_acc": 0.7115384615384616,
+          "unknown_recall": 1.0,
+          "n_known": 156,
+          "n_unknown": 3
+        }
+      }
+    },
+    "z": {
+      "z_drift": 1.495664119720459,
+      "z_std": 0.7690716981887817
+    },
+    "last_diag": {
+      "q_loss": 2.460207939147949,
+      "vision_loss": 0.577404260635376,
+      "encoder_grad": 19.011471101298877,
+      "actor_loss": 24.23574447631836,
+      "updates": 2750,
+      "step": 11360
+    },
+    "z_decodability_dev": {
+      "n": 80,
+      "probe_test_acc": 0.925000011920929,
+      "probe_test_known_acc": 0.9736841917037964,
+      "probe_train_acc": 1.0,
+      "signal_z_head_acc": 0.9375,
+      "chance": 0.5375000238418579,
+      "class_counts": [
+        43,
+        1,
+        31,
+        0,
+        5
+      ]
+    },
+    "image_swap": {
+      "n": 57,
+      "mean_abs_du": 0.08145803213119507,
+      "max_abs_du": 0.1716253161430359,
+      "frac_abs_du_gt_0_05": 0.6666666666666666,
+      "mean_du_green_minus_red": 0.08145803213119507,
+      "mean_dz": 14.709908702917266,
+      "roi_head_color_correct": 1.0,
+      "z_head_color_correct": 0.9824561403508771
+    }
+  },
+  "joint": {
+    "substeps": 9002,
+    "updates": 2260,
+    "episodes": 22,
+    "train_arrivals": 22,
+    "substeps_per_s": 4.853764885093662,
+    "updates_per_s": 1.2185635014787466,
+    "frame_store_MiB": 669.55078125,
+    "settled": 9,
+    "violations": 0,
+    "mean_Ij": 75.37919883975707,
+    "mean_time_s": 212.38888888888889,
+    "mean_E_Wh": 664.7842554227907,
+    "mean_R": -40.92334430633153,
+    "intervened": 3458,
+    "fallback": 0,
+    "visual": {
+      "housing_px_h:0-4": {
+        "roi_head": {
+          "n": 92,
+          "acc": 0.9239130434782609,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.07608695652173914,
+          "known_acc": 1.0,
+          "unknown_recall": 0.5,
+          "n_known": 78,
+          "n_unknown": 14
+        },
+        "z_head": {
+          "n": 92,
+          "acc": 0.9130434782608695,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.06521739130434782,
+          "known_acc": 1.0,
+          "unknown_recall": 0.42857142857142855,
+          "n_known": 78,
+          "n_unknown": 14
+        }
+      },
+      "housing_px_h:4-8": {
+        "roi_head": {
+          "n": 7,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 7,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 7,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 7,
+          "n_unknown": 0
+        }
+      },
+      "housing_px_h:8-16": {
+        "roi_head": {
+          "n": 61,
+          "acc": 0.9836065573770492,
+          "red_to_green": 0,
+          "green_to_nongreen": 1,
+          "unknown_rate": 0.0,
+          "known_acc": 0.9836065573770492,
+          "unknown_recall": null,
+          "n_known": 61,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 61,
+          "acc": 0.6557377049180327,
+          "red_to_green": 0,
+          "green_to_nongreen": 6,
+          "unknown_rate": 0.32786885245901637,
+          "known_acc": 0.6557377049180327,
+          "unknown_recall": null,
+          "n_known": 61,
+          "n_unknown": 0
+        }
+      },
+      "housing_px_h:16-inf": {
+        "roi_head": {
+          "n": 5,
+          "acc": 0.8,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.8,
+          "known_acc": null,
+          "unknown_recall": 0.8,
+          "n_known": 0,
+          "n_unknown": 5
+        },
+        "z_head": {
+          "n": 5,
+          "acc": 0.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": null,
+          "unknown_recall": 0.0,
+          "n_known": 0,
+          "n_unknown": 5
+        }
+      },
+      "lamp_px_d:0-1e-09": {
+        "roi_head": {
+          "n": 19,
+          "acc": 0.5789473684210527,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.5789473684210527,
+          "known_acc": null,
+          "unknown_recall": 0.5789473684210527,
+          "n_known": 0,
+          "n_unknown": 19
+        },
+        "z_head": {
+          "n": 19,
+          "acc": 0.3157894736842105,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.3157894736842105,
+          "known_acc": null,
+          "unknown_recall": 0.3157894736842105,
+          "n_known": 0,
+          "n_unknown": 19
+        }
+      },
+      "lamp_px_d:1e-09-3": {
+        "roi_head": {
+          "n": 142,
+          "acc": 0.9929577464788732,
+          "red_to_green": 0,
+          "green_to_nongreen": 1,
+          "unknown_rate": 0.0,
+          "known_acc": 0.9929577464788732,
+          "unknown_recall": null,
+          "n_known": 142,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 142,
+          "acc": 0.8591549295774648,
+          "red_to_green": 0,
+          "green_to_nongreen": 5,
+          "unknown_rate": 0.13380281690140844,
+          "known_acc": 0.8591549295774648,
+          "unknown_recall": null,
+          "n_known": 142,
+          "n_unknown": 0
+        }
+      },
+      "lamp_px_d:3-6": {
+        "roi_head": {
+          "n": 4,
+          "acc": 1.0,
+          "red_to_green": 0,
+          "green_to_nongreen": 0,
+          "unknown_rate": 0.0,
+          "known_acc": 1.0,
+          "unknown_recall": null,
+          "n_known": 4,
+          "n_unknown": 0
+        },
+        "z_head": {
+          "n": 4,
+          "acc": 0.75,
+          "red_to_green": 0,
+          "green_to_nongreen": 1,
+          "unknown_rate": 0.25,
+          "known_acc": 0.75,
+          "unknown_recall": null,
+          "n_known": 4,
+          "n_unknown": 0
+        }
+      },
+      "all": {
+        "roi_head": {
+          "n": 165,
+          "acc": 0.9454545454545454,
+          "red_to_green": 0,
+          "green_to_nongreen": 1,
+          "unknown_rate": 0.06666666666666667,
+          "known_acc": 0.9931506849315068,
+          "unknown_recall": 0.5789473684210527,
+          "n_known": 146,
+          "n_unknown": 19
+        },
+        "z_head": {
+          "n": 165,
+          "acc": 0.793939393939394,
+          "red_to_green": 0,
+          "green_to_nongreen": 6,
+          "unknown_rate": 0.15757575757575756,
+          "known_acc": 0.8561643835616438,
+          "unknown_recall": 0.3157894736842105,
+          "n_known": 146,
+          "n_unknown": 19
+        }
+      }
+    },
+    "z": {
+      "z_drift": 2.2671802043914795,
+      "z_std": 0.7106742262840271
+    },
+    "last_diag": {
+      "q_loss": 4.435297966003418,
+      "vision_loss": 0.7825645208358765,
+      "encoder_grad": 141.3823701253182,
+      "actor_loss": 25.304805755615234,
+      "updates": 2750,
+      "step": 11355
+    },
+    "z_decodability_dev": {
+      "n": 80,
+      "probe_test_acc": 0.949999988079071,
+      "probe_test_known_acc": 0.9736841917037964,
+      "probe_train_acc": 1.0,
+      "signal_z_head_acc": 0.925000011920929,
+      "chance": 0.5375000238418579,
+      "class_counts": [
+        43,
+        1,
+        31,
+        0,
+        5
+      ]
+    },
+    "image_swap": {
+      "n": 57,
+      "mean_abs_du": 0.2775732082919332,
+      "max_abs_du": 0.9257134729996324,
+      "frac_abs_du_gt_0_05": 0.8596491228070176,
+      "mean_du_green_minus_red": -0.056758956803956574,
+      "mean_dz": 13.25748032017758,
+      "roi_head_color_correct": 1.0,
+      "z_head_color_correct": 0.9122807017543859
+    }
+  }
+}

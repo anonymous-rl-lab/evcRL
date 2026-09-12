@@ -1,0 +1,25 @@
+[supervised] 子步 366/9000 更新 92 eps 3 完赛 3 q_loss 2.62 vis 0.206 enc_grad 2.84e+00
+[supervised] 子步 694/9000 更新 174 eps 3 完赛 3 q_loss 2.97 vis 0.223 enc_grad 6.25e+00
+[supervised] 子步 1134/9000 更新 284 eps 4 完赛 4 q_loss 3.31 vis 0.084 enc_grad 2.68e+00
+[supervised] 子步 1567/9000 更新 393 eps 5 完赛 5 q_loss 3.32 vis 0.318 enc_grad 9.07e+00
+[supervised] 子步 2007/9000 更新 503 eps 6 完赛 6 q_loss 3.19 vis 0.372 enc_grad 1.74e+01
+[supervised] 子步 2438/9000 更新 611 eps 7 完赛 7 q_loss 7.77 vis 0.812 enc_grad 2.95e+01
+[supervised] 子步 2868/9000 更新 719 eps 8 完赛 8 q_loss 3.63 vis 0.237 enc_grad 3.04e+00
+[supervised] 子步 3286/9000 更新 824 eps 9 完赛 9 q_loss 2.62 vis 0.342 enc_grad 8.78e+00
+[supervised] 子步 3712/9000 更新 931 eps 10 完赛 10 q_loss 6.32 vis 0.718 enc_grad 2.30e+01
+[supervised] 子步 4104/9000 更新 1029 eps 10 完赛 10 q_loss 4.12 vis 1.297 enc_grad 3.79e+01
+[supervised] 子步 4501/9000 更新 1129 eps 11 完赛 11 q_loss 3.38 vis 0.399 enc_grad 1.18e+01
+[supervised] 子步 4901/9000 更新 1229 eps 12 完赛 12 q_loss 4.55 vis 0.349 enc_grad 1.36e+01
+[supervised] 子步 5308/9000 更新 1331 eps 13 完赛 13 q_loss 3.83 vis 0.313 enc_grad 1.60e+01
+[supervised] 子步 5705/9000 更新 1431 eps 14 完赛 14 q_loss 4.63 vis 0.336 enc_grad 2.30e+01
+[supervised] 子步 6119/9000 更新 1535 eps 15 完赛 15 q_loss 4.96 vis 0.217 enc_grad 3.54e+00
+[supervised] 子步 6516/9000 更新 1635 eps 16 完赛 16 q_loss 3.82 vis 0.259 enc_grad 4.85e+00
+[supervised] 子步 6906/9000 更新 1733 eps 17 完赛 17 q_loss 1.65 vis 0.292 enc_grad 6.06e+00
+[supervised] 子步 7314/9000 更新 1835 eps 17 完赛 17 q_loss 6.73 vis 0.715 enc_grad 1.37e+01
+[supervised] 子步 7728/9000 更新 1939 eps 18 完赛 18 q_loss 4.74 vis 0.411 enc_grad 3.02e+00
+[supervised] 子步 8114/9000 更新 2036 eps 19 完赛 19 q_loss 3.40 vis 0.785 enc_grad 3.97e+01
+[supervised] 子步 8522/9000 更新 2138 eps 20 完赛 20 q_loss 3.70 vis 0.435 enc_grad 7.98e+00
+[supervised] 子步 8918/9000 更新 2237 eps 21 完赛 21 q_loss 5.85 vis 0.480 enc_grad 1.05e+01
+[supervised] Z 可解码性（dev 线性探针测试集）0.925（机会 0.538）；同状态换图 |Δu| 均值 0.0815 最大 0.1716
+[supervised] 评估：完赛(静止) 9/9 违规 0 平均I_j 58.295505046835515 平均时间 211.33333333333334 干预子步 3624 回退 0
+{"state": "substep_budget", "substeps": 9002, "updates": 2258, "episodes": 21, "train_arrivals": 21, "substeps_per_s": 6.739377270247888, "updates_per_s": 1.6904592175316298}

@@ -99,13 +99,14 @@ TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.
 
 ## 8. 视觉编码 Z 框架：已按交接文档接入并运行（`TIV_visual_development/`）
 
-本目录第 1–7 节是论文正文长程实验的核对与重训。用户交付的三份文档（设计、Codex 任务、框架骨架）要求的是另一件事：把摄像头图像编码 Z 接进 TD3、由 critic 反馈训练编码器，并与平滑执行层一起进入训练。这部分在 `TIV_visual_development/` 完成，阶段报告为 `TIV_visual_development/reports/REPORT_zh.md`，要点：
+本目录第 1–7 节是论文正文长程实验的核对与重训。用户交付的三份文档（设计、Codex 任务、框架骨架）要求的是另一件事：把摄像头图像编码 Z 接进 TD3、由 critic 反馈训练编码器，并与平滑执行层一起进入训练。这部分在 `TIV_visual_development/` 完成，当前报告为 `TIV_visual_development/reports/REPORT_zh.md`（v2，按独立审计 `TIV_Visual_Experiment_Audit_v1.md` 修复后重跑；v1 归档为 `REPORT_v1_zh.md`），要点：
 
-- 同步只读程序化渲染器（v19 无 RGB 传感器，本机无 3D 引擎）：由原环境位姿与同一时刻信号相位驱动，2 Hz、96×160，逐 episode 随机光照/雾/噪声/遮挡；真值只进标签。
-- 训练环境执行层换成 comfort_v2 r2 的完整 jerk 可行执行层（环境感知 + 动作平滑一起进入训练），信息访问三臂相同；`lambda_c` 可配置，首阶段为 0。
-- 审计 16/16 通过；随机初始化编码器的监督预训练；共同适配后分叉出 frozen / supervised / joint 三臂；10 分钟烟测含强制中断恢复；三臂小规模同预算并行（各 9003 子步 / 2259 次更新）。
-- 小规模结论：三臂均 9/9 静止完赛、0 违规、最坏 jerk 2.0，但控制指标逐工况相同——actor 饱和于最大指令（≥2.5 m/s² 占 92–99.5% 子步），特权执行层把它投影为限速巡航，Z 的差异被执行层吸收；编码层面 TD 梯度确实到达联合臂、Z 漂移 J 1.78 > S 0.66 > F 0。判断：当前设置下不值得扩大规模，需先把执行器信息接口改为感知输出（报告第 8.2 节）。
-- 一键：`cd TIV_visual_development && python3 visual_dev/pretrain.py && python3 visual_dev/run_stage.py audit && bash runs/run_pilot.sh && python3 visual_dev/run_stage.py report --tag pilot`。
+- 同步只读程序化渲染器（v19 无 RGB 传感器，本机无 3D 引擎）：由原环境位姿与同一时刻信号相位驱动，2 Hz、96×160，逐 episode 随机光照/雾/噪声/遮挡；灯箱位于停止线远侧 14 m；真值只进标签。
+- 训练环境执行层换成 comfort_v2 r2 的完整 jerk 可行执行层（环境感知 + 动作平滑一起进入训练），信息访问三臂相同，执行层独立性为实测审计项。
+- 按审计修复：框标签“格内偏移 + 归一化尺寸”参数化（可表示性 0 违例）、空 ROI 强制 unknown、`association_valid` 与地图关联/ROI 分开、`signal_z` 头使视觉监督训练到 Z 末端、源码/数据/权重哈希进入断点、权重与固定审计样本入库。对抗式代码审查（3 视角 + 逐条反驳核验）又修了检测链路：热图焦点损失按正样本归一化 + 先验偏置 π=0.01、检测评估口径（格一致率/中心误差/≤2 px 命中/阈值召回/误检率）、格分配规则受控对比后固定 floor、事件注意力对热图 detach；受控探针结果在 `runs/probes/`。
+- 分级门禁 `runs/run_v2_gated.sh`：门 1 预训练（≤2 px 命中 0.846、格一致 0.754、ROI 已知 0.951、Z 已知 0.973）→ 门 2 审计 19/19 → 门 3 共同适配 + 联合臂烟测 → 门 4 三臂 9000 子步。
+- 三臂小规模结论（单种子）：三臂均 9/9 静止完赛、0 违规；ROI 头行驶中已知类 ≥0.99，Z 探针 0.925–0.950；actor 对图像的依赖只有联合臂明显（同状态换图 |Δu| 0.28 vs 冻结 0.03、监督 0.08），联合臂闭环轨迹在 9 个工况上全部不同但不是增益（I_j +17、能耗 −5.4 Wh、R +0.11，换图方向与信号语义相反）；执行层仍主导实际动作（三臂实际动作分布相同，名义限制占 87–93%）。判断：先改执行层信息接口与两项几何/尺寸修正，再扩大规模。
+- 一键：`cd TIV_visual_development && STOP_BEFORE_ARMS=1 bash runs/run_v2_gated.sh pilot_v2`（门 1–3），通过后 `bash runs/run_pilot.sh pilot_v2 9000`；汇总 `python3 visual_dev/summarize_pilot.py --tag pilot_v2`。
 
 ### 8.1 交接包原状态（接入前）
 
@@ -116,4 +117,4 @@ TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.
 1. 若目标是**精确复现论文数字**：只需第 4 节前 9 行的流程，不需要重训。
 2. 若目标是**在同一协议下增加种子**：用 `scripts/train_repro.sh` 换 `SEEDS/TAG`，每种子 4 核约 100 分钟；用 `compare_curves.py` 按论文规则计分并与 `bench_results.json` 的种子分布比较。
 3. 若目标是**改善后期退化**：先在小规模（≤100 万步、固定种子对照）验证，候选方向为带重要性修正或截断的多步目标、按完赛分层的回放采样（`--balance` 已实现但未在正式协议使用）；冻结包 README 第 5 节列出的负结果不要重跑。
-4. 视觉分支按 `visual_z_framework/CODEX_TASK.md` 顺序接入渲染器后再谈训练。
+4. 视觉分支：先把执行层的信号信息接口改为感知输出、落实骨干下采样偶数核对齐与尺寸目标修正（`TIV_visual_development/reports/REPORT_zh.md` 第 9 节），再做 3 种子 × 更长预算的三臂实验。
