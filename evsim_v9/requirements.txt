@@ -1,0 +1,17 @@
+# DO NOT run `pip install -r requirements.txt` on a box that already has numpy
+# and torch.  Run `python3 check_env.py` instead -- if it prints versions and
+# rates, you are done.  See README.md section 1.
+#
+# On a CUDA box, plain `pip install torch` fetches the ~2.5 GB CUDA wheel and
+# may move the torch version other projects on that box depend on.  This code
+# never touches CUDA (grep: zero .cuda() / .to(device) calls).
+#
+# Tested floor and ceiling.  Both pass all gates and produce a BIT-IDENTICAL
+# 12k-step training curve (seed 0: R = -387.723, last-3 = -394.262):
+#     numpy 1.26.4 + torch 2.2.2+cpu    (floor)
+#     numpy 2.4.4  + torch 2.13.0+cpu   (development stack)
+numpy>=1.26
+torch>=2.2
+
+# Optional -- figs.py only.  Nothing on the training or reporting path imports it.
+# matplotlib>=3.8

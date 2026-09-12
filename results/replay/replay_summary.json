@@ -1,0 +1,87 @@
+{
+ "passed": true,
+ "rows": [
+  {
+   "seed": 0,
+   "step": 4500000,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -173.48968676680525,
+   "archived_reporting_R": -173.48968676680525,
+   "reporting_arrivals": 6,
+   "validation_R": -173.5801474766674,
+   "twelve_grid_R": -173.5349171217363
+  },
+  {
+   "seed": 1,
+   "step": 4000002,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -175.46757879190645,
+   "archived_reporting_R": -175.46757879190645,
+   "reporting_arrivals": 6,
+   "validation_R": -176.71573646881583,
+   "twelve_grid_R": -176.09165763036108
+  },
+  {
+   "seed": 2,
+   "step": 5000000,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -174.93582744145672,
+   "archived_reporting_R": -174.93582744145672,
+   "reporting_arrivals": 6,
+   "validation_R": -173.93319614634763,
+   "twelve_grid_R": -174.43451179390217
+  },
+  {
+   "seed": 3,
+   "step": 2500003,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -175.53355708587378,
+   "archived_reporting_R": -175.53355708587378,
+   "reporting_arrivals": 6,
+   "validation_R": -174.16861897537729,
+   "twelve_grid_R": -174.85108803062553
+  },
+  {
+   "seed": 4,
+   "step": 3500003,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -181.306583832756,
+   "archived_reporting_R": -181.306583832756,
+   "reporting_arrivals": 6,
+   "validation_R": -179.6215599590914,
+   "twelve_grid_R": -180.4640718959237
+  },
+  {
+   "seed": 5,
+   "step": 3000000,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -181.73947461990247,
+   "archived_reporting_R": -181.73947461990247,
+   "reporting_arrivals": 5,
+   "validation_R": -180.3175275623153,
+   "twelve_grid_R": -181.02850109110886
+  },
+  {
+   "seed": 6,
+   "step": 3500002,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -175.74427508545344,
+   "archived_reporting_R": -175.74427508545344,
+   "reporting_arrivals": 6,
+   "validation_R": -174.9186418028648,
+   "twelve_grid_R": -175.33145844415913
+  },
+  {
+   "seed": 7,
+   "step": 1000000,
+   "grid_max_abs_error": 0.0,
+   "reporting_R": -180.74969445298336,
+   "archived_reporting_R": -180.74969445298336,
+   "reporting_arrivals": 6,
+   "validation_R": -178.1025263193894,
+   "twelve_grid_R": -179.42611038618637
+  }
+ ],
+ "torch": "2.14.0+cu130",
+ "numpy": "2.4.6"
+}

@@ -1,0 +1,57 @@
+{
+ "status": "development_pilot_protocol_cpu_single_machine",
+ "base": "v19_deps (TIV_comfort_v1 code + comfort_v2 curve_layer r2 + short-route A nets)",
+ "route": "4km_mini",
+ "dynamics_and_reward": "unchanged (study.py StudyEnv, L reward, 600 s deadline, t_budget 480)",
+ "actuator": "complete_comfort_executor_curve_layer_r2_in_training_and_evaluation",
+ "executor_information": "privileged_simulator_signal_timing_unchanged_equal_across_arms",
+ "information_mode": "camera_map",
+ "legacy_mask_indices": [
+  7,
+  8
+ ],
+ "camera": {
+  "rgb_hw": [
+   96,
+   160
+  ],
+  "capture_hz": 2.0,
+  "history_frames": 4,
+  "note": "每个 0.5 s 子步采一帧；分辨率为设计候选 384x640 的 1/4；均为 CPU 实测限制，如实记录"
+ },
+ "encoder": "visual_z VisualEncoder 随机初始化 + 渲染帧监督预训练；无预训练 MobileNetV3 权重可用",
+ "arms": [
+  "frozen",
+  "supervised",
+  "joint"
+ ],
+ "seed": 7,
+ "pool_seed": 4242,
+ "camera_seed": 77,
+ "pretrained_encoder": "runs/pretrain/encoder.pt",
+ "repeat": 4,
+ "nstep": 20,
+ "gamma": 1.0,
+ "warmup": 400,
+ "replay_capacity": 6000,
+ "batch": 32,
+ "batch_note": "有效 batch 由原 256 改为 32：CPU 实测 96x160 联合更新 batch 32 为 0.57 s，batch 64 为 1.71 s；三臂相同",
+ "actor_lr": 3e-05,
+ "critic_lr": 0.0003,
+ "encoder_lr": 1e-05,
+ "policy_delay": 2,
+ "tau": 0.005,
+ "target_noise": 0.2,
+ "target_clip": 0.5,
+ "ou_sigma": 0.2,
+ "ou_theta": 0.15,
+ "vision_weight": 1.0,
+ "lambda_c": 0.0,
+ "adapt_substeps": 2400,
+ "checkpoint_interval_wall_seconds": 120,
+ "smoke_wall_seconds": 600,
+ "pilot_wall_seconds_per_arm": 900,
+ "pool_batch": 8,
+ "pool_batch_note": "每次更新的离线视觉监督批次为 8 个 4 帧序列（32 帧），S/J 相同顺序",
+ "diag_every": 25
+}
