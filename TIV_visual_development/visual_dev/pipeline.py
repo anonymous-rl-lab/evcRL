@@ -92,16 +92,84 @@ class SmoothEnv(S.StudyEnv):
         return result
 
 
+class VisionEnv(SmoothEnv):
+    """v4：执行层的道路事件信息全部来自 VisionMemory（停车目标、弯道入口目标、限速、前方信号是否可通行），无任何真值调用；
+    裁判（Route20.step 的 red_crossing / 弯道超速）仍用真值。"""
+    def __init__(self, *args, memory=None, assumed_green_remaining=30., **kw):
+        self.memory = memory
+        super().__init__(*args, signal_source='perceived', assumed_green_remaining=assumed_green_remaining, **kw)
+
+    def _stop_targets(self):
+        return self.memory.executor_targets(self.x) if self.memory is not None else []
+
+    def _truth_green_for_log(self):   # 只用于日志/评估口径，不参与任何控制量
+        ahead = [k for k, xs in enumerate(S.R.SIGNALS) if self.x < xs]
+        return all(S.R.signal_green(S.R.SIGNALS[k], self.t, self.offsets[k]) for k in ahead) if ahead else None
+
+    def _passable(self, k, xs):   # 基类不再调用（_stop_targets 已覆盖），保留以防
+        g, _, _ = self.memory.executor_signal() if self.memory is not None else (None, None, None); return bool(g)
+
+    def project(self, cmd):
+        fallback = S.E.Route20.project(self, cmd)   # 基类投影：jerk/执行器盒 + a_safe（来自记忆目标）
+        targets = [(max(t[0] - self.x, 0.), t[1]) for t in self._stop_targets()]
+        limit = self.memory.v_limit() if self.memory is not None else S.R.V_FREE
+        result, info = C.project(self.v, self.a, cmd, targets, fallback, vmax=limit)
+        result = min(result, C.brake_bound(max(limit - self.v, 0.)))
+        lower = info.get('lower'); upper = None if info.get('upper') is None else min(info['upper'], C.brake_bound(max(limit - self.v, 0.)))
+        green, remaining, d_line = self.memory.executor_signal(self.assumed_green_remaining) if self.memory is not None else (None, None, None)
+        if not info['fallback'] and green:
+            action, extra = C.signal_project(self.v, self.a, cmd, (lower, upper), d_line, remaining, limit)
+            info.update(extra)
+            if action is None: info['fallback'] = True; result = fallback
+            else: result = action
+        self.layer_log.append(dict(t=float(self.t), x=float(self.x), command=float(cmd), applied=float(result), fallback=bool(info['fallback']), intervened=bool(abs(result - cmd) > 1e-9),
+                                   lower=None if lower is None else float(lower), upper=None if upper is None else float(upper),
+                                   perceived=self.memory.sig['phase'] if self.memory is not None else 'unknown', truth_green=self._truth_green_for_log(), signal_source='vision_memory',
+                                   v_limit=float(limit), targets=[(round(float(a_), 1), float(b_)) for a_, b_, *_ in self._stop_targets()]))
+        return result
+
+
 class Perception:
     """v3 执行层的相位来源：冻结的预训练编码器 ROI 灯色头（与臂无关、训练中不更新），只看最新帧。
     无地图关联（不知道灯在哪）或 ROI 为空时给 unknown。source='oracle' 时直接给真值颜色（用于分离规则效应与识别误差的探针）。"""
-    def __init__(self, path=None, source='roi_head', green_threshold=0., min_consecutive=1):
+    def __init__(self, path=None, source='roi_head', green_threshold=0., min_consecutive=1, det_thr=0.5):
         """green_threshold：只有 P(green) ≥ 阈值才判为 green（否则判为 argmax 的非绿类或 'unknown'）；
         min_consecutive：连续 ≥ 该帧数满足绿灯条件才对执行层报 green（迟滞，只对绿→通行方向保守，非绿立即生效）。"""
-        self.source = source; self.last = None; self.green_threshold = float(green_threshold); self.min_consecutive = int(min_consecutive); self._green_run = 0
+        self.source = source; self.last = None; self.green_threshold = float(green_threshold); self.min_consecutive = int(min_consecutive); self._green_run = 0; self.det_thr = float(det_thr)
         if source == 'roi_head':
             ck = torch.load(path, map_location='cpu', weights_only=False); self.enc = VisualEncoder(STACK)
             self.enc.load_state_dict(ck['encoder']); self.enc.eval(); self.enc.requires_grad_(False)
+
+    def observe(self, store, history, episode_id, t):
+        """v4：两次前向——第一次（ROI 为空）得到四类检测与距离估计，用灯检测框构造预测 ROI 写回最新帧（roi_pred），
+        第二次用预测 ROI 得到灯色概率。返回 (dets, color_probs)。"""
+        from visual_z.model import decode_detections, predicted_roi
+        from renderer import CLASSES, COLOR_CLASSES
+        latest = store.frames[history[-1]]
+        if self.source == 'oracle':   # 真值检测（只用于探针：分离记忆规则效应与识别误差）
+            T = latest['labels']['truth']; L = latest['labels']
+            dets = {'traffic_light': dict(score=float(L.get('visible', 0) == 1), dist_m=float(T['light_m'] or 0.), box=None),
+                    'curve_sign': dict(score=float(T['curve_sign_m'] is not None and T['curve_sign_m'] > 1.5), dist_m=float(T['curve_sign_m'] or 0.), box=None),
+                    'end_marker': dict(score=float(T['end_m'] is not None and T['end_m'] > 1.5), dist_m=float(T['end_m'] or 0.), box=None),
+                    'release_sign': dict(score=float(T['release_sign_m'] is not None and T['release_sign_m'] > 1.5), dist_m=float(T['release_sign_m'] or 0.), box=None)}
+            probs = None
+            if L.get('visible', 0) == 1:
+                probs = np.zeros(5, np.float32); probs[COLOR_CLASSES.index(L['color_truth'])] = 1.
+            latest['roi_pred'] = (latest['roi'][0] if latest['roi'].ndim == 3 else latest['roi']).astype(np.float32)
+            self.last = dict(dets=dets, probs=None if probs is None else probs.tolist(), roi_pixels=int(latest['roi_pred'].sum())); return dets, probs
+        rec = dict(frame_ids=list(history), episode_id=episode_id, decision_time=float(t), legacy=np.zeros(LEGACY_DIM, np.float32), association_valid=0)
+        obs = obs_from_frames(store, [rec], use_pred_roi=False); obs.signal_roi.zero_()
+        with torch.no_grad(): out = self.enc(obs)
+        dets = {}
+        for c, name in enumerate(CLASSES):
+            d = decode_detections(out, c); dets[name] = dict(score=float(d['score'][0, -1]), dist_m=float(d['dist_m'][0, -1]), box=[float(v) for v in d['box'][0, -1]])
+        roi = predicted_roi(dets['traffic_light']['box'], H, W).numpy() if dets['traffic_light']['score'] >= self.det_thr else np.zeros((H, W), np.float32)
+        latest['roi_pred'] = roi.astype(np.float32); probs = None
+        if roi.sum() > 0:
+            obs2 = obs_from_frames(store, [rec], use_pred_roi=True)
+            with torch.no_grad(): probs = self.enc(obs2)['signal'][0, -1].softmax(0).numpy()
+        self.last = dict(dets=dets, probs=None if probs is None else probs.tolist(), roi_pixels=int(roi.sum()))
+        return dets, probs
 
     def phase(self, store, history, episode_id, t, env=None):
         latest = store.frames[history[-1]]
@@ -171,21 +239,25 @@ class Replay:
 
 
 # ------------------------------------------------------------------ 观测构造
-def obs_from_frames(store, obs_records):
-    """obs_records: list of dict(frame_ids, episode_id, decision_time, legacy, association_valid)。"""
+def obs_from_frames(store, obs_records, use_pred_roi=True):
+    """obs_records: list of dict(frame_ids, episode_id, decision_time, legacy, association_valid[, extra])。
+    v4：帧若带 roi_pred（检测器预测的 ROI）且 use_pred_roi，则用它替代地图 ROI；记录若带 extra 则填入 obs.extra。"""
     b = len(obs_records)
     frames = np.zeros((b, STACK, 3, H, W), np.uint8); roi = np.zeros((b, STACK, 1, H, W), np.float32)
     valid = np.zeros((b, STACK), bool); age = np.zeros((b, STACK), np.float32); legacy = np.zeros((b, LEGACY_DIM), np.float32)
-    assoc = np.zeros((b, 1), np.float32)
+    assoc = np.zeros((b, 1), np.float32); has_extra = 'extra' in obs_records[0]; extra = np.zeros((b, len(obs_records[0]['extra'])), np.float32) if has_extra else None
     for i, o in enumerate(obs_records):
         fids = o['frame_ids']; k0 = STACK - len(fids)
         for j, fid in enumerate(fids):
             r = store.get(fid, o['episode_id'], o['decision_time'])
-            frames[i, k0 + j] = r['rgb'].transpose(2, 0, 1); roi[i, k0 + j, 0] = r['roi']
+            frames[i, k0 + j] = r['rgb'].transpose(2, 0, 1)
+            rp = r.get('roi_pred') if use_pred_roi else None
+            roi[i, k0 + j, 0] = rp if rp is not None else (r['roi'][0] if r['roi'].ndim == 3 else r['roi'])
             valid[i, k0 + j] = True; age[i, k0 + j] = o['decision_time'] - r['meta']['capture_time']
         legacy[i] = o['legacy']; assoc[i, 0] = o['association_valid']
+        if has_extra: extra[i] = o['extra']
     T = torch.as_tensor
-    return VisualObservation(T(legacy), T(frames), T(valid), T(age), T(roi), T(assoc), torch.zeros(b, 1))
+    return VisualObservation(T(legacy), T(frames), T(valid), T(age), T(roi), T(assoc), torch.zeros(b, 1), None if extra is None else T(extra))
 
 
 def labels_from_frames(frame_list):
@@ -194,12 +266,17 @@ def labels_from_frames(frame_list):
     heat = np.zeros((b, STACK, 8, *P2), np.float32); hv = np.ones((b, STACK, 1, *P2), np.float32)
     boxes = np.zeros((b, STACK, 4, *P2), np.float32); bv = np.zeros((b, STACK, 1, *P2), np.float32)
     sig = np.full((b, STACK), -100, np.int64)
+    has_dist = 'dist' in frame_list[0][0]['labels']
+    dist = np.zeros((b, STACK, 1, *P2), np.float32); dv = np.zeros((b, STACK, 1, *P2), np.float32)
     for i, seq in enumerate(frame_list):
         for j, f in enumerate(seq):
             L = f['labels']; heat[i, j] = L['heat']; boxes[i, j] = L['boxes']; bv[i, j] = L['box_valid']   # uint8/bool 存储在此处无损转回 float32
             sig[i, j] = L['signal'] if f['meta']['map_association'] else -100   # v2：地图有灯即给标签（不可见=unknown）；无灯 -100
+            if has_dist: dist[i, j] = L['dist']; dv[i, j] = L['dist_valid']
     T = torch.as_tensor
-    return dict(heat=T(heat), heat_valid=T(hv), boxes=T(boxes), box_valid=T(bv), signal=T(sig))
+    out = dict(heat=T(heat), heat_valid=T(hv), boxes=T(boxes), box_valid=T(bv), signal=T(sig))
+    if has_dist: out.update(dist=T(dist), dist_valid=T(dv), presence=T((heat[:, :, :4].reshape(b, STACK, 4, -1).sum(-1) > 0).astype(np.float32)))
+    return out
 
 
 def pool_observation(frame_list, legacy=None):
@@ -233,13 +310,15 @@ class VisualTrainer:
         self.env_rng = np.random.default_rng(np.random.SeedSequence([seed, 11]))
         self.explore_rng = np.random.default_rng(np.random.SeedSequence([seed, 22]))
         self.replay_rng = np.random.default_rng(np.random.SeedSequence([seed, 33]))
-        self.learner = VisualTD3(Config(mode=cfg['mode'], information_mode='camera_map', stack=STACK,
+        self.learner = VisualTD3(Config(mode=cfg['mode'], information_mode=('vision_memory' if cfg.get('world', 'v2') == 'v4' else 'camera_map'), stack=STACK,
             actor_lr=cfg['actor_lr'], critic_lr=cfg['critic_lr'], encoder_lr=cfg['encoder_lr'],
             vision_weight=cfg['vision_weight'], lambda_c=cfg['lambda_c'], tau=cfg['tau'],
             policy_delay=cfg['policy_delay'], target_noise=cfg['target_noise'], target_clip=cfg['target_clip'],
             critic_action=cfg.get('critic_action', 'command'), actor_clip_ste=bool(cfg.get('actor_clip_ste', False))))
-        self.signal_source = cfg.get('signal_source', 'truth')
-        self.perception = Perception(ROOT / cfg['pretrained_encoder'], cfg.get('perception_source', 'roi_head'), green_threshold=cfg.get('green_threshold', 0.), min_consecutive=cfg.get('min_consecutive', 1)) if self.signal_source == 'perceived' else None
+        self.signal_source = cfg.get('signal_source', 'truth'); self.world = cfg.get('world', 'v2')
+        self.perception = Perception(ROOT / cfg['pretrained_encoder'], cfg.get('perception_source', 'roi_head'), green_threshold=cfg.get('green_threshold', 0.), min_consecutive=cfg.get('min_consecutive', 1), det_thr=cfg.get('det_thr', 0.5)) if (self.signal_source == 'perceived' or self.world == 'v4') else None
+        from vision_state import VisionMemory
+        self.memory = VisionMemory(det_thr=cfg.get('det_thr', 0.5), hold_s=cfg.get('hold_s', 3.)) if self.world == 'v4' else None
         # 共同起点：预训练编码器 + 冻结 4 km A 臂 actor/critic 的第一层迁移（新增 Z/元信息列初始化为零）
         enc = torch.load(ROOT / cfg['pretrained_encoder'], map_location='cpu', weights_only=False)
         self.learner.encoder.load_state_dict(enc['encoder'])
@@ -253,7 +332,7 @@ class VisualTrainer:
         if cfg['mode'] == 'frozen': self.learner.encoder.requires_grad_(False)
         self.store = FrameStore(); self.replay = Replay(cfg['replay_capacity'], self.store)
         self.pool_sampler = PoolSampler(pool, cfg.get('pool_batch', 8), seed=cfg['pool_seed']); self.pool = pool
-        self.camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=cfg['camera_seed'])
+        self.camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=cfg['camera_seed'], world=cfg.get('world', 'v2'))
         self.pending = deque(); self.history = []; self.ou = 0.
         self.used = self.decisions = self.updates = self.episodes = self.train_arrivals = 0
         self.diag = []; self.wall = dict(train=0., eval=0., save=0.); self.completed = []
@@ -264,7 +343,9 @@ class VisualTrainer:
     def new_episode(self):
         soc, temp = S.PACKS[int(self.env_rng.integers(0, 3))]
         v0 = float(self.env_rng.uniform(12., 20.)); off = float(self.env_rng.uniform(0., 90.))
-        self.env = SmoothEnv(soc, temp, off, signal_source=self.signal_source, assumed_green_remaining=self.cfg.get('assumed_green_remaining', 30.))
+        if self.world == 'v4':
+            self.memory.reset(); self.env = VisionEnv(soc, temp, off, memory=self.memory, assumed_green_remaining=self.cfg.get('assumed_green_remaining', 30.))
+        else: self.env = SmoothEnv(soc, temp, off, signal_source=self.signal_source, assumed_green_remaining=self.cfg.get('assumed_green_remaining', 30.))
         self.env.reset(v0); self.episodes_started = getattr(self, 'episodes_started', 0) + 1
         self.episode_id = f"ep{self.episodes_started:06d}"; self.camera.new_episode(self.episode_id)
         self.history = []; self.ou = 0.; self.capture()
@@ -273,11 +354,19 @@ class VisualTrainer:
         f = self.camera.capture(episode_id=self.episode_id, sim_time=self.env.t, pose=dict(x=self.env.x, v=self.env.v, offsets=self.env.offsets))
         fid = f"{self.episode_id}_{f['meta']['frame_index']:05d}"; self.store.put(fid, f)
         self.history.append(fid); self.history = self.history[-STACK:]
-        if self.perception is not None:   # v3：每采一帧就更新执行层的感知相位
+        if self.world == 'v4':   # v4：每帧感知 → 记忆更新（弯道/信号/终点），三方共享
+            dets, probs = self.perception.observe(self.store, self.history, self.episode_id, self.env.t)
+            self.memory.update(dets, probs, self.env.v, S.E.DT if len(self.history) > 1 else 0.)
+            self.env.set_perceived(self.memory.sig['phase'], self.memory.sig['age'] if self.memory.sig['seen'] else 0., 'vision_memory')
+        elif self.perception is not None:   # v3：每采一帧就更新执行层的感知相位
             self.env.set_perceived(self.perception.phase(self.store, self.history, self.episode_id, self.env.t, self.env), 0., self.perception.source)
 
     def current_obs_record(self):
         latest = self.store.frames[self.history[-1]]
+        if self.world == 'v4':   # v4：13 维来自视觉记忆 + 车辆传感器，不调用 env.obs()（地图/真值）
+            e = self.env; leg = self.memory.legacy(e.v, e.a, e.soc, e.T, e.t_end, e.t, e.t_budget)
+            return dict(frame_ids=list(self.history), episode_id=self.episode_id, decision_time=float(e.t), legacy=leg,
+                        association_valid=self.memory.light_detected(), extra=self.memory.extra())
         return dict(frame_ids=list(self.history), episode_id=self.episode_id, decision_time=float(self.env.t),
                     legacy=np.asarray(self.env.obs(), np.float32), association_valid=int(latest['meta']['association_valid']))
 
@@ -384,30 +473,43 @@ class VisualTrainer:
 
 
 # ------------------------------------------------------------------ 评估（固定 actor，相机驱动，平滑执行层）
-def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perception=None, assumed_green_remaining=30.):
+def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perception=None, assumed_green_remaining=30., world='v2', memory_kw=None, hide=()):
+    """world='v4'：相机 v4 世界，执行层为 VisionEnv（记忆驱动），观测由记忆生成；hide 可含 'curve_sign'/'light_color'/'release_sign'/'end_marker'
+    用于“驾驶是否依赖视觉”的消融（画面里不画该物体 / 灯色改为灭）。"""
     """固定工况闭环评估。v2e：每个工况用独立的相机外观种子（camera_seed*1000+i）与独立噪声流（camera_seed*1000+500+i），
     外观不再依赖之前工况采了多少帧——三臂在同一工况下看到的光照/雾/噪声/遮挡逐位相同（v2d 及以前共用一个生成器，
     轨迹长度不同的臂从第 3 个工况起外观不同）。"""
     rows = []; visual = []; traces = []; store = FrameStore()
+    from vision_state import VisionMemory
     for i, (soc, temp, v0, off) in enumerate(conditions):
-        camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=camera_seed * 1000 + i, noise_seed=camera_seed * 1000 + 500 + i)
-        env = SmoothEnv(soc, temp, off, signal_source=signal_source, assumed_green_remaining=assumed_green_remaining); env.reset(v0); eid = f"eval{i:02d}"; camera.new_episode(eid); hist = []
+        camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=camera_seed * 1000 + i, noise_seed=camera_seed * 1000 + 500 + i, world=world); camera.hide = set(hide)
+        if world == 'v4':
+            memory = VisionMemory(**(memory_kw or {})); env = VisionEnv(soc, temp, off, memory=memory, assumed_green_remaining=assumed_green_remaining)
+        else: memory = None; env = SmoothEnv(soc, temp, off, signal_source=signal_source, assumed_green_remaining=assumed_green_remaining)
+        env.reset(v0); eid = f"eval{i:02d}"; camera.new_episode(eid); hist = []
         def cap():
             f = camera.capture(episode_id=eid, sim_time=env.t, pose=dict(x=env.x, v=env.v, offsets=env.offsets))
             fid = f"{eid}_{f['meta']['frame_index']:05d}"; store.put(fid, f); hist.append(fid); del hist[:-STACK]
-            if perception is not None:
+            if world == 'v4':
+                dets, probs = perception.observe(store, hist, eid, env.t); memory.update(dets, probs, env.v, S.E.DT if len(hist) > 1 else 0.)
+                env.set_perceived(memory.sig['phase'], memory.sig['age'] if memory.sig['seen'] else 0., 'vision_memory'); env.perceived['detail'] = dict(perception.last, memory=memory.snapshot())
+            elif perception is not None:
                 env.set_perceived(perception.phase(store, hist, eid, env.t, env), 0., perception.source); env.perceived['detail'] = perception.last
             return f
         cap(); done = False
         while not done and env.t < 600:
-            rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=np.asarray(env.obs(), np.float32),
-                       association_valid=int(store.frames[hist[-1]]['meta']['association_valid']))
+            if world == 'v4':
+                rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=memory.legacy(env.v, env.a, env.soc, env.T, env.t_end, env.t, env.t_budget),
+                           association_valid=memory.light_detected(), extra=memory.extra())
+            else:
+                rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=np.asarray(env.obs(), np.float32),
+                           association_valid=int(store.frames[hist[-1]]['meta']['association_valid']))
             obs = obs_from_frames(store, [rec])
             with torch.no_grad():
                 out = learner.encoder(obs); u = float(learner.actor(learner.adapter(obs, out['z']))[0, 0])
             latest = store.frames[hist[-1]]['labels']
             lm = store.frames[hist[-1]]['meta']
-            if lm['map_association']:
+            if lm['map_association'] and latest.get('light_distance_m') is not None:
                 visual.append(dict(pred=int(out['signal'][0, -1].argmax()), pred_z=int(out['signal_z'][0].argmax()), truth=int(latest['signal']), px=float(latest['housing_px_h']),
                                    lamp_px_d=float(latest['lamp_px_d']), d=float(latest['light_distance_m']), roi_nonempty=int(lm['roi_pixels'] > 0), visible=int(latest['visible']), occluded=int(latest['occluded'])))
             cmd = S.command(u)
@@ -419,7 +521,8 @@ def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perce
         m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6),
             fallback_substeps=sum(l['fallback'] for l in env.layer_log), intervened_substeps=sum(l['intervened'] for l in env.layer_log),
             mean_abs_command_gap=float(np.mean([abs(l['applied'] - l['command']) for l in env.layer_log])),
-            signal_source=signal_source, perception_source=None if perception is None else perception.source,
+            signal_source=('vision_memory' if world == 'v4' else signal_source), perception_source=None if perception is None else perception.source, world=world, hide=list(hide),
+            curve_excess_penalty=float(getattr(env, 'e_curve_pen', 0.)), offroad_substeps=int(getattr(env, 'n_offroad', 0)),
             perceived_counts={ph: int(sum(l['perceived'] == ph for l in env.layer_log)) for ph in PHASES},
             perceived_green_truth_red_substeps=int(sum(l['perceived'] == 'green' and l['truth_green'] is False for l in env.layer_log)),
             perceived_nongreen_truth_green_substeps=int(sum(l['perceived'] != 'green' and l['truth_green'] is True for l in env.layer_log)),

@@ -5,7 +5,12 @@ import torch
 LEGACY_DIM = 13
 Z_DIM = 64
 META_DIM = 4
+META_EXTRA_DIM = 6   # v4 vision_memory 模式的附加元信息维数
 POLICY_DIM = LEGACY_DIM + Z_DIM + META_DIM
+
+
+def policy_dim(information_mode='camera_map'):
+    return POLICY_DIM + (META_EXTRA_DIM if information_mode == 'vision_memory' else 0)
 # Preserve measured acceleration at index 1; original comfort_loss depends on it.
 CHANNELS = ('v','a','distance_end','local_limit','distance_curve','curve_limit',
             'map_distance_signal','signal_green','countdown','soc','temperature',
@@ -20,9 +25,10 @@ class VisualObservation:
     signal_roi: torch.Tensor   # [B,T,1,H,W], projected map region, NOT truth color/box
     association_valid: torch.Tensor # [B,1], controlling-light association known
     v2x_valid: torch.Tensor    # [B,1], explicit protocol flag
+    extra: torch.Tensor | None = None   # v4：视觉记忆的附加元信息 [B,META_EXTRA_DIM]（灯置信/年龄/相位持续、弯道已宣告/激活、终点已见）
 
     def to(self,device):
-        return VisualObservation(**{f.name:getattr(self,f.name).to(device) for f in fields(self)})
+        return VisualObservation(**{f.name:(None if getattr(self,f.name) is None else getattr(self,f.name).to(device)) for f in fields(self)})
 
     def validate(self, stack=4):
         b,t,c,h,w=self.frames.shape

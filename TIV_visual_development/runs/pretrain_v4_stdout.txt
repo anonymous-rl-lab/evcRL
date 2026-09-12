@@ -1,0 +1,6 @@
+/home/user/evcrl/TIV_visual_development/visual_dev/pretrain.py:221: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  log.append(dict(step=step, loss=float(loss), dev_all=summ['all'], z_head_latest=zh, detection=det['all'], wall_s=time.monotonic() - t1))
+预训练 step 1 loss 6.8672 | ROI头 acc 0.413 unknown召回 None | Z头(最新帧) acc 0.575 | 检测 格一致 0.0 ≤2px 0.0 误检 0.0
+预训练 step 200 loss 2.6349 | ROI头 acc 0.733 unknown召回 None | Z头(最新帧) acc 0.600 | 检测 格一致 0.21511627906976744 ≤2px 0.09302325581395349 误检 0.0
+预训练 step 400 loss 1.8059 | ROI头 acc 0.826 unknown召回 None | Z头(最新帧) acc 0.850 | 检测 格一致 0.3546511627906977 ≤2px 0.27906976744186046 误检 0.0
