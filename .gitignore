@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+TIV_visual_development/runs/**/*.pt
+TIV_visual_development/runs/**/*.npz
+TIV_visual_development/runs/**/*.tmp
+evsim_v9/out/*
+!evsim_v9/out/.gitkeep
+evsim_v9/logs/*
+!evsim_v9/logs/.gitkeep
