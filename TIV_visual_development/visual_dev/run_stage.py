@@ -132,7 +132,21 @@ def stage_audit():
     if float(CFG.get('actor_output_scale', 1.)) != 1.:
         st = t.learner.adapter(b.obs, t.learner.encoder(b.obs)['z']).detach(); pre = t.learner.actor.f[:-1](st).abs()
         checks['actor_desaturated_at_fork'] = bool(pre.mean() < 1.5); checks['actor_pre_activation_mean'] = float(pre.mean())
-    checks['lambda_c_positive_all_arms'] = float(CFG.get('lambda_c', 0.)) > 0 if CFG.get('runs_subdir') == 'v3' else True
+    checks['lambda_c_positive_all_arms'] = float(CFG.get('lambda_c', 0.)) > 0 if CFG.get('runs_subdir') in ('v3', 'v4') else True
+    if CFG.get('world') == 'v4':   # 9 v4：无地图——控制输入与执行层只依赖视觉记忆
+        from vision_state import VisionMemory
+        e = t.env; leg0 = t.memory.legacy(e.v, e.a, e.soc, e.T, e.t_end, e.t, e.t_budget)
+        saved = list(e.offsets); e.offsets = [float((e.offsets[0] + 45.) % 90.)]   # 改真值相位，画面/记忆不变 → 观测与投影不变
+        leg1 = t.memory.legacy(e.v, e.a, e.soc, e.T, e.t_end, e.t, e.t_budget); a0 = P.S.E.Route20.project(e, 1.3); tg0 = e._stop_targets(); e.offsets = saved; a1 = P.S.E.Route20.project(e, 1.3); tg1 = e._stop_targets()
+        checks['obs_and_executor_independent_of_truth_phase'] = bool(np.array_equal(leg0, leg1) and abs(a0 - a1) < 1e-12 and tg0 == tg1)
+        mem_empty = VisionMemory(); env2 = P.VisionEnv(.85, 288.15, 0., memory=mem_empty); env2.reset(15.); env2.x = P.S.R.SIGNALS[0] - 100.; env2.t = 100.
+        checks['executor_targets_from_memory_only'] = env2._stop_targets() == [] and env2.memory.v_limit() == P.S.R.V_FREE
+        import inspect; src = inspect.getsource(P.VisionEnv._stop_targets) + inspect.getsource(P.VisionEnv.project) + inspect.getsource(VisionMemory)
+        checks['no_map_or_truth_calls_in_control'] = all(k not in src for k in ('signal_green', 'time_to_change', 'R.CURVES', 'R.SIGNALS', 'v_limit(', 'self.obs()', 'offsets'))
+        checks['policy_obs_from_memory_not_env_obs'] = 'env.obs()' not in inspect.getsource(VisualTrainer.current_obs_record).split("if self.world == 'v4'")[1].split('return dict')[1]
+        checks['policy_input_dim_v4'] = state.shape[1] == 13 + 64 + 4 + 6
+        checks['roi_is_predicted_at_runtime'] = all('roi_pred' in t.store.frames[f] for f in t.history)
+        checks['perception_encoder_frozen_and_shared'] = (not any(p.requires_grad for p in t.perception.enc.parameters())) and t.perception is not None
     passed = all(v for k, v in checks.items() if isinstance(v, bool))
     out = dict(passed=passed, checks=checks, gradient_routes=routes, identity=t.identity, runtime=dict(torch=torch.__version__, numpy=np.__version__))
     json_save(RUNS / 'audit' / 'audit.json', out)

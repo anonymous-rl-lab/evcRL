@@ -13,6 +13,7 @@ sys.path.insert(0, str(ROOT / 'visual_dev'))
 import numpy as np, torch
 import pipeline as P
 from pipeline import S, SceneCamera, STACK, pool_observation, labels_from_frames
+from visual_z.contracts import VisualObservation
 from visual_z.model import VisualEncoder, perception_loss, decode_boxes
 OUT = ROOT / 'runs' / 'pretrain'
 
@@ -25,16 +26,26 @@ def compact(seqs):
             L = f['labels']; L['heat'] = L['heat'].astype(np.uint8); L['heat_valid'] = L['heat_valid'].astype(np.uint8); L['box_valid'] = L['box_valid'].astype(np.uint8)
 
 
-def make_sequences(n, seed, tag, coverage='v2'):
+def make_sequences(n, seed, tag, coverage='v2', world=None):
     """生成 n 个 4 帧序列。coverage='v2'：原采样（60% x∈[2200,3000]，v∈[4,22]，相位均匀）。
     coverage='v3'：分层覆盖——30% 原区间；25% 近线 x∈[2900,3000]、v∈[0,12]；10% 停在线上 x∈[2994,3000]、v∈[0,2]；
     20% 全路线；15% 相位定向（x∈[2500,3000]，相位落在绿末/黄/红初 [26,38) s），使近距离与黄灯不再是覆盖缺口。"""
-    cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=seed); rng = np.random.default_rng(seed + 1)
-    seqs = []; xs = S.R.SIGNALS[0]
+    world = world or ('v4' if coverage == 'v4' else 'v2')
+    cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=seed, world=world); rng = np.random.default_rng(seed + 1)
+    seqs = []; xs = S.R.SIGNALS[0]; ca, cb, _ = S.R.CURVES[0]
     for i in range(n):
         eid = f'{tag}{i:05d}'; cam.new_episode(eid)
         t = float(rng.uniform(0., 600.)); off = float(rng.uniform(0., 90.))
-        if coverage == 'v2':
+        if coverage == 'v4':   # 无地图世界：按道路事件分区覆盖
+            u = rng.random()
+            if u < .20: x = float(rng.uniform(ca - 400. - 330., ca - 400.)); v = float(rng.uniform(4., 22.))      # 警示牌可见区
+            elif u < .30: x = float(rng.uniform(ca - 400., cb + 30.)); v = float(rng.uniform(4., 14.))            # 牌后到弯道/解除牌
+            elif u < .55: x = float(rng.uniform(xs - 210., xs)); v = float(rng.uniform(0., 20.))                    # 灯 200 m 可见区
+            elif u < .63: x = float(rng.uniform(xs - 6., xs)); v = float(rng.uniform(0., 2.))                       # 停在线上
+            elif u < .73: x = float(rng.uniform(xs - 210., xs)); v = float(rng.uniform(0., 18.)); off = float((rng.uniform(26., 38.) - t) % 90.)   # 相位定向（绿末/黄/红初）
+            elif u < .85: x = float(rng.uniform(S.R.LENGTH - 410., S.R.LENGTH - 10.)); v = float(rng.uniform(0., 20.))   # 终点标志区
+            else: x = float(rng.uniform(0., 3990.)); v = float(rng.uniform(4., 22.))                                # 全路线
+        elif coverage == 'v2':
             x = float(rng.uniform(2200., 3000.)) if rng.random() < .6 else float(rng.uniform(0., 3990.)); v = float(rng.uniform(4., 22.))
         else:
             u = rng.random()
@@ -130,6 +141,53 @@ def evaluate_vision(encoder, seqs, batch=16, score_thr=0.5):
     return summ, detection, rows
 
 
+def evaluate_vision_v4(encoder, seqs, batch=16, score_thr=0.5, bins=((0, 50), (50, 100), (100, 200), (200, 330), (330, 400))):
+    """v4 口径：每类目标（灯/警示牌/终点/解除牌）按真值距离分层的检测召回（得分>thr 且格在真值格 ±1 内）与距离估计误差；
+    无该类目标的帧上的误检率；灯色的运行时路径：由预测框构造 ROI 再过灯色头的正确率（与教师 ROI 对比）。"""
+    from visual_z.model import decode_detections, predicted_roi
+    from renderer import CLASSES
+    per = {c: [] for c in range(4)}; neg = {c: [] for c in range(4)}; color = []
+    for i in range(0, len(seqs), batch):
+        chunk = seqs[i:i + batch]; obs = pool_observation(chunk)
+        with torch.no_grad(): out = encoder(obs)
+        dets = {c: decode_detections(out, c) for c in range(4)}
+        # 预测 ROI 灯色：用最新帧的灯检测框构造 ROI，再前向一次
+        roi2 = obs.signal_roi.clone()
+        for j in range(len(chunk)):
+            for k in range(STACK):
+                roi2[j, k, 0] = predicted_roi(dets[0]['box'][j, k], P.H, P.W) if float(dets[0]['score'][j, k]) >= score_thr else torch.zeros(P.H, P.W)
+        obs2 = VisualObservation(obs.legacy, obs.frames, obs.valid, obs.age_s, roi2, obs.association_valid, obs.v2x_valid)
+        with torch.no_grad(): out2 = encoder(obs2)
+        for j, seq in enumerate(chunk):
+            for k, f in enumerate(seq):
+                L = f['labels']; hm = L['heat']
+                for c in range(4):
+                    cells = np.argwhere(hm[c] > 0)
+                    if len(cells):
+                        ti, tj = cells[0]; pi, pj = dets[c]['cell'][j, k].tolist(); ok = float(dets[c]['score'][j, k]) >= score_thr and abs(pi - ti) <= 1 and abs(pj - tj) <= 1
+                        d_true = float(L['dist'][0, ti, tj]) * 400.; d_pred = float(dets[c]['dist_m'][j, k])
+                        per[c].append(dict(d=d_true, hit=int(ok), derr=abs(d_pred - d_true) if ok else None, score=float(dets[c]['score'][j, k])))
+                    else: neg[c].append(int(float(dets[c]['score'][j, k]) >= score_thr))
+                if L.get('visible') and f['meta']['map_association']:
+                    color.append(dict(d=float(L['light_distance_m']), truth=int(L['signal']), teacher=int(out['signal'][j, k].argmax()), runtime=int(out2['signal'][j, k].argmax()),
+                                      detected=int(float(dets[0]['score'][j, k]) >= score_thr), roi_iou=float((roi2[j, k, 0] * obs.signal_roi[j, k, 0]).sum() / ((roi2[j, k, 0] + obs.signal_roi[j, k, 0]).clamp(max=1).sum().clamp_min(1)))))
+    rep = {}
+    for c in range(4):
+        rows = per[c]; rep[CLASSES[c]] = dict(n=len(rows), recall=float(np.mean([r['hit'] for r in rows])) if rows else None, false_alarm=float(np.mean(neg[c])) if neg[c] else None,
+            dist_mae=float(np.mean([r['derr'] for r in rows if r['derr'] is not None])) if any(r['derr'] is not None for r in rows) else None,
+            by_distance={f'{lo}-{hi}': dict(n=len(b), recall=float(np.mean([r['hit'] for r in b])) if b else None, dist_mae=float(np.mean([r['derr'] for r in b if r['derr'] is not None])) if any(r['derr'] is not None for r in b) else None,
+                                            dist_rel=float(np.mean([r['derr'] / max(r['d'], 1.) for r in b if r['derr'] is not None])) if any(r['derr'] is not None for r in b) else None)
+                         for lo, hi in bins for b in [[r for r in rows if lo <= r['d'] < hi]]})
+    known = [r for r in color if r['truth'] < 4]
+    rep['light_color'] = dict(n=len(color), teacher_roi_known_acc=float(np.mean([r['teacher'] == r['truth'] for r in known])) if known else None,
+                              runtime_roi_known_acc=float(np.mean([r['runtime'] == r['truth'] for r in known])) if known else None,
+                              runtime_detected_rate=float(np.mean([r['detected'] for r in color])) if color else None, mean_roi_iou=float(np.mean([r['roi_iou'] for r in color])) if color else None,
+                              by_distance={f'{lo}-{hi}': dict(n=len(b), runtime_known_acc=float(np.mean([r['runtime'] == r['truth'] for r in b if r['truth'] < 4])) if any(r['truth'] < 4 for r in b) else None,
+                                                             red_to_green=int(sum(r['truth'] == 0 and r['runtime'] == 2 for r in b)), yellow_to_green=int(sum(r['truth'] == 1 and r['runtime'] == 2 for r in b)))
+                                           for lo, hi in ((0, 20), (20, 50), (50, 100), (100, 150), (150, 215)) for b in [[r for r in color if lo <= r['d'] - 14. < hi]]})
+    return rep
+
+
 def z_head_on_latest(encoder, seqs, batch=16):
     rows = []
     for i in range(0, len(seqs), batch):
@@ -164,6 +222,8 @@ def main(n_train=1600, n_dev=240, n_audit=32, steps=1200, batch=16, seed=4242, c
             print(f"预训练 step {step} loss {float(loss):.4f} | ROI头 acc {summ['all']['roi_head']['acc']:.3f} unknown召回 {summ['all']['roi_head']['unknown_recall']} | Z头(最新帧) acc {zh['acc'] if zh else None:.3f} | 检测 格一致 {det['all'].get('cell_ok_rate')} ≤2px {det['all'].get('hit_le2px')} 误检 {det['no_visible_light_frames']['false_alarm_rate']}", flush=True)
     enc.eval(); summ, det, rows = evaluate_vision(enc, dev); zh = z_head_on_latest(enc, dev); byd = roi_head_by_distance(enc, dev)
     print('ROI 头按距离分层（dev）:', json.dumps(byd, ensure_ascii=False), flush=True)
+    v4rep = evaluate_vision_v4(enc, dev) if coverage == 'v4' else None
+    if v4rep: print('v4 检测/距离/运行时灯色（dev）:', json.dumps(v4rep, ensure_ascii=False), flush=True)
     torch.save(dict(encoder=enc.state_dict(), steps=steps, batch=batch, seed=seed, dev_metrics=summ, pool_seed=seed, coverage=coverage), OUT / 'encoder.pt')
     grads = {}
     obs = pool_observation(dev[:4]); labels = labels_from_frames(dev[:4]); enc.zero_grad(); perception_loss(enc(obs), labels, obs).backward()
@@ -171,7 +231,7 @@ def main(n_train=1600, n_dev=240, n_audit=32, steps=1200, batch=16, seed=4242, c
         grads[name] = sum(float(p.grad.square().sum()) for p in mod.parameters() if p.grad is not None) ** .5
     report = dict(pool=dict(train=n_train, dev=n_dev, audit=n_audit, frames_each=STACK, hw=[P.H, P.W], generation_wall_s=gen_s, frame_bytes=int(train[0][0]['rgb'].nbytes)),
                   label_representability=rep, training=dict(steps=steps, batch_sequences=batch, frames_per_step=batch * STACK, wall_s=time.monotonic() - t1, seconds_per_step=(time.monotonic() - t1) / steps),
-                  dev_signal_metrics=summ, dev_z_head_latest_frame=zh, dev_detection=det, dev_roi_head_by_distance=byd, coverage=coverage, supervised_gradient_norms=grads, log=log,
+                  dev_signal_metrics=summ, dev_z_head_latest_frame=zh, dev_detection=det, dev_roi_head_by_distance=byd, dev_v4=v4rep, coverage=coverage, supervised_gradient_norms=grads, log=log,
                   note='随机初始化编码器的监督预训练，非预训练 MobileNetV3；dev 与 train 使用不同外观 episode 种子；分层同时给出名义灯箱高与实际光斑直径')
     json.dump(report, open(OUT / 'pretrain_report.json', 'w'), indent=1, ensure_ascii=False)
     print(json.dumps(dict(all=summ['all'], z_head=zh, detection=det['all'], grads=grads, wall=report['training']['wall_s']), ensure_ascii=False))
@@ -179,7 +239,7 @@ def main(n_train=1600, n_dev=240, n_audit=32, steps=1200, batch=16, seed=4242, c
 
 if __name__ == '__main__':
     import argparse
-    ap = argparse.ArgumentParser(); ap.add_argument('--coverage', default='v2', choices=('v2', 'v3')); ap.add_argument('--out', default=None); ap.add_argument('--steps', type=int, default=1200)
+    ap = argparse.ArgumentParser(); ap.add_argument('--coverage', default='v2', choices=('v2', 'v3', 'v4')); ap.add_argument('--out', default=None); ap.add_argument('--steps', type=int, default=1200)
     ap.add_argument('--n-train', type=int, default=1600); ap.add_argument('--n-dev', type=int, default=240)
     a = ap.parse_args()
     if a.out: OUT = ROOT / 'runs' / a.out

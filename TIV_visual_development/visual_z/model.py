@@ -31,6 +31,8 @@ class VisualEncoder(nn.Module):
         self.c2=block(16,32,2);self.c3=block(32,48,2);self.c4=block(48,64,2)
         self.lat2=nn.Conv2d(32,32,1);self.lat3=nn.Conv2d(48,32,1);self.lat4=nn.Conv2d(64,32,1)
         self.heat=nn.Conv2d(32,classes,1);self.box=nn.Conv2d(32,4,1)
+        self.dist=nn.Conv2d(32,1,1)   # v4：目标格距离回归（sigmoid → d/400）
+        self.presence=nn.Linear(64,4)  # v4：逐帧“画面中是否存在该类目标”（灯/警示牌/终点/解除牌），BCE 训练，作检测门控分数（热图峰值分数校准差）
         self.signal=nn.Linear(32,5)  # red/yellow/green/off/unknown, controlling light only（ROI 头）
         self.temporal=nn.Sequential(nn.Linear(stack*(64+2),128),nn.SiLU(),nn.Linear(128,zdim),nn.LayerNorm(zdim))
         self.signal_z=nn.Linear(zdim,5)   # v2：由 Z 预测最新帧灯色，使视觉监督训练到 Z 末端
@@ -42,10 +44,11 @@ class VisualEncoder(nn.Module):
         c2=self.c2(self.stem(x));c3=self.c3(c2);c4=self.c4(c3)
         p4=self.lat4(c4);p3=self.lat3(c3)+F.interpolate(p4,size=c3.shape[-2:],mode='nearest')
         p2=self.lat2(c2)+F.interpolate(p3,size=c2.shape[-2:],mode='nearest')
-        logits=self.heat(p2);boxes=self.box(p2).sigmoid()
+        logits=self.heat(p2);boxes=self.box(p2).sigmoid();dist=self.dist(p2).sigmoid()
         att=logits.detach().sigmoid().sum(1,keepdim=True)+1e-6   # v2d：注意力权重与热图头切断梯度——热图只由检测监督塑形，Z 侧损失/TD 梯度经 p2 特征进入骨干，不再改写热图头（对抗式审查发现该耦合初始占检测梯度约 25%）
         event=(p2*att).sum((2,3))/att.sum((2,3))
         scene=p4.mean((2,3));f=torch.cat([scene,event],1).reshape(b,t,64)
+        presence=self.presence(f)
         f=f*obs.valid.unsqueeze(-1)
         temporal=torch.cat([f,obs.valid.float().unsqueeze(-1),obs.age_s.clamp(0,10).unsqueeze(-1)],-1)
         z=self.temporal(temporal.flatten(1))
@@ -57,16 +60,19 @@ class VisualEncoder(nn.Module):
         sl=torch.where(roi_empty.unsqueeze(1),UNKNOWN_LOGITS.to(sl).expand_as(sl),sl).reshape(b,t,5)
         hh,ww=p2.shape[-2:]
         return {'z':z,'heat':logits.reshape(b,t,-1,hh,ww),
-                'boxes':boxes.reshape(b,t,4,hh,ww),'signal':sl,'signal_z':self.signal_z(z),
+                'boxes':boxes.reshape(b,t,4,hh,ww),'dist':dist.reshape(b,t,1,hh,ww),'presence':presence,'signal':sl,'signal_z':self.signal_z(z),
                 'roi_empty':roi_empty.reshape(b,t)}
 
 class InputAdapter(nn.Module):
     def __init__(self,information_mode='camera_map'):
         super().__init__()
-        if information_mode not in ('camera_map','camera_map_v2x'):raise ValueError(information_mode)
+        if information_mode not in ('camera_map','camera_map_v2x','vision_memory'):raise ValueError(information_mode)
         self.information_mode=information_mode
     def forward(self,obs,z):
         o=obs.legacy.clone()
+        if self.information_mode=='vision_memory':   # v4：legacy 13 维已全部来自视觉记忆（无地图、无真值），不再屏蔽；附加 6 维记忆元信息
+            meta=torch.cat([obs.valid[:,-1:].float(),obs.age_s[:,-1:].clamp(0,10),obs.association_valid.float(),torch.zeros_like(obs.v2x_valid),obs.extra.float()],1)
+            return torch.cat([o,z,meta],1)
         o[:,7]=-1.
         if self.information_mode=='camera_map':
             o[:,8]=1.;v2x=torch.zeros_like(obs.v2x_valid)
@@ -118,6 +124,13 @@ def perception_loss(output,labels,obs):
         mask=labels['box_valid']*obs.valid[:,:,None,None,None]
         err=F.smooth_l1_loss(output['boxes'],labels['boxes'],reduction='none')
         losses.append((err*mask).sum()/mask.expand_as(err).sum().clamp_min(1))
+    if 'dist' in labels:   # v4：距离回归，只在目标格；对数尺度（相对误差）
+        mask=labels['dist_valid']*obs.valid[:,:,None,None,None]
+        err=F.smooth_l1_loss(torch.log1p(output['dist']*400.),torch.log1p(labels['dist']*400.),reduction='none',beta=.1)
+        losses.append(2.*(err*mask).sum()/mask.sum().clamp_min(1))
+    if 'presence' in labels:   # v4：逐帧存在性
+        m=obs.valid.float().unsqueeze(-1).expand_as(labels['presence'])
+        losses.append((F.binary_cross_entropy_with_logits(output['presence'],labels['presence'],reduction='none')*m).sum()/m.sum().clamp_min(1))
     if 'signal' in labels:
         y=labels['signal'].clone();y[~obs.valid]=-100;y[output['roi_empty']]=-100   # 空 ROI 帧由规则输出 unknown，不参与 ROI 头训练
         losses.append(F.cross_entropy(output['signal'].reshape(-1,5),y.reshape(-1),ignore_index=-100,
@@ -125,3 +138,22 @@ def perception_loss(output,labels,obs):
         yz=labels['signal'][:,-1].clone();yz[~obs.valid[:,-1]]=-100                # v2：Z 头监督最新帧灯色（含 unknown）
         losses.append(F.cross_entropy(output['signal_z'],yz,ignore_index=-100,reduction='sum')/(yz!=-100).sum().clamp_min(1))
     return sum(losses,zero)
+
+
+def decode_detections(out,cls,cell=4,dist_scale=400.):
+    """v4：对每帧取类别 cls 的最大格，返回 dict(score[b,t], box[b,t,4] 像素, dist_m[b,t], cell[b,t,2])。"""
+    heat=out['heat'];boxes=out['boxes'];dist=out['dist'];b,t,_,hh,ww=heat.shape
+    score,idx=heat[:,:,cls].reshape(b,t,-1).max(-1);i=idx//ww;j=idx%ww
+    if 'presence' in out:score=out['presence'][:,:,cls]   # v4：门控分数用逐帧存在头（校准好），位置仍用热图峰值
+    bx,_=decode_boxes(heat,boxes,cls,cell)
+    dm=torch.stack([dist[n,k,0,i[n,k],j[n,k]] for n in range(b) for k in range(t)]).reshape(b,t)*dist_scale
+    return dict(score=score.sigmoid(),box=bx,dist_m=dm,cell=torch.stack([i,j],-1))
+
+
+def predicted_roi(box,h,w,min_half=6.,scale=1.5):
+    """v4：由检测框构造 ROI 掩码 [h,w]（框按 scale 放大、半宽至少 min_half px，裁剪到画面）。box=(l,t,r,b) 像素。"""
+    l,t,r,b_=[float(v) for v in box];cx,cy=(l+r)/2,(t+b_)/2;hw=max((r-l)/2*scale,min_half);hh=max((b_-t)/2*scale,min_half)
+    roi=torch.zeros(h,w)
+    l2,r2=int(max(cx-hw,0)),int(min(cx+hw,w-1));t2,b2=int(max(cy-hh,0)),int(min(cy+hh,h-1))
+    if r2>=l2 and b2>=t2 and cx+hw>=0 and cx-hw<=w-1 and cy+hh>=0 and cy-hh<=h-1:roi[t2:b2+1,l2:r2+1]=1.
+    return roi

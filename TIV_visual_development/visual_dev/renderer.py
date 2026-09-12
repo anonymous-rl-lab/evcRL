@@ -30,7 +30,12 @@ LIGHT_AHEAD = 14.0              # 灯箱在停止线远侧 14 m（v2）
 SIGN_LATERAL, SIGN_H, SIGN_SIZE = 4.0, 2.5, 0.9
 VISIBLE_LAMP_M = 450.0          # 超过此距离灯面低于可分辨像素，不渲染，标签 unknown
 MIN_GLOW_PX = 1.3               # 亮灯的最小发光半径（相机 bloom）；这是仿真假设，评估时按实际光斑直径分层披露
-CLASSES = ('traffic_light', 'curve_sign', 'end_marker')   # 热图前三类，其余五类保留为 0
+CLASSES = ('traffic_light', 'curve_sign', 'end_marker', 'release_sign')   # 热图前四类（第 4 类 release_sign 仅 v4 世界），其余保留为 0
+# ---- v4 世界约定（world='v4'）：无地图、靠视觉获取道路事件信息
+SIGN_AHEAD = 400.0              # 弯道警示牌立在入弯点上游 400 m；牌面语义 = “前方 400 m 入弯，限速 35 km/h”（本世界唯一弯道类型）
+LIGHT_RANGE_M = 200.0           # 信号灯只在距停止线 200 m 内可见（灯箱在停止线远侧 14 m，故灯箱可见距离 ≤ 214 m）
+DIST_SCALE = 400.0              # 距离回归头目标 = min(d/400, 1)
+SIGN_VISIBLE_M = 320.0          # 标牌可见距离
 COLOR_CLASSES = ('red', 'yellow', 'green', 'off', 'unknown')
 LAMP_RGB = {'red': (255, 40, 30), 'yellow': (255, 200, 40), 'green': (40, 230, 90)}
 CELL = 4
@@ -77,8 +82,11 @@ def decode_box(i, j, target):
 
 
 class SceneCamera:
-    def __init__(self, curves, signals, length, seed=0, noise_seed=None):
-        self.curves, self.signals, self.length = list(curves), list(signals), float(length)
+    def __init__(self, curves, signals, length, seed=0, noise_seed=None, world='v2'):
+        """world='v2'：原世界（弯道牌立在入弯点、灯 450 m 可见、无解除牌/停止线标线）；'v4'：警示牌上游 400 m、解除牌在弯道出口、
+        灯只在停止线 200 m 内可见并画停止线标线、每个目标格带距离回归标签。默认 'v2'，旧池/编码器逐位不变。"""
+        self.curves, self.signals, self.length = list(curves), list(signals), float(length); self.world = world
+        if world not in ('v2', 'v4'): raise ValueError(world)
         self.rng = np.random.default_rng(seed)
         # v2e：noise_seed 给定时，逐帧传感器噪声用独立的随机数流，外观（new_episode）只由 seed 决定，
         # 不再随之前采过多少帧而变；未给定时噪声与外观共用 self.rng（训练/池生成保持原行为，逐位不变）
@@ -148,19 +156,42 @@ class SceneCamera:
                       boxes=np.zeros((4, *P2), np.float32), box_valid=np.zeros((1, *P2), np.float32),
                       signal=4, visible=0, occluded=0, housing_px_h=0., lamp_px_d=0., light_px_h=0.,
                       light_distance_m=None, color_truth=None, light_box_px=None)
+        v4 = self.world == 'v4'; hide = getattr(self, 'hide', set())
+        if v4:
+            labels['dist'] = np.zeros((1, *P2), np.float32); labels['dist_valid'] = np.zeros((1, *P2), np.float32)
+            labels['truth'] = dict(curve_sign_m=None, release_sign_m=None, light_m=None, stop_line_m=None, end_m=None, curve_entry_m=None, curve_exit_m=None)
         objects = []
         d_end = self.length - x
         if 0.5 < d_end < 400.:
-            objects.append((d_end, lambda: self._draw_marker(dr, d_end, labels)))
+            if 'end_marker' not in hide: objects.append((d_end, lambda: self._draw_marker(dr, d_end, labels)))
+            if v4: labels['truth']['end_m'] = float(d_end)
         for a, b, _ in self.curves:
-            d = a - x
-            if 0.5 < d < 320.:
-                objects.append((d, lambda d=d: self._draw_sign(dr, d, labels)))
+            if v4:
+                labels['truth']['curve_entry_m'] = float(a - x); labels['truth']['curve_exit_m'] = float(b - x)
+                d = (a - SIGN_AHEAD) - x                      # 警示牌在入弯点上游 400 m
+                if 0.5 < d < SIGN_VISIBLE_M:
+                    labels['truth']['curve_sign_m'] = float(d)
+                    if 'curve_sign' not in hide: objects.append((d, lambda d=d: self._draw_sign(dr, d, labels)))
+                dr_ = b - x                                   # 解除牌在弯道出口
+                if 0.5 < dr_ < SIGN_VISIBLE_M:
+                    labels['truth']['release_sign_m'] = float(dr_)
+                    if 'release_sign' not in hide: objects.append((dr_, lambda d=dr_: self._draw_release(dr, d, labels)))
+            else:
+                d = a - x
+                if 0.5 < d < 320.:
+                    objects.append((d, lambda d=d: self._draw_sign(dr, d, labels)))
         light = None
         for k, xs in enumerate(self.signals):
-            d = xs + LIGHT_AHEAD - x
-            if 0.5 < d < 700.:
-                color = force_color or signal_color(sim_time, pose['offsets'][k])
+            d = xs + LIGHT_AHEAD - x; d_line = xs - x
+            color = force_color or signal_color(sim_time, pose['offsets'][k])
+            if 'light_color' in hide: color = 'off'
+            if v4:
+                if 0.5 < d_line < LIGHT_RANGE_M:               # v4：灯与停止线标线只在 200 m 内出现
+                    labels['color_truth'] = color; labels['light_distance_m'] = float(d); labels['truth']['light_m'] = float(d); labels['truth']['stop_line_m'] = float(d_line)
+                    light = (d, color)
+                    objects.append((d_line, lambda dl=d_line: self._draw_stopline(dr, dl, labels)))
+                    objects.append((d, lambda d=d, c=color: self._draw_light(dr, d, c, labels)))
+            elif 0.5 < d < 700.:
                 labels['color_truth'] = color; labels['light_distance_m'] = float(d)
                 light = (d, color)
                 objects.append((d, lambda d=d, c=color: self._draw_light(dr, d, c, labels)))
@@ -184,7 +215,7 @@ class SceneCamera:
         # 由地图距离投影的 ROI（不用真值框），裁剪到画面；association_valid 要求 ROI 与画面相交
         roi = np.zeros((1, H, W), np.float32); d_map = None
         for xs in self.signals:
-            if 0.5 < xs + LIGHT_AHEAD - x <= VISIBLE_LAMP_M: d_map = xs + LIGHT_AHEAD - x
+            if (0.5 < xs - x < LIGHT_RANGE_M) if v4 else (0.5 < xs + LIGHT_AHEAD - x <= VISIBLE_LAMP_M): d_map = xs + LIGHT_AHEAD - x
         if d_map is not None:
             u, v = project(LIGHT_LATERAL, LIGHT_BASE + HOUSING[1] / 2, d_map)
             hh = max(FOCAL * HOUSING[1] / d_map, 6.); ww = max(FOCAL * HOUSING[0] / d_map, 6.)
@@ -202,11 +233,12 @@ class SceneCamera:
         return dict(rgb=rgb, labels=labels, roi=roi, meta=meta)
 
     # ------------------------------------------------------------ objects
-    def _mark(self, labels, cls, box, extra=None):
+    def _mark(self, labels, cls, box, extra=None, dist=None):
         enc = encode_box(box)
         if enc is None: return False
         i, j, target, clipped = enc
         labels['heat'][cls, i, j] = 1.; labels['boxes'][:, i, j] = target; labels['box_valid'][0, i, j] = 1.
+        if dist is not None and 'dist' in labels: labels['dist'][0, i, j] = min(float(dist) / DIST_SCALE, 1.); labels['dist_valid'][0, i, j] = 1.
         if extra: labels.update(extra)
         if cls == 0: labels['_light_cell'] = (i, j); labels['light_box_px'] = clipped   # 评估真值框用裁剪后的框（与训练目标一致）
         return True
@@ -221,11 +253,12 @@ class SceneCamera:
         dr.rectangle(box, fill=self._fog(self._bright((25, 25, 25)), d))
         lamp_px = FOCAL * LAMP_R / d
         in_frame = 0. <= cv <= H - 1 and 0. <= cu <= W - 1
-        visible = d <= VISIBLE_LAMP_M and in_frame
+        vis_m = (LIGHT_RANGE_M + LIGHT_AHEAD) if self.world == 'v4' else VISIBLE_LAMP_M
+        visible = d <= vis_m and in_frame
         glow_r = max(lamp_px, MIN_GLOW_PX)
         for k, name in enumerate(('red', 'yellow', 'green')):
             lu, lv = project(LIGHT_LATERAL, LIGHT_BASE + HOUSING[1] * (0.83 - 0.33 * k), d)
-            if name == color and d <= VISIBLE_LAMP_M:
+            if name == color and d <= vis_m:
                 dr.ellipse([lu - glow_r, lv - glow_r, lu + glow_r, lv + glow_r], fill=self._fog(self._bright(LAMP_RGB[name]), d))
             elif lamp_px >= 0.8:
                 dr.ellipse([lu - lamp_px, lv - lamp_px, lu + lamp_px, lv + lamp_px], fill=self._fog(self._bright((45, 40, 40)), d))
@@ -233,7 +266,7 @@ class SceneCamera:
         labels['housing_px_h'] = labels['light_px_h'] = float(2 * hh)
         labels['lamp_px_d'] = float(2 * glow_r) if visible else 0.
         labels['light_box_px'] = None
-        if visible and self._mark(labels, 0, box, dict(signal=COLOR_CLASSES.index(color), visible=1)):
+        if visible and self._mark(labels, 0, box, dict(signal=COLOR_CLASSES.index(color), visible=1), dist=d):
             return
         labels['signal'] = 4; labels['visible'] = 0
 
@@ -244,7 +277,22 @@ class SceneCamera:
         dr.polygon([(cu, cv - s), (cu + s, cv), (cu, cv + s), (cu - s, cv)], fill=self._fog(self._bright((245, 200, 30)), d))
         if s >= 1.2:
             dr.line([(cu - s * .5, cv + s * .3), (cu, cv - s * .2), (cu + s * .5, cv + s * .3)], fill=self._fog(self._bright((20, 20, 20)), d), width=1)
-        self._mark(labels, 1, (cu - s, cv - s, cu + s, cv + s))
+        self._mark(labels, 1, (cu - s, cv - s, cu + s, cv + s), dist=d)
+
+    def _draw_release(self, dr, d, labels):
+        """v4：限速解除牌（白色圆牌 + 黑色斜杠），立在弯道出口右侧。"""
+        cu, cv = project(SIGN_LATERAL, SIGN_H, d); s = max(FOCAL * SIGN_SIZE / (2 * d), .6)
+        pu, pv = project(SIGN_LATERAL, 0., d)
+        dr.line([(pu, pv), (cu, cv)], fill=self._fog(self._bright((70, 70, 70)), d), width=1)
+        dr.ellipse([cu - s, cv - s, cu + s, cv + s], fill=self._fog(self._bright((240, 240, 240)), d))
+        if s >= 1.2:
+            dr.line([(cu - s * .6, cv + s * .6), (cu + s * .6, cv - s * .6)], fill=self._fog(self._bright((20, 20, 20)), d), width=max(1, int(s * .25)))
+        self._mark(labels, 3, (cu - s, cv - s, cu + s, cv + s), dist=d)
+
+    def _draw_stopline(self, dr, d, labels):
+        """v4：信号灯停止线标线（白色横杠，跨本车道）。"""
+        lu, lv = project(-5.25, 0., d); ru, rv = project(1.75, 0., d)
+        dr.line([(lu, lv), (ru, rv)], fill=self._fog(self._bright((235, 235, 235)), d), width=max(1, int(FOCAL * 0.4 / d)))
 
     def _draw_marker(self, dr, d, labels):
         lu, lv = project(-5.25, 0., d); ru, rv = project(1.75, 0., d)
@@ -252,7 +300,7 @@ class SceneCamera:
         for lat, col in ((-5.25, (200, 30, 30)), (1.75, (200, 30, 30))):
             bu, bv = project(lat, 0., d); tu, tv = project(lat, 1.6, d)
             dr.line([(bu, bv), (tu, tv)], fill=self._fog(self._bright(col), d), width=max(1, int(FOCAL * 0.2 / d)))
-        self._mark(labels, 2, (lu, min(lv, rv) - max(FOCAL * 1.6 / d, 1), ru, max(lv, rv)))
+        self._mark(labels, 2, (lu, min(lv, rv) - max(FOCAL * 1.6 / d, 1), ru, max(lv, rv)), dist=d)
 
     def _draw_occluder(self, dr, d, h, w, labels):
         cu, cv = project(LIGHT_LATERAL - 0.5, h, d); rw, rh = max(FOCAL * w / (2 * d), 1.), max(FOCAL * (h * 0.6) / (2 * d), 1.)
