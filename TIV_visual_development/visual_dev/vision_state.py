@@ -160,6 +160,15 @@ class VisionMemory:
     def light_detected(self):
         return int(self.sig['seen'] and self.sig['age'] <= 0.)
 
+    def adopt_state(self, old):
+        """从断点里反序列化的旧记忆对象迁移运行状态（轨迹/投票），参数用当前默认值——断点早于代码改动时也能续接。"""
+        for k in ('curve', 'sig', 'end', 'votes', 'mismatch', 'last_dets'):
+            if hasattr(old, k): setattr(self, k, getattr(old, k))
+        for tr in (self.curve, self.sig, self.end):
+            for k, v in tr.items():
+                if v is None and k in ('age',): tr[k] = math.inf
+        return self
+
     def snapshot(self):
         f = lambda d: {k: (None if isinstance(v, float) and not math.isfinite(v) else v) for k, v in d.items()}   # inf → None（JSON 安全）
         return dict(curve=f(self.curve), sig=f(self.sig), end=f(self.end))

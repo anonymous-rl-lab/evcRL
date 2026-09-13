@@ -183,6 +183,7 @@ def fork_from_common(arm, out):
     t.learner.updates = s['learner']['updates']
     t.store.load_state_dict(s['store']); t.replay.load_state_dict(s['replay']); t.pending = P.deque(s['pending']); t.history = list(s['history'])
     t.camera.load_state_dict(s['camera']); t.env.__dict__ = s['env']; t.episode_id = s['episode_id']; t.episodes_started = s['episodes_started']; t.ou = s['ou']
+    if t.world == 'v4': t.memory.adopt_state(t.env.memory); t.env.memory = t.memory   # v4：记忆状态迁移到当前代码的实例
     for k, v in s['counters'].items(): setattr(t, k, v)
     t.diag = []; t.completed = []; t.wall = dict(train=0., eval=0., save=0.); t.pool_sampler.load_state_dict(s['pool_sampler'])
     random.setstate(s['rng']['python']); np.random.set_state(s['rng']['numpy']); torch.set_rng_state(s['rng']['torch'])
