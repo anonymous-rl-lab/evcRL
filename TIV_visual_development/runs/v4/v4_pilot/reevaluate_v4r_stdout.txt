@@ -1,0 +1,4 @@
+[frozen] 评估：完赛(静止) 9/9 到达 9 违规 0 弯道超速 0 平均I_j 84.78 时间 217.6 能耗 600.6 R -39.025 干预 3694 | Z探针 0.983 | 消融 {'hide_curve_sign': (9, 0, 81), 'hide_light_color': (2, 6, 0), 'hide_end_marker': (0, 0, 0)} (137s)
+[supervised] 评估：完赛(静止) 9/9 到达 9 违规 0 弯道超速 0 平均I_j 98.85 时间 220.6 能耗 628.0 R -40.257 干预 3630 | Z探针 0.983 | 消融 {'hide_curve_sign': (9, 0, 81), 'hide_light_color': (2, 6, 0), 'hide_end_marker': (0, 0, 0)} (137s)
+[joint] 评估：完赛(静止) 9/9 到达 9 违规 0 弯道超速 0 平均I_j 88.36 时间 223.3 能耗 610.4 R -39.842 干预 3638 | Z探针 0.983 | 消融 {'hide_curve_sign': (9, 0, 81), 'hide_light_color': (2, 7, 0), 'hide_end_marker': (0, 0, 0)} (127s)
+[joint_head] 评估：完赛(静止) 9/9 到达 9 违规 0 弯道超速 0 平均I_j 87.41 时间 221.1 能耗 625.6 R -40.206 干预 3699 | Z探针 0.983 | 消融 {'hide_curve_sign': (9, 0, 81), 'hide_light_color': (2, 7, 0), 'hide_end_marker': (0, 0, 0)} (130s)

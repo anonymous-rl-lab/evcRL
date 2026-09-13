@@ -65,8 +65,8 @@
  "world": "v4",
  "det_thr": {
   "traffic_light": 0.4,
-  "curve_sign": 0.5,
-  "end_marker": 0.55,
+  "curve_sign": 0.4,
+  "end_marker": 0.35,
   "release_sign": 0.2
  },
  "hold_s": 3.0,
