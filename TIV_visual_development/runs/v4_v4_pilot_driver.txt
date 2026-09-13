@@ -1,0 +1,2 @@
+supervised 退出码 1
+frozen 退出码 1
