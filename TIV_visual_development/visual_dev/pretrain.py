@@ -37,15 +37,15 @@ def make_sequences(n, seed, tag, coverage='v2', world=None):
         eid = f'{tag}{i:05d}'; cam.new_episode(eid)
         t = float(rng.uniform(0., 600.)); off = float(rng.uniform(0., 90.))
         if coverage in ('v4', 'v4b'):   # 无地图世界：按道路事件分区覆盖；v4b：停在线上分区扩到线后 3 m（灯箱在线远侧 14 m，停车等待帧 d∈[11,20] m），并加近线低速接近分区
-            u = rng.random()
+            u = rng.random(); ov = .13 * (1. - u) if coverage == 'v4b' else 0.   # v4b：新分区占 13%，其余分区按 0.87 等比压缩（u<.20 → u<.13+.87·.20）
             if coverage == 'v4b' and u < .08: x = float(rng.uniform(xs - 6., xs + 3.)); v = float(rng.uniform(0., 2.))       # v4b：停在线上/略过线等待
             elif coverage == 'v4b' and u < .13: x = float(rng.uniform(xs - 30., xs - 2.)); v = float(rng.uniform(0., 6.))   # v4b：近线低速接近
-            elif u < .20: x = float(rng.uniform(ca - 400. - 330., ca - 400.)); v = float(rng.uniform(4., 22.))      # 警示牌可见区
-            elif u < .30: x = float(rng.uniform(ca - 400., cb + 30.)); v = float(rng.uniform(4., 14.))            # 牌后到弯道/解除牌
-            elif u < .55: x = float(rng.uniform(xs - 210., xs)); v = float(rng.uniform(0., 20.))                    # 灯 200 m 可见区
-            elif u < .63: x = float(rng.uniform(xs - 6., xs)); v = float(rng.uniform(0., 2.))                       # 停在线上
-            elif u < .73: x = float(rng.uniform(xs - 210., xs)); v = float(rng.uniform(0., 18.)); off = float((rng.uniform(26., 38.) - t) % 90.)   # 相位定向（绿末/黄/红初）
-            elif u < .85: x = float(rng.uniform(S.R.LENGTH - 410., S.R.LENGTH - 10.)); v = float(rng.uniform(0., 20.))   # 终点标志区
+            elif u < .20 + ov: x = float(rng.uniform(ca - 400. - 330., ca - 400.)); v = float(rng.uniform(4., 22.))      # 警示牌可见区
+            elif u < .30 + ov: x = float(rng.uniform(ca - 400., cb + 30.)); v = float(rng.uniform(4., 14.))            # 牌后到弯道/解除牌
+            elif u < .55 + ov: x = float(rng.uniform(xs - 210., xs)); v = float(rng.uniform(0., 20.))                    # 灯 200 m 可见区
+            elif u < .63 + ov: x = float(rng.uniform(xs - 6., xs)); v = float(rng.uniform(0., 2.))                       # 停在线上
+            elif u < .73 + ov: x = float(rng.uniform(xs - 210., xs)); v = float(rng.uniform(0., 18.)); off = float((rng.uniform(26., 38.) - t) % 90.)   # 相位定向（绿末/黄/红初）
+            elif u < .85 + ov: x = float(rng.uniform(S.R.LENGTH - 410., S.R.LENGTH - 10.)); v = float(rng.uniform(0., 20.))   # 终点标志区
             else: x = float(rng.uniform(0., 3990.)); v = float(rng.uniform(4., 22.))                                # 全路线
         elif coverage == 'v2':
             x = float(rng.uniform(2200., 3000.)) if rng.random() < .6 else float(rng.uniform(0., 3990.)); v = float(rng.uniform(4., 22.))
