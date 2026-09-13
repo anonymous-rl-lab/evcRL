@@ -528,9 +528,10 @@ def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perce
                 if env.x >= 3999 and env.v <= .3: cmd = 0.
                 _, r, d, info = env.step(cmd); cap()
                 overshoot = env.x > S.R.LENGTH + 100.   # v4：无地图时可能冲过终点；驶出终点 100 m 视为失败终止
-                done = bool(info['red_crossing'] or (info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6) or env.t >= 600 or overshoot)
+                settled_now = info['arrived'] and env.v <= (0.05 if world == 'v4' else 1e-6) and abs(env.a) <= (0.05 if world == 'v4' else 1e-6)   # v4：感知执行层停车有蠕动，0.05 m/s 视为静止
+                done = bool(info['red_crossing'] or settled_now or env.t >= 600 or overshoot)
                 if done: break
-        m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6), overshoot=bool(env.x > S.R.LENGTH + 100.),
+        m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= (0.05 if world == 'v4' else 1e-6) and abs(env.a) <= (0.05 if world == 'v4' else 1e-6)), overshoot=bool(env.x > S.R.LENGTH + 100.),
             fallback_substeps=sum(l['fallback'] for l in env.layer_log), intervened_substeps=sum(l['intervened'] for l in env.layer_log),
             mean_abs_command_gap=float(np.mean([abs(l['applied'] - l['command']) for l in env.layer_log])),
             signal_source=('vision_memory' if world == 'v4' else signal_source), perception_source=None if perception is None else perception.source, world=world, hide=list(hide),
