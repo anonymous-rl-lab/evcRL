@@ -1,0 +1,38 @@
+[joint_head] 子步 280/9000 更新 70 eps 4 完赛 4 q_loss 248.64 vis 1.744 enc_grad 4.20e+02
+[joint_head] 子步 550/9000 更新 138 eps 5 完赛 5 q_loss 222.44 vis 0.727 enc_grad 1.29e+02
+[joint_head] 子步 824/9000 更新 207 eps 6 完赛 6 q_loss 265.60 vis 1.348 enc_grad 6.12e+02
+[joint_head] 子步 1084/9000 更新 272 eps 6 完赛 6 q_loss 543.81 vis 1.344 enc_grad 9.82e+02
+[joint_head] 子步 1369/9000 更新 344 eps 7 完赛 7 q_loss 377.85 vis 0.730 enc_grad 1.13e+03
+[joint_head] 子步 1645/9000 更新 413 eps 7 完赛 7 q_loss 310.13 vis 0.929 enc_grad 3.48e+02
+[joint_head] 子步 1913/9000 更新 480 eps 8 完赛 8 q_loss 167.28 vis 0.406 enc_grad 2.61e+02
+[joint_head] 子步 2175/9000 更新 546 eps 9 完赛 9 q_loss 327.36 vis 0.685 enc_grad 1.17e+03
+[joint_head] 子步 2435/9000 更新 611 eps 9 完赛 9 q_loss 259.33 vis 1.346 enc_grad 3.51e+02
+[joint_head] 子步 2687/9000 更新 674 eps 10 完赛 10 q_loss 233.47 vis 0.869 enc_grad 5.36e+02
+[joint_head] 子步 2947/9000 更新 739 eps 10 完赛 10 q_loss 251.15 vis 1.425 enc_grad 5.17e+02
+[joint_head] 子步 3195/9000 更新 801 eps 11 完赛 11 q_loss 188.10 vis 0.459 enc_grad 1.79e+02
+[joint_head] 子步 3449/9000 更新 865 eps 12 完赛 12 q_loss 148.13 vis 0.379 enc_grad 4.65e+02
+[joint_head] 子步 3701/9000 更新 928 eps 12 完赛 12 q_loss 119.06 vis 0.466 enc_grad 1.37e+03
+[joint_head] 子步 3957/9000 更新 992 eps 12 完赛 12 q_loss 225.27 vis 0.567 enc_grad 7.98e+02
+[joint_head] 子步 4201/9000 更新 1053 eps 12 完赛 12 q_loss 185.82 vis 0.661 enc_grad 1.04e+03
+[joint_head] 子步 4465/9000 更新 1119 eps 12 完赛 12 q_loss 139.95 vis 0.711 enc_grad 5.03e+02
+[joint_head] 子步 4713/9000 更新 1181 eps 13 完赛 12 q_loss 89.37 vis 0.946 enc_grad 5.42e+02
+[joint_head] 子步 4969/9000 更新 1245 eps 13 完赛 12 q_loss 63.46 vis 0.828 enc_grad 4.50e+02
+[joint_head] 子步 5213/9000 更新 1306 eps 14 完赛 13 q_loss 66.28 vis 1.419 enc_grad 1.05e+03
+[joint_head] 子步 5465/9000 更新 1369 eps 14 完赛 13 q_loss 166.89 vis 0.632 enc_grad 3.53e+02
+[joint_head] 子步 5708/9000 更新 1430 eps 15 完赛 14 q_loss 114.62 vis 0.548 enc_grad 2.56e+02
+[joint_head] 子步 5972/9000 更新 1496 eps 15 完赛 14 q_loss 117.53 vis 0.324 enc_grad 4.27e+02
+[joint_head] 子步 6231/9000 更新 1561 eps 16 完赛 15 q_loss 69.44 vis 0.371 enc_grad 3.44e+02
+[joint_head] 子步 6487/9000 更新 1625 eps 16 完赛 15 q_loss 99.50 vis 1.106 enc_grad 6.70e+02
+[joint_head] 子步 6733/9000 更新 1687 eps 17 完赛 16 q_loss 55.92 vis 0.488 enc_grad 4.74e+02
+[joint_head] 子步 6987/9000 更新 1751 eps 18 完赛 17 q_loss 63.01 vis 0.661 enc_grad 5.43e+02
+[joint_head] 子步 7239/9000 更新 1814 eps 18 完赛 17 q_loss 68.00 vis 0.545 enc_grad 2.44e+02
+[joint_head] 子步 7488/9000 更新 1877 eps 19 完赛 17 q_loss 29.34 vis 1.088 enc_grad 1.66e+02
+[joint_head] 子步 7736/9000 更新 1939 eps 19 完赛 17 q_loss 40.87 vis 0.755 enc_grad 3.10e+02
+[joint_head] 子步 7984/9000 更新 2001 eps 20 完赛 18 q_loss 31.01 vis 0.784 enc_grad 4.11e+02
+[joint_head] 子步 8224/9000 更新 2061 eps 20 完赛 18 q_loss 60.97 vis 0.730 enc_grad 3.51e+02
+[joint_head] 子步 8470/9000 更新 2123 eps 21 完赛 19 q_loss 43.35 vis 0.707 enc_grad 4.91e+02
+[joint_head] 子步 8715/9000 更新 2185 eps 22 完赛 19 q_loss 80.69 vis 0.898 enc_grad 8.03e+02
+[joint_head] 子步 8967/9000 更新 2248 eps 22 完赛 19 q_loss 67.30 vis 0.509 enc_grad 2.36e+02
+[joint_head] Z 可解码性 0.983（机会 0.517）；消融 hide_curve_sign: 到达 9 闯红灯 0 弯道超速 82 | hide_light_color: 到达 2 闯红灯 5 弯道超速 0 | hide_end_marker: 到达 0 闯红灯 0 弯道超速 0
+[joint_head] 评估：完赛(静止) 8/9 违规 0 平均I_j 89.95323698570851 平均时间 214.625 干预子步 4418 回退 28
+{"state": "substep_budget", "substeps": 9003, "updates": 2257, "episodes": 22, "train_arrivals": 19, "substeps_per_s": 4.260333379489394, "updates_per_s": 1.0680409238595536}
