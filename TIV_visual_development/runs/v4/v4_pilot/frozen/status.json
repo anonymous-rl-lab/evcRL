@@ -5,29 +5,29 @@
     "substeps": 2403,
     "updates": 503
   },
-  "substeps": 975,
-  "decisions": 847,
-  "updates": 245,
-  "episodes": 6,
-  "train_arrivals": 5,
-  "replay_size": 842,
-  "frames": 3385,
-  "frame_store_MiB": 198.33984375,
+  "substeps": 1874,
+  "decisions": 1072,
+  "updates": 470,
+  "episodes": 7,
+  "train_arrivals": 6,
+  "replay_size": 1053,
+  "frames": 4285,
+  "frame_store_MiB": 251.07421875,
   "wall": {
-    "train": 120.35339230599857,
+    "train": 240.55787401500857,
     "eval": 0.0,
-    "save": 4.81772399700094
+    "save": 8.483504756000912
   },
-  "session_wall_s": 125.19467859999895,
-  "substeps_per_s": 8.101142654301443,
-  "updates_per_s": 2.035671743901388,
+  "session_wall_s": 249.24043938899922,
+  "substeps_per_s": 7.790225149242381,
+  "updates_per_s": 1.953791793033041,
   "last_diag": {
-    "q_loss": 439.1107482910156,
-    "vision_loss": 0.7415056824684143,
+    "q_loss": 213.45895385742188,
+    "vision_loss": 0.8425388932228088,
     "encoder_grad": 0.0,
-    "actor_loss": null,
-    "updates": 725,
-    "step": 3288
+    "actor_loss": 40.816444396972656,
+    "updates": 950,
+    "step": 4185
   },
   "z": {
     "z_drift": 0.0,
@@ -227,6 +227,71 @@
       "fallback_substeps": 0,
       "intervened_substeps": 298,
       "episode": 6,
+      "settled": false
+    },
+    {
+      "Ij": 149.89189229010344,
+      "jerk_rms": 0.7513751167455706,
+      "jerk_p95": 2.0,
+      "jerk_max": 7.502124558516989,
+      "a_min": -3.3336230337007358,
+      "a_max": 2.5853996304818323,
+      "time_s": 265.5,
+      "E_Wh": 627.8323212014377,
+      "friction_Wh": 152.13140155250485,
+      "R": -43.84196356325177,
+      "nominal_limited_steps": 453,
+      "safety_override_steps": 102,
+      "jerk_override_steps": 4,
+      "physical_violation_steps": 0,
+      "stopped_time_s": 41.0,
+      "windows": {
+        "launch": {
+          "Ij": 8.185468394972794,
+          "time_s": 36.5,
+          "jerk_max": 2.0
+        },
+        "curve": {
+          "Ij": 20.243222179833165,
+          "time_s": 58.5,
+          "jerk_max": 2.0
+        },
+        "signal": {
+          "Ij": 90.50533493489237,
+          "time_s": 110.5,
+          "jerk_max": 7.502124558516989
+        },
+        "terminal": {
+          "Ij": 22.977188855042282,
+          "time_s": 25.0,
+          "jerk_max": 2.0
+        },
+        "other": {
+          "Ij": 7.980677925362812,
+          "time_s": 35.0,
+          "jerk_max": 2.0
+        }
+      },
+      "trace_steps": 531,
+      "ledger_error": -7.105427357601002e-15,
+      "arrived": true,
+      "deadline": false,
+      "violations": 0,
+      "overspeed_time_s": 0.0,
+      "overspeed_max": 0.0,
+      "safety_infeasible": 0,
+      "end_x": 4053.6603663577184,
+      "end_v": 0.14918417420175062,
+      "stops": 2,
+      "soc_start": 0.9,
+      "temperature_K": 263.15,
+      "offset_s": 74.1614011613478,
+      "initial_speed": 16.017496892776798,
+      "terminal_penalty": 0.0,
+      "green_start_latency_s": null,
+      "fallback_substeps": 17,
+      "intervened_substeps": 474,
+      "episode": 7,
       "settled": false
     }
   ],
