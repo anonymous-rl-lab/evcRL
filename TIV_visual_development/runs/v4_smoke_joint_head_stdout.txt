@@ -1,3 +1,4 @@
-[joint_head] Z 可解码性 0.983（机会 0.517）；消融 hide_curve_sign: 到达 7 闯红灯 0 弯道超速 85 | hide_light_color: 到达 1 闯红灯 7 弯道超速 0 | hide_end_marker: 到达 0 闯红灯 0 弯道超速 0
-[joint_head] 评估：完赛(静止) 6/9 违规 0 平均I_j 86.05059134160165 平均时间 221.66666666666666 干预子步 6009 回退 39
-{"state": "substep_budget", "substeps": 602, "updates": 151, "episodes": 5, "train_arrivals": 4, "substeps_per_s": 10.293953440898525, "updates_per_s": 2.582038155441324}
+[joint_head] 子步 429/600 更新 108 eps 4 完赛 3 q_loss 340.57 vis 0.841 enc_grad 2.72e+02
+[joint_head] Z 可解码性 0.983（机会 0.517）；消融 hide_curve_sign: 到达 8 闯红灯 0 弯道超速 85 | hide_light_color: 到达 2 闯红灯 6 弯道超速 0 | hide_end_marker: 到达 0 闯红灯 0 弯道超速 0
+[joint_head] 评估：完赛(静止) 7/9 违规 0 平均I_j 97.74917804991203 平均时间 211.57142857142858 干预子步 5183 回退 32
+{"state": "substep_budget", "substeps": 601, "updates": 151, "episodes": 4, "train_arrivals": 3, "substeps_per_s": 7.0153644513785265, "updates_per_s": 1.7625957273846216}

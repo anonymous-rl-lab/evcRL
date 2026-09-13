@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "checks": {
+    "oracle_channels_masked": true,
+    "oracle_channels_note": "v4 无地图：legacy 由记忆生成，真值不进入（见 obs_and_executor_independent_of_truth_phase）",
+    "policy_input_dim_81": true,
+    "policy_input_dim_note": "v4 为 13+64+4+6=87（见 policy_input_dim_v4）",
+    "acceleration_channel_kept": true,
+    "actor_migration_exact": true,
+    "critic_migration_exact_action_last_column": true,
+    "no_future_frames": true,
+    "command_is_pre_projection": true,
+    "executor_intervention_logged": true,
+    "cross_episode_rejected": true,
+    "joint_td_reaches_encoder_after_critic_updates": true,
+    "joint_td_zero_at_fork_is_expected": true,
+    "supervised_frozen_td_blocked": true,
+    "vision_reaches_encoder": true,
+    "actor_never_moves_encoder": true,
+    "exact_resume": true,
+    "resume_detail": {
+      "uninterrupted": [
+        [
+          142.0,
+          2437.7978293904566,
+          16.34979014915435,
+          386.745849609375,
+          21.0,
+          284.0
+        ],
+        [
+          144.0,
+          2470.3342350502367,
+          16.19849221893256,
+          386.745849609375,
+          22.0,
+          288.0
+        ]
+      ],
+      "resumed": [
+        [
+          142.0,
+          2437.7978293904566,
+          16.34979014915435,
+          386.745849609375,
+          21.0,
+          284.0
+        ],
+        [
+          144.0,
+          2470.3342350502367,
+          16.19849221893256,
+          386.745849609375,
+          22.0,
+          288.0
+        ]
+      ]
+    },
+    "executor_independent_of_arm": true,
+    "box_labels_in_unit_range": true,
+    "empty_roi_outputs_unknown": true,
+    "vision_loss_reaches_z_projection": true,
+    "joint_head_td_reaches_temporal_only": true,
+    "critic_trained_on_applied_action": true,
+    "actor_ste_clip_active": true,
+    "actor_desaturated_at_fork": true,
+    "actor_pre_activation_mean": 0.36071503162384033,
+    "lambda_c_positive_all_arms": true,
+    "obs_and_executor_independent_of_truth_phase": true,
+    "executor_targets_from_memory_only": true,
+    "no_map_or_truth_calls_in_control": true,
+    "policy_obs_from_memory_not_env_obs": true,
+    "policy_input_dim_v4": true,
+    "roi_is_predicted_at_runtime": true,
+    "perception_encoder_frozen_and_shared": true
+  },
+  "gradient_routes": {
+    "frozen": {
+      "td_to_encoder_at_fork_zero_columns": 0.0,
+      "td_to_encoder_after_critic_updates": 0.0,
+      "critic_updates_before_test": 20,
+      "vision_to_encoder": 0.0,
+      "actor_moves_encoder": 0.0,
+      "targets_no_grad": true
+    },
+    "supervised": {
+      "td_to_encoder_at_fork_zero_columns": 0.0,
+      "td_to_encoder_after_critic_updates": 0.0,
+      "critic_updates_before_test": 20,
+      "vision_to_encoder": 23.634115682816386,
+      "actor_moves_encoder": 0.0,
+      "targets_no_grad": true
+    },
+    "joint": {
+      "td_to_encoder_at_fork_zero_columns": 0.0,
+      "td_to_encoder_after_critic_updates": 1130.589827210274,
+      "critic_updates_before_test": 20,
+      "vision_to_encoder": 23.634115682816386,
+      "actor_moves_encoder": 0.0,
+      "targets_no_grad": true
+    },
+    "joint_head": {
+      "td_to_encoder_at_fork_zero_columns": 0.0,
+      "td_to_encoder_after_critic_updates": 124.44109412482045,
+      "critic_updates_before_test": 20,
+      "vision_to_encoder": 0.024729106645147988,
+      "actor_moves_encoder": 0.0,
+      "targets_no_grad": true,
+      "td_to_temporal": 124.79544071525783,
+      "td_to_backbone": 0.0,
+      "optimizer_params_only_head": true
+    }
+  },
+  "identity": {
+    "sources": "3d1d529421d4ffae8e7b780610bbf337e983e50889a142aac0e1815fc05e4be8",
+    "config": "a38af9e38159ac07cdd9264b6c934e88e9d700d158bfddb8cc6d11e9959a222c"
+  },
+  "runtime": {
+    "torch": "2.14.0+cu130",
+    "numpy": "2.4.6"
+  }
+}
