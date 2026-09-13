@@ -1,0 +1,9 @@
+[supervised] 子步 522/3000 更新 131 eps 4 完赛 3 q_loss 278.60 vis 0.725 enc_grad 1.74e+01
+[supervised] 子步 1022/3000 更新 257 eps 6 完赛 4 q_loss 442.06 vis 1.263 enc_grad 1.42e+01
+[supervised] 子步 1510/3000 更新 379 eps 7 完赛 5 q_loss 264.10 vis 1.309 enc_grad 2.07e+01
+[supervised] 子步 1994/3000 更新 500 eps 7 完赛 5 q_loss 306.95 vis 1.242 enc_grad 4.13e+01
+[supervised] 子步 2502/3000 更新 627 eps 7 完赛 5 q_loss 189.79 vis 0.960 enc_grad 1.48e+01
+[supervised] 子步 2994/3000 更新 750 eps 8 完赛 5 q_loss 165.31 vis 0.994 enc_grad 1.52e+01
+[supervised] Z 可解码性 0.983（机会 0.517）；消融 hide_curve_sign: 到达 8 闯红灯 0 弯道超速 81 | hide_light_color: 到达 3 闯红灯 6 弯道超速 0 | hide_end_marker: 到达 0 闯红灯 0 弯道超速 0
+[supervised] 评估：完赛(静止) 7/9 违规 0 平均I_j 99.83311086442396 平均时间 273.07142857142856 干预子步 5313 回退 44
+{"state": "substep_budget", "substeps": 3001, "updates": 752, "episodes": 9, "train_arrivals": 6, "substeps_per_s": 8.312723426402822, "updates_per_s": 2.083028329441827}

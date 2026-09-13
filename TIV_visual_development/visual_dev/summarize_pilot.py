@@ -6,6 +6,7 @@
 import argparse, json, sys
 from pathlib import Path
 import numpy as np, torch
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'visual_dev')); import pipeline as P   # 设置 v19_deps 路径（断点内含 study 环境对象）
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -50,7 +51,7 @@ def main(tag):
         return one(m.get('roi_head')) + ' ‖ ' + one(m.get('z_head'))
     for a, v in arms.items():
         lines.append(f"| {ZH[a]} | " + " | ".join(cell(v['eval']['visual'].get(b)) for b in bins) + " |")
-    if all(v['eval'].get('z_decodability_dev') for v in arms.values()):
+    if all(v['eval'].get('z_decodability_dev') and v['eval'].get('image_swap') for v in arms.values()):
         lines.append("\nZ 可解码性（dev 固定序列集，线性探针，一半训练一半测试）与同状态换图响应（红↔绿，同外观同噪声）\n")
         lines.append("| 臂 | 探针测试准确率 | 已知类准确率 | 机会水平 | signal_z 头准确率 | 换图 \|Δu\| 均值 | 最大 | >0.05 比例 | Δu(绿−红) 均值 | ‖ΔZ‖ 均值 | ROI 头颜色对 | Z 头颜色对 |")
         lines.append("|---|---|---|---|---|---|---|---|---|---|---|---|")
