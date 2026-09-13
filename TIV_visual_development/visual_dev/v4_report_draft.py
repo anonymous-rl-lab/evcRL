@@ -76,5 +76,20 @@ for a in ('frozen', 'supervised', 'joint', 'joint_head'):
     rs = [r for r in allcond(a) if r['settled']]
     if rs: cm_rows.append(f"| {ZH[a]} | {len(rs)} | {np.mean([r['Ij'] for r in rs]):.1f} | {np.mean([r['time_s'] for r in rs]):.1f} | {np.mean([r['E_Wh'] for r in rs]):.1f} | {np.mean([r['R'] for r in rs]):.3f} |")
 cm_hdr = "| 臂 | 成功工况数 | I_j | 时间 s | 能耗 Wh | R |\n|---|---|---|---|---|---|"
+# 失败工况归因表（visual_dev/v4_violation_analysis.py 输出）
+fail_rows = []
+try:
+    F = json.load(open(ROOT / 'reports/_v4_failures.json')); ZS = {'v4r': '0', 'v4r_s1': '1', 'v4r_s2': '2'}; ZA = {'frozen': 'F', 'supervised': 'S', 'joint': 'J', 'joint_head': 'JH'}
+    for r in F:
+        k = r.get('kind', '')
+        if k.startswith('闯红灯（黄灯'):
+            fail_rows.append(f"| {ZS[r['runs']]}/{ZA[r['arm']]} | {r['condition']} | {k} | {r['d_line_at_onset']} / {r['v_at_onset']} / {r['min_stop_dist']} | {'是' if r['stoppable_ideal'] else '否'} | {r['mem_phase_at_onset']} / {r['mem_d_line_at_onset']} | {r['substeps_onset_to_cross']} | {r['crossing_speed']} | – |")
+        elif k.startswith('红灯蠕行') or k.startswith('闯红灯'):
+            fail_rows.append(f"| {ZS[r['runs']]}/{ZA[r['arm']]} | {r['condition']} | {k} | – | – | 过线时 {r.get('mem_phase_at_cross')} / 锁存 {r.get('mem_hold_at_cross')} | – | {r['crossing_speed']} | – |")
+        else:
+            fail_rows.append(f"| {ZS[r['runs']]}/{ZA[r['arm']]} | {r['condition']} | {k} | – | – | 停车时 {r.get('mem_phase_at_stop')} / d 估计 {r.get('mem_d_line_at_stop')} | – | – | 线前 {-r['stop_rel_line']:.1f} m，静止 {r['stopped_substeps']} 子步，真值绿而感知非绿 {r['perceived_nongreen_while_truth_green']} 子步 |")
+except Exception as e: fail_rows = [f'| 归因文件缺失：{e} |']
+fail_hdr = "| 种子/臂 | 工况 | 类型 | 黄灯起始（子步前状态）d m / v m/s / v²/7 m | 理想可停 | 记忆相位 / d 估计 | 起始到过线子步 | 过线速度 m/s | 停车细节 |\n|---|---|---|---|---|---|---|---|---|"
+out.update(fail_hdr=fail_hdr, failures="\n".join(fail_rows))
 out.update(agg_hdr=agg_hdr, agg="\n".join(agg + ([probe_row] if probe_row else [])), paired_hdr=paired_hdr, paired="\n".join(paired), cm_hdr=cm_hdr, cm="\n".join(cm_rows), n_seeds=len(seeds))
 json.dump(out, open(ROOT / 'reports' / '_v4_tables.json', 'w'), ensure_ascii=False, indent=1); print({k: (len(v_) if hasattr(v_, "__len__") else v_) for k, v_ in out.items()})
