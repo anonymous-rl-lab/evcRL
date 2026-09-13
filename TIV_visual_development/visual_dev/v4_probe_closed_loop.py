@@ -30,17 +30,22 @@ def run(name, learner, perception, hide=(), memory_kw=None):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--encoder', default='runs/pretrain_v4/encoder.pt'); ap.add_argument('--u', type=float, default=1.0); ap.add_argument('--oracle-only', action='store_true'); ap.add_argument('--out', default='runs/probes/v4_probe_closed_loop.json')
+    ap = argparse.ArgumentParser(); ap.add_argument('--encoder', default='runs/pretrain_v4/encoder.pt'); ap.add_argument('--u', type=float, default=1.0); ap.add_argument('--oracle-only', action='store_true'); ap.add_argument('--out', default='runs/probes/v4_probe_closed_loop.json'); ap.add_argument('--det-thr', default=None, help='JSON：float 或 {类别: 阈值}'); ap.add_argument('--config', default=None, help='从 configs/<file> 读取 det_thr/hold_s/init_votes/consistency_m')
     a = ap.parse_args(); L = ConstantLearner(a.u); res = {}
-    res['oracle'] = run('oracle 记忆', L, Perception(source='oracle'))
-    res['oracle_hide_curve_sign'] = run('oracle 记忆 / 隐藏警示牌', L, Perception(source='oracle'), hide=('curve_sign',))
-    res['oracle_hide_light_color'] = run('oracle 记忆 / 灯色灭', L, Perception(source='oracle'), hide=('light_color',))
+    mk = {}
+    if a.config: c = json.load(open(ROOT / 'configs' / a.config)); mk = {k: c[k] for k in ('det_thr', 'hold_s', 'init_votes', 'consistency_m') if k in c}
+    if a.det_thr: mk['det_thr'] = json.loads(a.det_thr)
+    light_thr = mk['det_thr'].get('traffic_light', 0.5) if isinstance(mk.get('det_thr'), dict) else mk.get('det_thr', 0.5)
+    print('记忆参数', mk, flush=True)
+    res['oracle'] = run('oracle 记忆', L, Perception(source='oracle'), memory_kw=mk)
+    res['oracle_hide_light_color'] = run('oracle 记忆 / 灯色灭', L, Perception(source='oracle'), hide=('light_color',), memory_kw=mk)
     if not a.oracle_only:
-        per = Perception(ROOT / a.encoder, 'roi_head')
-        res['vision'] = run('视觉记忆', L, per)
-        res['vision_hide_curve_sign'] = run('视觉记忆 / 隐藏警示牌', L, Perception(ROOT / a.encoder, 'roi_head'), hide=('curve_sign',))
-        res['vision_hide_light_color'] = run('视觉记忆 / 灯色灭', L, Perception(ROOT / a.encoder, 'roi_head'), hide=('light_color',))
-        res['vision_hide_release_sign'] = run('视觉记忆 / 隐藏解除牌', L, Perception(ROOT / a.encoder, 'roi_head'), hide=('release_sign',))
+        P_ = lambda: Perception(ROOT / a.encoder, 'roi_head', det_thr=light_thr)
+        res['vision'] = run('视觉记忆', L, P_(), memory_kw=mk)
+        res['vision_hide_curve_sign'] = run('视觉记忆 / 隐藏警示牌', L, P_(), hide=('curve_sign',), memory_kw=mk)
+        res['vision_hide_light_color'] = run('视觉记忆 / 灯色灭', L, P_(), hide=('light_color',), memory_kw=mk)
+        res['vision_hide_release_sign'] = run('视觉记忆 / 隐藏解除牌', L, P_(), hide=('release_sign',), memory_kw=mk)
+        res['vision_hide_end_marker'] = run('视觉记忆 / 隐藏终点标志', L, P_(), hide=('end_marker',), memory_kw=mk)
     json.dump(res, open(ROOT / a.out, 'w'), indent=1, ensure_ascii=False)
 
 

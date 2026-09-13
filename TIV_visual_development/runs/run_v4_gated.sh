@@ -7,7 +7,7 @@ export OMP_NUM_THREADS=1 VISUAL_CONFIG=v4_cpu.json
 cd "$(dirname "$0")/.."
 TAG="${1:-v4_pilot}"; SMALL="${SMALL_SUBSTEPS:-3000}"
 if [ "${SKIP_PRETRAIN:-0}" = "1" ] && [ -f runs/pretrain_v4/encoder.pt ]; then echo "[门 1] 复用已有 v4 预训练"; else
-  rm -rf runs/pretrain_v4; echo "[门 1] 预训练 v4"; python3 -u visual_dev/pretrain.py --coverage v4 --out pretrain_v4 --steps 2400 > runs/pretrain_v4_stdout.txt 2>&1 || { echo "GATE1_FAILED: 预训练异常"; exit 1; }
+  rm -rf runs/pretrain_v4; echo "[门 1] 预训练 v4"; python3 -u visual_dev/pretrain.py --coverage v4 --out pretrain_v4 --steps 6000 --n-train 3200 --n-dev 320 > runs/pretrain_v4_stdout.txt 2>&1 || { echo "GATE1_FAILED: 预训练异常"; exit 1; }
 fi
 python3 - <<'PY' || { echo "GATE1_FAILED: 指标不达标"; exit 1; }
 import json; r=json.load(open('runs/pretrain_v4/pretrain_report.json')); v=r['dev_v4']

@@ -32,7 +32,7 @@ class VisualEncoder(nn.Module):
         self.lat2=nn.Conv2d(32,32,1);self.lat3=nn.Conv2d(48,32,1);self.lat4=nn.Conv2d(64,32,1)
         self.heat=nn.Conv2d(32,classes,1);self.box=nn.Conv2d(32,4,1)
         self.dist=nn.Conv2d(32,1,1)   # v4：目标格距离回归（sigmoid → d/400）
-        self.presence=nn.Linear(64,4)  # v4：逐帧“画面中是否存在该类目标”（灯/警示牌/终点/解除牌），BCE 训练，作检测门控分数（热图峰值分数校准差）
+        # v4：存在性分数 = 热图各类的峰值 logit（max over cells），用类别平衡 BCE 单独校准（焦点损失下峰值分数偏低、类间不可比）
         self.signal=nn.Linear(32,5)  # red/yellow/green/off/unknown, controlling light only（ROI 头）
         self.temporal=nn.Sequential(nn.Linear(stack*(64+2),128),nn.SiLU(),nn.Linear(128,zdim),nn.LayerNorm(zdim))
         self.signal_z=nn.Linear(zdim,5)   # v2：由 Z 预测最新帧灯色，使视觉监督训练到 Z 末端
@@ -48,7 +48,7 @@ class VisualEncoder(nn.Module):
         att=logits.detach().sigmoid().sum(1,keepdim=True)+1e-6   # v2d：注意力权重与热图头切断梯度——热图只由检测监督塑形，Z 侧损失/TD 梯度经 p2 特征进入骨干，不再改写热图头（对抗式审查发现该耦合初始占检测梯度约 25%）
         event=(p2*att).sum((2,3))/att.sum((2,3))
         scene=p4.mean((2,3));f=torch.cat([scene,event],1).reshape(b,t,64)
-        presence=self.presence(f)
+        presence=logits.reshape(b,t,-1,logits.shape[-2]*logits.shape[-1]).amax(-1)[:,:,:4]   # [b,t,4] 峰值 logit
         f=f*obs.valid.unsqueeze(-1)
         temporal=torch.cat([f,obs.valid.float().unsqueeze(-1),obs.age_s.clamp(0,10).unsqueeze(-1)],-1)
         z=self.temporal(temporal.flatten(1))
@@ -128,9 +128,10 @@ def perception_loss(output,labels,obs):
         mask=labels['dist_valid']*obs.valid[:,:,None,None,None]
         err=F.smooth_l1_loss(torch.log1p(output['dist']*400.),torch.log1p(labels['dist']*400.),reduction='none',beta=.1)
         losses.append(2.*(err*mask).sum()/mask.sum().clamp_min(1))
-    if 'presence' in labels:   # v4：逐帧存在性
-        m=obs.valid.float().unsqueeze(-1).expand_as(labels['presence'])
-        losses.append((F.binary_cross_entropy_with_logits(output['presence'],labels['presence'],reduction='none')*m).sum()/m.sum().clamp_min(1))
+    if 'presence' in labels:   # v4：峰值存在性校准（类别平衡的 BCE，pos_weight 按批内负正比，裁到 [1,20]）
+        y=labels['presence'];m=obs.valid.float().unsqueeze(-1).expand_as(y)
+        pos=(y*m).sum((0,1));neg=((1-y)*m).sum((0,1));pw=(neg/pos.clamp_min(1)).clamp(1.,20.)
+        losses.append((F.binary_cross_entropy_with_logits(output['presence'],y,reduction='none',pos_weight=pw)*m).sum()/m.sum().clamp_min(1))
     if 'signal' in labels:
         y=labels['signal'].clone();y[~obs.valid]=-100;y[output['roi_empty']]=-100   # 空 ROI 帧由规则输出 unknown，不参与 ROI 头训练
         losses.append(F.cross_entropy(output['signal'].reshape(-1,5),y.reshape(-1),ignore_index=-100,
