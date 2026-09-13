@@ -1,2 +1,4 @@
 [frozen] 子步 477/9000 更新 120 eps 4 完赛 4 q_loss 251.80 vis 0.841 enc_grad 0.00e+00
 [frozen] 子步 975/9000 更新 245 eps 6 完赛 5 q_loss 439.11 vis 0.742 enc_grad 0.00e+00
+[frozen] 子步 1427/9000 更新 358 eps 6 完赛 5 q_loss 293.63 vis 1.018 enc_grad 0.00e+00
+[frozen] 子步 1874/9000 更新 470 eps 7 完赛 6 q_loss 213.46 vis 0.843 enc_grad 0.00e+00

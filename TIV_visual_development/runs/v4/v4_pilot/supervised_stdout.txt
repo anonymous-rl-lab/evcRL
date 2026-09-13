@@ -1,2 +1,4 @@
 [supervised] 子步 445/9000 更新 112 eps 4 完赛 4 q_loss 257.19 vis 0.833 enc_grad 1.66e+01
 [supervised] 子步 897/9000 更新 225 eps 5 完赛 5 q_loss 380.52 vis 0.707 enc_grad 1.28e+01
+[supervised] 子步 1351/9000 更新 339 eps 6 完赛 6 q_loss 330.13 vis 0.709 enc_grad 1.17e+01
+[supervised] 子步 1804/9000 更新 453 eps 7 完赛 7 q_loss 227.13 vis 0.838 enc_grad 1.69e+01
