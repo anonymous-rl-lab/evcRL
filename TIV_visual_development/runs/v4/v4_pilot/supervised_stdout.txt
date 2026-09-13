@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/home/user/evcrl/TIV_visual_development/visual_dev/run_stage.py", line 274, in <module>
+    elif a.stage == 'train': stage_train(a)
+                             ^^^^^^^^^^^^^^
+  File "/home/user/evcrl/TIV_visual_development/visual_dev/run_stage.py", line 205, in stage_train
+    t.step()
+  File "/home/user/evcrl/TIV_visual_development/visual_dev/pipeline.py", line 397, in step
+    _, r, done, info = self.env.step(S.command(u)); reward += r; self.used += 1; n += 1
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/evcrl/TIV_visual_development/v19_deps/code/study.py", line 74, in step
+    safe=self.a_safe();green=R.signal_green(3000.,t,self.offsets[0])
+         ^^^^^^^^^^^^^
+  File "/home/user/evcrl/TIV_visual_development/v19_deps/code/env20.py", line 174, in a_safe
+    for tg in self._stop_targets():
+              ^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/evcrl/TIV_visual_development/visual_dev/pipeline.py", line 103, in _stop_targets
+    return self.memory.executor_targets(self.x) if self.memory is not None else []
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/evcrl/TIV_visual_development/visual_dev/vision_state.py", line 135, in executor_targets
+    out.append((x + self.end['d_est'] + self.end_bias_m, 0.0))   # 终点：固定锚点，偏后 end_bias_m（估计偏短会停在终点线前而不算到达；停在线后无代价）
+                                        ^^^^^^^^^^^^^^^
+AttributeError: 'VisionMemory' object has no attribute 'end_bias_m'
