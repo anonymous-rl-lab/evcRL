@@ -17,7 +17,7 @@ def learner_from_final_nets(path):
     learner = VisualTD3(Config(mode=cfg['mode'], information_mode=('vision_memory' if cfg.get('world') == 'v4' else 'camera_map'), stack=STACK, actor_lr=cfg['actor_lr'], critic_lr=cfg['critic_lr'],
                                encoder_lr=cfg['encoder_lr'], vision_weight=cfg['vision_weight'], lambda_c=cfg['lambda_c'], tau=cfg['tau'],
                                policy_delay=cfg['policy_delay'], target_noise=cfg['target_noise'], target_clip=cfg['target_clip'],
-                               critic_action=cfg.get('critic_action', 'command'), actor_clip_ste=bool(cfg.get('actor_clip_ste', False))))
+                               critic_action=cfg.get('critic_action', 'command'), actor_clip_ste=bool(cfg.get('actor_clip_ste', False)), extra_dim=int(cfg.get('extra_dim', 6))))
     for k, v in ck['nets'].items(): learner.named_nets()[k].load_state_dict(v)
     for m in learner.named_nets().values(): m.eval()
     return learner, ck

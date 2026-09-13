@@ -20,7 +20,7 @@ from visual_z.learner import VisualTD3, Config, grad_norm
 torch.set_num_threads(1)
 STACK = 4
 V19_FILES = ['study.py', 'env20.py', 'route20.py', 'models.py', 'plant.py', 'effcal.py', 'curve_layer.py', 'scn/arterial_mini_profile.npy']
-DEV_FILES = ['renderer.py', 'pipeline.py', 'pretrain.py', 'run_stage.py']
+DEV_FILES = ['renderer.py', 'pipeline.py', 'pretrain.py', 'run_stage.py', 'vision_state.py']   # 审计整改：v4r 关键行为规则在 vision_state.py，必须纳入源码身份
 
 
 def source_identity(config):
@@ -323,7 +323,7 @@ class VisualTrainer:
             actor_lr=cfg['actor_lr'], critic_lr=cfg['critic_lr'], encoder_lr=cfg['encoder_lr'],
             vision_weight=cfg['vision_weight'], lambda_c=cfg['lambda_c'], tau=cfg['tau'],
             policy_delay=cfg['policy_delay'], target_noise=cfg['target_noise'], target_clip=cfg['target_clip'],
-            critic_action=cfg.get('critic_action', 'command'), actor_clip_ste=bool(cfg.get('actor_clip_ste', False))))
+            critic_action=cfg.get('critic_action', 'command'), actor_clip_ste=bool(cfg.get('actor_clip_ste', False)), extra_dim=int(cfg.get('extra_dim', 6))))
         self.signal_source = cfg.get('signal_source', 'truth'); self.world = cfg.get('world', 'v2')
         self.perception = Perception(ROOT / cfg['pretrained_encoder'], cfg.get('perception_source', 'roi_head'), green_threshold=cfg.get('green_threshold', 0.), min_consecutive=cfg.get('min_consecutive', 1), det_thr=(cfg['det_thr'].get('traffic_light', 0.5) if isinstance(cfg.get('det_thr'), dict) else cfg.get('det_thr', 0.5))) if (self.signal_source == 'perceived' or self.world == 'v4') else None
         from vision_state import VisionMemory
@@ -376,7 +376,7 @@ class VisualTrainer:
         if self.world == 'v4':   # v4：13 维来自视觉记忆 + 车辆传感器，不调用 env.obs()（地图/真值）
             e = self.env; leg = self.memory.legacy(e.v, e.a, e.soc, e.T, e.t_end, e.t, e.t_budget)
             return dict(frame_ids=list(self.history), episode_id=self.episode_id, decision_time=float(e.t), legacy=leg,
-                        association_valid=self.memory.light_detected(), extra=self.memory.extra())
+                        association_valid=self.memory.light_detected(), extra=self.memory.extra(extended=int(self.cfg.get('extra_dim', 6)) == 10))
         return dict(frame_ids=list(self.history), episode_id=self.episode_id, decision_time=float(self.env.t),
                     legacy=np.asarray(self.env.obs(), np.float32), association_valid=int(latest['meta']['association_valid']))
 
@@ -493,6 +493,7 @@ def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perce
     轨迹长度不同的臂从第 3 个工况起外观不同）。"""
     rows = []; visual = []; traces = []; store = FrameStore()
     from vision_state import VisionMemory
+    extra_dim = int(getattr(getattr(learner, 'cfg', None), 'extra_dim', 6))   # 记忆附加元信息维数随被评估网络的配置（6=原接口，10=扩展接口）
     for i, (soc, temp, v0, off) in enumerate(conditions):
         camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=camera_seed * 1000 + i, noise_seed=camera_seed * 1000 + 500 + i, world=world); camera.hide = set(hide)
         if world == 'v4':
@@ -512,7 +513,7 @@ def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perce
         while not done and env.t < 600:
             if world == 'v4':
                 rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=memory.legacy(env.v, env.a, env.soc, env.T, env.t_end, env.t, env.t_budget),
-                           association_valid=memory.light_detected(), extra=memory.extra())
+                           association_valid=memory.light_detected(), extra=memory.extra(extended=extra_dim == 10))
             else:
                 rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=np.asarray(env.obs(), np.float32),
                            association_valid=int(store.frames[hist[-1]]['meta']['association_valid']))

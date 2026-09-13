@@ -9,8 +9,9 @@ META_EXTRA_DIM = 6   # v4 vision_memory 模式的附加元信息维数
 POLICY_DIM = LEGACY_DIM + Z_DIM + META_DIM
 
 
-def policy_dim(information_mode='camera_map'):
-    return POLICY_DIM + (META_EXTRA_DIM if information_mode == 'vision_memory' else 0)
+def policy_dim(information_mode='camera_map', extra_dim=None):
+    """extra_dim：vision_memory 模式附加元信息维数（默认 META_EXTRA_DIM=6；审计整改后的扩展接口为 10，含锁存/承诺/观测灯色/观测置信）。"""
+    return POLICY_DIM + ((META_EXTRA_DIM if extra_dim is None else int(extra_dim)) if information_mode == 'vision_memory' else 0)
 # Preserve measured acceleration at index 1; original comfort_loss depends on it.
 CHANNELS = ('v','a','distance_end','local_limit','distance_curve','curve_limit',
             'map_distance_signal','signal_green','countdown','soc','temperature',
