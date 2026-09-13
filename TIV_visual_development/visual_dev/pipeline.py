@@ -164,7 +164,7 @@ class Perception:
             probs = None
             if L.get('visible', 0) == 1:
                 probs = np.zeros(5, np.float32); probs[COLOR_CLASSES.index(L['color_truth'])] = 1.
-            latest['roi_pred'] = (latest['roi'][0] if latest['roi'].ndim == 3 else latest['roi']).astype(np.float32)
+            latest['roi_pred'] = ((latest['roi'][0] if latest['roi'].ndim == 3 else latest['roi']) > 0).astype(np.uint8)
             self.last = dict(dets=dets, probs=None if probs is None else probs.tolist(), roi_pixels=int(latest['roi_pred'].sum())); return dets, probs
         rec = dict(frame_ids=list(history), episode_id=episode_id, decision_time=float(t), legacy=np.zeros(LEGACY_DIM, np.float32), association_valid=0)
         obs = obs_from_frames(store, [rec], use_pred_roi=False); obs.signal_roi.zero_()
@@ -173,7 +173,7 @@ class Perception:
         for c, name in enumerate(CLASSES):
             d = decode_detections(out, c); dets[name] = dict(score=float(d['score'][0, -1]), dist_m=float(d['dist_m'][0, -1]), box=[float(v) for v in d['box'][0, -1]])
         roi = predicted_roi(dets['traffic_light']['box'], H, W).numpy() if dets['traffic_light']['score'] >= self.det_thr * getattr(self, 'roi_ratio', 0.5) else np.zeros((H, W), np.float32)   # ROI 用较低阈值（灯色由记忆的轨迹门控决定是否采纳）
-        latest['roi_pred'] = roi.astype(np.float32); probs = None
+        latest['roi_pred'] = (roi > 0).astype(np.uint8); probs = None   # 以 uint8 存储（float32 每帧 61 KB 会把断点撑到 GB 级）
         if roi.sum() > 0:
             obs2 = obs_from_frames(store, [rec], use_pred_roi=True)
             with torch.no_grad(): probs = self.enc(obs2)['signal'][0, -1].softmax(0).numpy()
@@ -261,7 +261,7 @@ def obs_from_frames(store, obs_records, use_pred_roi=True):
             r = store.get(fid, o['episode_id'], o['decision_time'])
             frames[i, k0 + j] = r['rgb'].transpose(2, 0, 1)
             rp = r.get('roi_pred') if use_pred_roi else None
-            roi[i, k0 + j, 0] = rp if rp is not None else (r['roi'][0] if r['roi'].ndim == 3 else r['roi'])
+            roi[i, k0 + j, 0] = (rp.astype(np.float32) if rp is not None else (r['roi'][0] if r['roi'].ndim == 3 else r['roi']))
             valid[i, k0 + j] = True; age[i, k0 + j] = o['decision_time'] - r['meta']['capture_time']
         legacy[i] = o['legacy']; assoc[i, 0] = o['association_valid']
         if has_extra: extra[i] = o['extra']

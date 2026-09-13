@@ -7,6 +7,7 @@ TAG="${1:-v3_pilot}"; SUBSTEPS="${2:-3000}"
 SUB=$(python3 -c "import json,os; print(json.load(open('configs/'+os.environ['VISUAL_CONFIG'])).get('runs_subdir',''))")
 if [ -d "runs/$SUB/$TAG" ]; then echo "runs/$SUB/$TAG 已存在，拒绝覆盖"; exit 2; fi
 [ -f "runs/$SUB/common/common.pt" ] || { python3 -u visual_dev/run_stage.py adapt > runs/v3_adapt_stdout.txt 2>&1 || { echo "适配失败"; exit 1; }; }
+FREE_GB=$(df -BG --output=avail . | tail -1 | tr -dc '0-9'); [ "$FREE_GB" -ge 8 ] || { echo "磁盘剩余 ${FREE_GB} GB < 8 GB，拒绝启动（每臂断点约 1–2 GB × 2 份）"; exit 3; }
 mkdir -p "runs/$SUB/$TAG"; FAIL=0; MAXP="${MAX_PARALLEL:-2}"   # 每臂进程约 4–6 GB（v4 池 3200 序列 + 帧存储），16 GB 机器最多并行 2 臂
 ARMS=(frozen supervised joint joint_head); i=0
 while [ $i -lt ${#ARMS[@]} ]; do
