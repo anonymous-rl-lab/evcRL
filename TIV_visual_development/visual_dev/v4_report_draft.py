@@ -24,7 +24,10 @@ extra = {}
 for s, runs in (('0', 'v4r'), ('1', 'v4r_s1'), ('2', 'v4r_s2'), ('0_v4enc_oldrules_reeval', 'v4')):
     t = arm_table('v4_pilot', runs); extra[f'pilot_s{s}'] = t
 out.update(extra)
-# 三种子汇总：逐臂 27 工况到达/违规合计，I_j/时间/能耗/R 的种子均值与范围；配对差（S−F、J−F、JH−F）逐种子与均值
+# 三种子汇总（审计整改后的口径）：
+#  主表 = 全部 27 工况（失败工况计入分母）：到达/违规/弯道超速、全工况平均 R、jerk 越界回合数与峰值、执行层干预子步占比；
+#  副表 = 与冻结臂 F 在“同种子、双方都到达且停稳”的共同工况上的配对差，逐种子标明 n 与工况号（按结果筛选的条件描述，不是无偏处理效应）；
+#  参照行 = 常量命令 u=+1 + 同一冻结感知/记忆执行层的探针（runs/probes/v4r_probe_closed_loop.json）。
 import numpy as np
 seeds = {}
 for s, runs in (('0', 'v4r'), ('1', 'v4r_s1'), ('2', 'v4r_s2')):
@@ -32,23 +35,46 @@ for s, runs in (('0', 'v4r'), ('1', 'v4r_s1'), ('2', 'v4r_s2')):
     for a in ('frozen', 'supervised', 'joint', 'joint_head'):
         p = ROOT / 'runs' / runs / 'v4_pilot' / a / 'evaluation.json'
         if p.exists():
-            e = json.load(open(p)); cm = e['summary']['completed_mean'] or {}
-            d[a] = dict(arrived=e.get('arrived', 0), violations=e['summary']['violations'], offroad=e.get('offroad', 0), Ij=cm.get('Ij'), time_s=cm.get('time_s'), E_Wh=cm.get('E_Wh'), R=cm.get('R'), fallback=e['fallback'], z_drift=e['z']['z_drift'])
+            e = json.load(open(p)); d[a] = dict(rows={r['condition_id']: r for r in e['rows']}, z_drift=e['z']['z_drift'], intervened=e['intervened'])
     if d: seeds[s] = d
+def allcond(a):
+    rs = [r for s in seeds if a in seeds[s] for r in seeds[s][a]['rows'].values()]
+    return rs
 agg = []
 for a in ('frozen', 'supervised', 'joint', 'joint_head'):
-    xs = [seeds[s][a] for s in seeds if a in seeds[s]]
-    if not xs: continue
-    def mr(k):
-        v_ = [x[k] for x in xs if x[k] is not None]
-        return f"{np.mean(v_):.1f} [{min(v_):.1f}, {max(v_):.1f}]" if v_ else 'nan'
-    agg.append(f"| {ZH[a]} | {len(xs)} | {sum(x['arrived'] for x in xs)}/{9 * len(xs)} | {sum(x['violations'] for x in xs)} | {sum(x['offroad'] for x in xs)} | {mr('Ij')} | {mr('time_s')} | {mr('E_Wh')} | {np.mean([x['R'] for x in xs if x['R'] is not None]):.3f} | {mr('z_drift')} |")
-agg_hdr = "| 臂 | 种子数 | 到达 | 闯红灯 | 弯道超速 | I_j 均值 [最小, 最大] | 时间 s | 能耗 Wh | R 均值 | Z 漂移 |\n|---|---|---|---|---|---|---|---|---|---|"
+    rs = allcond(a)
+    if not rs: continue
+    n = len(rs); arrived = sum(r['settled'] for r in rs); viol = sum(r['violations'] for r in rs); off = sum(r.get('offroad_substeps', 0) for r in rs)
+    R = np.mean([r['R'] for r in rs]); jo = sum(r['jerk_override_steps'] > 0 for r in rs); jmax = max(r['jerk_max'] for r in rs)
+    interv = np.mean([r['intervened_substeps'] / max(r['trace_steps'], 1) for r in rs]); zd = np.mean([seeds[s][a]['z_drift'] for s in seeds if a in seeds[s]])
+    agg.append(f"| {ZH[a]} | {arrived}/{n} | {viol} | {off} | {R:.3f} | {jo}/{n} | {jmax:.1f} | {interv * 100:.1f}% | {zd:.2f} |")
+pr_ = pr.get('vision') or {}
+probe_row = ''
+try:
+    prv = json.load(open(ROOT / 'runs/probes/v4r_probe_closed_loop.json'))['vision']
+    probe_row = f"| 参照：常量 u=+1 + 冻结感知/记忆执行层（探针，9 工况） | {prv['arrived']}/9 | {prv['violations']} | {prv['offroad']} | {prv['R']:.3f} | – | {prv['max_jerk']:.1f} | – | – |"
+except Exception: pass
+agg_hdr = "| 臂（三种子 × 9 工况，失败工况计入分母） | 到达且停稳 | 信号违规 | 弯道超速子步 | 全工况平均 R | jerk 越界回合 | jerk 峰值 m/s³ | 执行层干预子步占比 | Z 漂移 |\n|---|---|---|---|---|---|---|---|---|"
 paired = []
 for a in ('supervised', 'joint', 'joint_head'):
-    for k, name in (('Ij', 'I_j'), ('R', 'R'), ('E_Wh', '能耗')):
-        diffs = [seeds[s][a][k] - seeds[s]['frozen'][k] for s in seeds if a in seeds[s] and 'frozen' in seeds[s] and seeds[s][a][k] is not None and seeds[s]['frozen'][k] is not None]
-        if diffs: paired.append(f"| {ZH[a]} − F | {name} | " + ' / '.join(f"{d_:+.2f}" for d_ in diffs) + f" | {np.mean(diffs):+.2f} | {'同号' if all(d_ > 0 for d_ in diffs) or all(d_ < 0 for d_ in diffs) else '异号'} |")
-paired_hdr = "| 配对 | 指标 | 逐种子差 | 均值 | 符号一致性 |\n|---|---|---|---|---|"
-out.update(agg_hdr=agg_hdr, agg="\n".join(agg), paired_hdr=paired_hdr, paired="\n".join(paired), n_seeds=len(seeds))
+    per = []
+    for s in seeds:
+        if a not in seeds[s] or 'frozen' not in seeds[s]: continue
+        A = seeds[s][a]['rows']; F = seeds[s]['frozen']['rows']; common = [i for i in sorted(A) if A[i]['settled'] and F[i]['settled']]
+        if not common: continue
+        dd = {k: float(np.mean([A[i][k] - F[i][k] for i in common])) for k in ('Ij', 'R', 'E_Wh', 'time_s')}
+        per.append((s, common, dd))
+    for k, name, better in (('Ij', 'I_j（低为好）', -1), ('R', 'R（高为好）', 1), ('E_Wh', '能耗 Wh（低为好）', -1), ('time_s', '时间 s（低为好）', -1)):
+        cells = ' / '.join(f"{dd[k]:+.2f} (n={len(c)})" for s_, c, dd in per); m = np.mean([dd[k] for _, _, dd in per])
+        signs = [np.sign(dd[k]) for _, _, dd in per]; cons = '同号' if len(set(signs)) == 1 else '异号'
+        paired.append(f"| {ZH[a]} − F | {name} | {cells} | {m:+.2f} | {cons} |")
+    paired.append(f"| {ZH[a]} − F | 共同成功工况号 | " + ' / '.join(f"种子{s_}: {c}" for s_, c, _ in per) + " | – | – |")
+paired_hdr = "| 配对（同种子、双方都到达且停稳的工况） | 指标 | 逐种子差 (n) | 等权均值 | 符号一致性 |\n|---|---|---|---|---|"
+# 完赛均值副表（各臂自己的成功工况；分母不同，仅作描述）
+cm_rows = []
+for a in ('frozen', 'supervised', 'joint', 'joint_head'):
+    rs = [r for r in allcond(a) if r['settled']]
+    if rs: cm_rows.append(f"| {ZH[a]} | {len(rs)} | {np.mean([r['Ij'] for r in rs]):.1f} | {np.mean([r['time_s'] for r in rs]):.1f} | {np.mean([r['E_Wh'] for r in rs]):.1f} | {np.mean([r['R'] for r in rs]):.3f} |")
+cm_hdr = "| 臂 | 成功工况数 | I_j | 时间 s | 能耗 Wh | R |\n|---|---|---|---|---|---|"
+out.update(agg_hdr=agg_hdr, agg="\n".join(agg + ([probe_row] if probe_row else [])), paired_hdr=paired_hdr, paired="\n".join(paired), cm_hdr=cm_hdr, cm="\n".join(cm_rows), n_seeds=len(seeds))
 json.dump(out, open(ROOT / 'reports' / '_v4_tables.json', 'w'), ensure_ascii=False, indent=1); print({k: (len(v_) if hasattr(v_, "__len__") else v_) for k, v_ in out.items()})

@@ -46,7 +46,7 @@ class VisionMemory:
 
     def reset(self):
         self.curve = dict(d_est=None, announced=False, active=False, age=math.inf, release_d=None, traveled_since_entry=0.)
-        self.sig = dict(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False)
+        self.sig = dict(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, observed='unknown', observed_conf=0., committed=False)
         self.end = dict(d_est=None, age=math.inf)
         self.last_dets = None; self.votes = {n: [] for n in ('traffic_light', 'curve_sign', 'end_marker', 'release_sign')}; self.mismatch = {n: 0 for n in self.votes}
 
@@ -98,18 +98,20 @@ class VisionMemory:
             if self._accept('traffic_light', self.sig['d_line'] if self.sig['seen'] else None, new_d) or (self.mismatch['traffic_light'] >= 3 and lt['score'] >= self.thr('traffic_light') and ok):
                 near = self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < self.dist_freeze_m
                 fused = self.sig['d_line'] if near else self._fuse(self.sig['d_line'] if self.sig['seen'] else None, new_d)   # 近线：距离冻结（推算更准）
+                obs_phase = PHASES[int(np.argmax(color_probs))]; obs_conf = float(np.max(color_probs))
+                self.sig['observed'] = obs_phase; self.sig['observed_conf'] = obs_conf   # 审计整改：当前观测灯色始终记录（不被承诺/冻结覆盖），供 actor/critic 与日志
                 if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < self.color_freeze_m and v > 3.:
-                    phase, conf = self.sig['phase'], self.sig['conf']   # 近距离且仍在行驶（已无法改变决策）：灯色冻结；停车等待时照常更新
+                    phase, conf = self.sig['phase'], self.sig['conf']; self.sig['committed'] = True   # 近距离且仍在行驶（已无法改变决策）：执行层采用的相位为“已作承诺”的相位；观测另存
                 else:
-                    phase = PHASES[int(np.argmax(color_probs))]; conf = float(np.max(color_probs))
+                    phase, conf = obs_phase, obs_conf; self.sig['committed'] = False
                 self.sig['dur'] = self.sig['dur'] + dt if (self.sig['seen'] and phase == self.sig['phase']) else 0.
                 self.sig.update(d_line=fused, phase=phase, conf=conf, age=0., seen=True); self.mismatch['traffic_light'] = 0
         elif self.sig['seen'] and self.sig['age'] > self.hold_s and self.sig['phase'] != 'unknown':
             self.sig['phase'] = 'unknown'; self.sig['conf'] = 0.
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < -5.:
-            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
+            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, observed='unknown', observed_conf=0., committed=False)
         if self.sig['seen'] and v < 0.5 and self.sig['age'] > self.stationary_expire_s:   # 静止等待中长时间无检出：幻影灯（弯道出口解除牌误判为灯等）→ 丢弃，避免永久停车
-            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
+            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, observed='unknown', observed_conf=0., committed=False)
         # v4r 停稳锁存：红灯/未知相位前一旦停稳（v<0.05）就把停车目标锁在当前位置，直到相位为绿或轨迹丢弃。
         # 否则停止线距离估计偏长时车会缓慢蠕行到线上（灯距 ≈14 m 的近距离灯色不可靠区），绿灯后无法起步。
         if self.sig['seen'] and self.sig['phase'] != 'green':
@@ -128,7 +130,7 @@ class VisionMemory:
         if self.curve['announced'] and not self.curve['active'] and self.curve['d_est'] is not None and (self.curve['d_est'] - SIGN_AHEAD) > self.expire_far_m and self.curve['age'] > self.expire_s:
             self.curve.update(d_est=None, announced=False, age=math.inf)
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] > self.expire_far_m and self.sig['age'] > self.light_expire_s:
-            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
+            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, observed='unknown', observed_conf=0., committed=False)
 
     # ---------------------------------------------------------------- 三方共享的接口
     def v_limit(self):
@@ -162,11 +164,18 @@ class VisionMemory:
         return np.array([v / V_FREE, a / 3.5, max(d_end, 0.) / S.R.LENGTH, self.v_limit() / V_FREE, min(max(dc, 0.), S.E.PREVIEW) / S.E.PREVIEW, vc / V_FREE,
                          min(max(ds, 0.), S.E.SPAT_RANGE) / S.E.SPAT_RANGE, phase, 1.0, (soc - .5) / .5, (T - 283.15) / 30., (t_end - t) / t_budget, t / t_budget], np.float32)
 
-    def extra(self):
-        """附加 6 维：灯置信度、灯信息年龄/10、当前相位持续/90、弯道已宣告、弯道限速激活、终点已见。"""
-        return np.array([self.sig['conf'] if self.sig['seen'] else 0., min(self.sig['age'], 10.) / 10. if self.sig['seen'] else 1.,
-                         min(self.sig['dur'], 90.) / 90. if self.sig['seen'] else 0., float(self.curve['announced']), float(self.curve['active']),
-                         float(self.end['d_est'] is not None)], np.float32)
+    EXTRA_DIM_BASE = 6; EXTRA_DIM_EXTENDED = 10
+
+    def extra(self, extended=False):
+        """附加 6 维：灯置信度、灯信息年龄/10、当前相位持续/90、弯道已宣告、弯道限速激活、终点已见。
+        extended=True（审计整改，供下一轮训练；既有权重仍用 6 维）再追加 4 维执行层内部状态：停稳锁存、近线灯色承诺、观测灯色是否为绿、观测置信——
+        使实际影响执行的记忆状态对 actor/critic 可见（此前锁存/承诺只在执行层内部，同一 legacy/extra 可对应不同执行目标）。"""
+        base = [self.sig['conf'] if self.sig['seen'] else 0., min(self.sig['age'], 10.) / 10. if self.sig['seen'] else 1.,
+                min(self.sig['dur'], 90.) / 90. if self.sig['seen'] else 0., float(self.curve['announced']), float(self.curve['active']),
+                float(self.end['d_est'] is not None)]
+        if extended:
+            base += [float(self.sig.get('hold', False)), float(self.sig.get('committed', False)), float(self.sig.get('observed') == 'green' and self.sig['seen']), self.sig.get('observed_conf', 0.) if self.sig['seen'] else 0.]
+        return np.array(base, np.float32)
 
     def light_detected(self):
         return int(self.sig['seen'] and self.sig['age'] <= 0.)

@@ -20,6 +20,7 @@ class Config:
     target_clip: float=.5
     critic_action: str='command'   # v3：'command'（投影前指令，原行为）或 'applied'（执行层投影后的实际动作）
     actor_clip_ste: bool=False     # v3：actor 更新时把指令直通裁剪到执行层可行区间（前向裁剪、反向恒等）
+    extra_dim: int=6               # 审计整改：vision_memory 附加元信息维数（6=原接口；10=含锁存/承诺/观测灯色/观测置信的扩展接口，需重训）
 
 def grad_norm(module):
     return sum(float(p.grad.detach().square().sum()) for p in module.parameters() if p.grad is not None)**.5
@@ -30,8 +31,8 @@ class VisualTD3:
         if self.cfg.mode not in ('frozen','supervised','joint','joint_head'):raise ValueError(self.cfg.mode)
         if self.cfg.critic_action not in ('command','applied'):raise ValueError(self.cfg.critic_action)
         self.encoder=VisualEncoder(self.cfg.stack).to(device)
-        self.adapter=InputAdapter(self.cfg.information_mode).to(device)
-        D=policy_dim(self.cfg.information_mode)
+        self.adapter=InputAdapter(self.cfg.information_mode,extra_dim=self.cfg.extra_dim).to(device)
+        D=policy_dim(self.cfg.information_mode,self.cfg.extra_dim)
         self.actor=MLP(D,True).to(device)
         self.q1=MLP(D+1).to(device);self.q2=MLP(D+1).to(device)
         self.actor_t=copy.deepcopy(self.actor);self.q1t=copy.deepcopy(self.q1);self.q2t=copy.deepcopy(self.q2)

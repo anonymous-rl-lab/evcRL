@@ -25,14 +25,18 @@ def main():
                 rec = dict(runs=runs, arm=arm, condition=i, arrived=r['arrived'], violations=r['violations'], time_s=r['time_s'], end_x=round(r['end_x'], 1))
                 rc = np.where(V[:, C.index('red_crossing')] > 0)[0]
                 if len(rc):
-                    k = int(rc[0]); g = V[:, C.index('signal_green')]
-                    onset = [j for j in range(1, k + 1) if g[j - 1] > 0.5 and g[j] < 0.5]; j = onset[-1] if onset else None
-                    if j is not None:
-                        d = XS - V[j, C.index('x1')]; v = V[j, C.index('v1')]
-                        rec.update(kind='闯红灯', yellow_onset_substep=j, d_line_at_onset=round(float(d), 1), v_at_onset=round(float(v), 1), min_stop_dist=round(float(v * v / 7.), 1), stoppable=bool(v * v / 7. <= d),
-                                   mem_phase_at_onset=log[j].get('memory', {}).get('sig', {}).get('phase'), mem_d_line_at_onset=log[j].get('memory', {}).get('sig', {}).get('d_line'),
-                                   crossing_speed=round(float(V[k, C.index('v1')]), 1))
-                    else: rec.update(kind='闯红灯', note='未找到黄灯起始（进入可见区时已非绿）', crossing_speed=round(float(V[k, C.index('v1')]), 1))
+                    k = int(rc[0]); g = V[:, C.index('signal_green')]; v_cross = float(V[k, C.index('v0')])
+                    # 时序约定（审计整改）：signal_green[j] 是第 j 子步结束时刻 t1 的真值相位；相位由绿转非绿发生在子步 j 内。
+                    # 事件时刻的车辆状态取子步 j 的起点 (x0, v0)（最晚的“仍是绿灯”的已知状态，保守：真实起始略晚于此）。只在过线前 40 子步（20 s）内找切换，否则不属于同一相位事件。
+                    onset = [j for j in range(max(1, k - 40), k + 1) if g[j - 1] > 0.5 and g[j] < 0.5]; j = onset[-1] if onset else None
+                    if v_cross < 1.0: rec.update(kind='红灯蠕行过线', crossing_speed=round(v_cross, 2), mem_phase_at_cross=log[k].get('memory', {}).get('sig', {}).get('phase'), mem_hold_at_cross=log[k].get('memory', {}).get('sig', {}).get('hold'))
+                    elif j is not None:
+                        d = XS - V[j, C.index('x0')]; v = V[j, C.index('v0')]
+                        rec.update(kind='闯红灯（黄灯起始后）', yellow_onset_substep=j, d_line_at_onset=round(float(d), 1), v_at_onset=round(float(v), 1), min_stop_dist=round(float(v * v / 7.), 1), stoppable_ideal=bool(v * v / 7. <= d),
+                                   note='v²/7 为忽略反应延迟与 jerk 的理想最短距离：d < v²/7 说明即使立即最大制动也不够；反之不保证 jerk 约束下可停',
+                                   mem_phase_at_onset=log[j].get('memory', {}).get('sig', {}).get('phase'), mem_d_line_at_onset=None if log[j].get('memory', {}).get('sig', {}).get('d_line') is None else round(log[j]['memory']['sig']['d_line'], 1),
+                                   substeps_onset_to_cross=k - j, crossing_speed=round(v_cross, 1))
+                    else: rec.update(kind='闯红灯（20 s 内无绿→非绿切换）', crossing_speed=round(v_cross, 1), mem_phase_at_cross=log[k].get('memory', {}).get('sig', {}).get('phase'))
                 else:
                     st = [k for k, l in enumerate(log) if l.get('v', 1) < 0.05]
                     if st:
