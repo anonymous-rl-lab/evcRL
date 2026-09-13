@@ -125,7 +125,8 @@ class VisionEnv(SmoothEnv):
         self.layer_log.append(dict(t=float(self.t), x=float(self.x), command=float(cmd), applied=float(result), fallback=bool(info['fallback']), intervened=bool(abs(result - cmd) > 1e-9),
                                    lower=None if lower is None else float(lower), upper=None if upper is None else float(upper),
                                    perceived=self.memory.sig['phase'] if self.memory is not None else 'unknown', truth_green=self._truth_green_for_log(), signal_source='vision_memory',
-                                   v_limit=float(limit), targets=[(round(float(a_), 1), float(b_)) for a_, b_, *_ in self._stop_targets()]))
+                                   v_limit=float(limit), targets=[(round(float(a_), 1), float(b_)) for a_, b_, *_ in self._stop_targets()], v=float(self.v),
+                                   perceived_detail=self.perceived.get('detail'), memory=self.memory.snapshot() if self.memory is not None else None))
         return result
 
 
@@ -318,7 +319,8 @@ class VisualTrainer:
         self.signal_source = cfg.get('signal_source', 'truth'); self.world = cfg.get('world', 'v2')
         self.perception = Perception(ROOT / cfg['pretrained_encoder'], cfg.get('perception_source', 'roi_head'), green_threshold=cfg.get('green_threshold', 0.), min_consecutive=cfg.get('min_consecutive', 1), det_thr=cfg.get('det_thr', 0.5)) if (self.signal_source == 'perceived' or self.world == 'v4') else None
         from vision_state import VisionMemory
-        self.memory = VisionMemory(det_thr=cfg.get('det_thr', 0.5), hold_s=cfg.get('hold_s', 3.)) if self.world == 'v4' else None
+        self.memory = VisionMemory(det_thr=cfg.get('det_thr', 0.5), hold_s=cfg.get('hold_s', 3.), init_votes=cfg.get('init_votes', 2), consistency_m=cfg.get('consistency_m', 40.)) if self.world == 'v4' else None
+        if self.perception is not None and isinstance(cfg.get('det_thr'), dict): self.perception.det_thr = float(cfg['det_thr'].get('traffic_light', 0.5))
         # 共同起点：预训练编码器 + 冻结 4 km A 臂 actor/critic 的第一层迁移（新增 Z/元信息列初始化为零）
         enc = torch.load(ROOT / cfg['pretrained_encoder'], map_location='cpu', weights_only=False)
         self.learner.encoder.load_state_dict(enc['encoder'])

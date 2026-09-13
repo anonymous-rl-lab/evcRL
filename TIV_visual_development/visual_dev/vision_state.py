@@ -18,15 +18,41 @@ SIGN_AHEAD, LIGHT_AHEAD, LIGHT_RANGE = 400., 14., 200.
 
 
 class VisionMemory:
-    def __init__(self, det_thr=0.5, hold_s=3.0, curve_len_max=1000., release_grace_m=5.):
+    def __init__(self, det_thr=0.5, hold_s=3.0, curve_len_max=1000., release_grace_m=5., init_votes=2, vote_window=3, consistency_m=40., expire_s=4.0, light_expire_s=10.0,
+                 gain=0.4, margin_rel=0.15, margin_abs=3.0, color_freeze_m=8.0):
+        """gain：已有轨迹的距离更新增益（推算值与新测量的加权），抑制逐帧抖动；margin_rel/abs：执行层目标的感知不确定性余量，
+        目标距离 = 估计 − (margin_rel·估计 + margin_abs)（红灯停车与入弯限速都提前，保守）；color_freeze_m：停止线估计小于该距离时不再更新灯色（近距离灯色不可靠，且已无法改变决策）。"""
+        """det_thr：检测门控阈值（float 或 dict 类别→阈值）；init_votes/vote_window：新建轨迹需最近 vote_window 帧中 ≥init_votes 帧过阈值；
+        consistency_m：已有轨迹只接受与推算值相差 ≤consistency_m 的新距离估计（否则记一次不一致，连续 3 次后重置轨迹）。"""
         self.det_thr = det_thr; self.hold_s = hold_s; self.curve_len_max = curve_len_max; self.release_grace_m = release_grace_m
+        self.init_votes = init_votes; self.vote_window = vote_window; self.consistency_m = consistency_m; self.expire_s = expire_s; self.light_expire_s = light_expire_s
+        self.gain = gain; self.margin_rel = margin_rel; self.margin_abs = margin_abs; self.color_freeze_m = color_freeze_m
         self.reset()
+
+    def _fuse(self, tracked, new):
+        return new if tracked is None else (1. - self.gain) * tracked + self.gain * new
+
+    def _margin(self, d):
+        return max(d - (self.margin_rel * max(d, 0.) + self.margin_abs), 0.)
+
+    def thr(self, name):
+        return self.det_thr.get(name, 0.5) if isinstance(self.det_thr, dict) else self.det_thr
 
     def reset(self):
         self.curve = dict(d_est=None, announced=False, active=False, age=math.inf, release_d=None, traveled_since_entry=0.)
         self.sig = dict(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
         self.end = dict(d_est=None, age=math.inf)
-        self.last_dets = None
+        self.last_dets = None; self.votes = {n: [] for n in ('traffic_light', 'curve_sign', 'end_marker', 'release_sign')}; self.mismatch = {n: 0 for n in self.votes}
+
+    def _vote(self, name, dets):
+        d = dets.get(name); hit = bool(d and d['score'] >= self.thr(name)); v = self.votes[name]; v.append(hit); del v[:-self.vote_window]
+        return hit, sum(v) >= self.init_votes
+
+    def _accept(self, name, tracked_d, new_d):
+        """已有轨迹的距离更新是否与推算一致。"""
+        if tracked_d is None: self.mismatch[name] = 0; return True
+        if abs(new_d - tracked_d) <= self.consistency_m: self.mismatch[name] = 0; return True
+        self.mismatch[name] += 1; return False
 
     # ---------------------------------------------------------------- 观测融合
     def update(self, dets, color_probs, v, dt):
@@ -38,30 +64,47 @@ class VisionMemory:
         if self.curve['release_d'] is not None: self.curve['release_d'] -= ds
         if self.curve['active']: self.curve['traveled_since_entry'] += ds
         # 弯道警示牌
-        cs = dets.get('curve_sign')
-        if cs and cs['score'] >= self.det_thr and not self.curve['active']:
-            self.curve['d_est'] = float(cs['dist_m']) + SIGN_AHEAD; self.curve['announced'] = True; self.curve['age'] = 0.
+        hit, ok = self._vote('curve_sign', dets); cs = dets.get('curve_sign')
+        if hit and not self.curve['active'] and (self.curve['announced'] or ok):
+            new_d = float(cs['dist_m']) + SIGN_AHEAD
+            if self._accept('curve_sign', self.curve['d_est'] if self.curve['announced'] else None, new_d):
+                self.curve['d_est'] = self._fuse(self.curve['d_est'] if self.curve['announced'] else None, new_d); self.curve['announced'] = True; self.curve['age'] = 0.
+            elif self.mismatch['curve_sign'] >= 3: self.curve.update(d_est=new_d, announced=True, age=0.); self.mismatch['curve_sign'] = 0
         if self.curve['announced'] and not self.curve['active'] and self.curve['d_est'] is not None and self.curve['d_est'] <= 0.:
             self.curve['active'] = True; self.curve['traveled_since_entry'] = 0.
-        rs = dets.get('release_sign')
-        if rs and rs['score'] >= self.det_thr and (self.curve['announced'] or self.curve['active']):
+        hit, ok = self._vote('release_sign', dets); rs = dets.get('release_sign')
+        if hit and ok and (self.curve['announced'] or self.curve['active']):
             self.curve['release_d'] = float(rs['dist_m'])
         if self.curve['active'] and ((self.curve['release_d'] is not None and self.curve['release_d'] <= -self.release_grace_m) or self.curve['traveled_since_entry'] > self.curve_len_max):
             self.curve.update(d_est=None, announced=False, active=False, age=math.inf, release_d=None, traveled_since_entry=0.)
         # 信号灯
-        lt = dets.get('traffic_light')
-        if lt and lt['score'] >= self.det_thr and lt['dist_m'] <= LIGHT_RANGE + LIGHT_AHEAD and color_probs is not None:
-            phase = PHASES[int(np.argmax(color_probs))]; conf = float(np.max(color_probs))
-            self.sig['dur'] = self.sig['dur'] + dt if (self.sig['seen'] and phase == self.sig['phase']) else 0.
-            self.sig.update(d_line=float(lt['dist_m']) - LIGHT_AHEAD, phase=phase, conf=conf, age=0., seen=True)
+        hit, ok = self._vote('traffic_light', dets); lt = dets.get('traffic_light')
+        if hit and (self.sig['seen'] or ok) and lt['dist_m'] <= LIGHT_RANGE + LIGHT_AHEAD and color_probs is not None:
+            new_d = float(lt['dist_m']) - LIGHT_AHEAD
+            if self._accept('traffic_light', self.sig['d_line'] if self.sig['seen'] else None, new_d) or self.mismatch['traffic_light'] >= 3:
+                fused = self._fuse(self.sig['d_line'] if self.sig['seen'] else None, new_d)
+                if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < self.color_freeze_m and v > 3.:
+                    phase, conf = self.sig['phase'], self.sig['conf']   # 近距离且仍在行驶（已无法改变决策）：灯色冻结；停车等待时照常更新
+                else:
+                    phase = PHASES[int(np.argmax(color_probs))]; conf = float(np.max(color_probs))
+                self.sig['dur'] = self.sig['dur'] + dt if (self.sig['seen'] and phase == self.sig['phase']) else 0.
+                self.sig.update(d_line=fused, phase=phase, conf=conf, age=0., seen=True); self.mismatch['traffic_light'] = 0
         elif self.sig['seen'] and self.sig['age'] > self.hold_s and self.sig['phase'] != 'unknown':
             self.sig['phase'] = 'unknown'; self.sig['conf'] = 0.
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < -5.:
             self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
         # 终点
-        em = dets.get('end_marker')
-        if em and em['score'] >= self.det_thr:
-            self.end['d_est'] = float(em['dist_m']); self.end['age'] = 0.
+        hit, ok = self._vote('end_marker', dets); em = dets.get('end_marker')
+        if hit and (self.end['d_est'] is not None or ok):
+            if self._accept('end_marker', self.end['d_est'], float(em['dist_m'])) or self.mismatch['end_marker'] >= 3:
+                self.end['d_est'] = self._fuse(self.end['d_est'], float(em['dist_m'])); self.end['age'] = 0.; self.mismatch['end_marker'] = 0
+        # 轨迹失效（误检保护）：目标按估计仍应在视野内却长时间未再检出 → 丢弃
+        if self.end['d_est'] is not None and self.end['d_est'] > 10. and self.end['age'] > self.expire_s:
+            self.end.update(d_est=None, age=math.inf)
+        if self.curve['announced'] and not self.curve['active'] and self.curve['d_est'] is not None and (self.curve['d_est'] - SIGN_AHEAD) > 10. and self.curve['age'] > self.expire_s:
+            self.curve.update(d_est=None, announced=False, age=math.inf)
+        if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] > 20. and self.sig['age'] > self.light_expire_s:
+            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
 
     # ---------------------------------------------------------------- 三方共享的接口
     def v_limit(self):
@@ -71,17 +114,17 @@ class VisionMemory:
         """(绝对位置估计, 目标速度[, 2.0]) 列表，全部来自记忆。"""
         out = []
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['phase'] != 'green':
-            out.append((x + max(self.sig['d_line'], 0.) - S.E.STOP_MARGIN, 0.0))
+            out.append((x + self._margin(self.sig['d_line']), 0.0))                       # 保守：按不确定性余量提前停
         if self.curve['announced'] and not self.curve['active'] and self.curve['d_est'] is not None:
-            out.append((x + max(self.curve['d_est'] - S.E.MARGIN, 0.), V_CURVE, 2.0))
+            out.append((x + max(self._margin(self.curve['d_est']) - S.E.MARGIN, 0.), V_CURVE, 2.0))
         if self.end['d_est'] is not None:
-            out.append((x + max(self.end['d_est'], 0.), 0.0))
+            out.append((x + self.end['d_est'] + 2.0, 0.0))   # 终点：固定锚点（估计可为负 → 立即停），偏后 2 m 保证过线到达；不随车移动
         return out
 
     def executor_signal(self, assumed_green_remaining=30.):
         """(前方信号是否可通行, 假定剩余绿灯时间, 停止线距离估计)。"""
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] > 0.:
-            return self.sig['phase'] == 'green', assumed_green_remaining, self.sig['d_line']
+            return self.sig['phase'] == 'green', assumed_green_remaining, self._margin(self.sig['d_line'])
         return None, None, None
 
     def legacy(self, v, a, soc, T, t_end, t, t_budget):

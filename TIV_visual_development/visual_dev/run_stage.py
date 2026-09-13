@@ -142,7 +142,7 @@ def stage_audit():
         mem_empty = VisionMemory(); env2 = P.VisionEnv(.85, 288.15, 0., memory=mem_empty); env2.reset(15.); env2.x = P.S.R.SIGNALS[0] - 100.; env2.t = 100.
         checks['executor_targets_from_memory_only'] = env2._stop_targets() == [] and env2.memory.v_limit() == P.S.R.V_FREE
         import inspect; src = inspect.getsource(P.VisionEnv._stop_targets) + inspect.getsource(P.VisionEnv.project) + inspect.getsource(VisionMemory)
-        checks['no_map_or_truth_calls_in_control'] = all(k not in src for k in ('signal_green', 'time_to_change', 'R.CURVES', 'R.SIGNALS', 'v_limit(', 'self.obs()', 'offsets'))
+        checks['no_map_or_truth_calls_in_control'] = all(k not in src for k in ('signal_green', 'time_to_change', 'R.CURVES', 'R.SIGNALS', 'v_limit_at', 'E.v_limit', 'self.obs()', 'offsets'))
         checks['policy_obs_from_memory_not_env_obs'] = 'env.obs()' not in inspect.getsource(VisualTrainer.current_obs_record).split("if self.world == 'v4'")[1].split('return dict')[1]
         checks['policy_input_dim_v4'] = state.shape[1] == 13 + 64 + 4 + 6
         checks['roi_is_predicted_at_runtime'] = all('roi_pred' in t.store.frames[f] for f in t.history)
