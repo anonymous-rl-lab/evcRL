@@ -186,10 +186,10 @@ class SceneCamera:
             color = force_color or signal_color(sim_time, pose['offsets'][k])
             if 'light_color' in hide: color = 'off'
             if v4:
-                if 0.5 < d_line < LIGHT_RANGE_M:               # v4：灯与停止线标线只在 200 m 内出现
+                if 0.5 < d and d_line < LIGHT_RANGE_M:         # v4：灯与停止线标线只在 200 m 内出现；灯箱在线远侧 14 m，车停在线上/略过线等待时仍可见（修复：原按 d_line>0.5 判定，停到线上灯箱即消失导致死锁）
                     labels['color_truth'] = color; labels['light_distance_m'] = float(d); labels['truth']['light_m'] = float(d); labels['truth']['stop_line_m'] = float(d_line)
                     light = (d, color)
-                    objects.append((d_line, lambda dl=d_line: self._draw_stopline(dr, dl, labels)))
+                    if d_line > 0.5: objects.append((d_line, lambda dl=d_line: self._draw_stopline(dr, dl, labels)))
                     objects.append((d, lambda d=d, c=color: self._draw_light(dr, d, c, labels)))
             elif 0.5 < d < 700.:
                 labels['color_truth'] = color; labels['light_distance_m'] = float(d)
@@ -215,7 +215,7 @@ class SceneCamera:
         # 由地图距离投影的 ROI（不用真值框），裁剪到画面；association_valid 要求 ROI 与画面相交
         roi = np.zeros((1, H, W), np.float32); d_map = None
         for xs in self.signals:
-            if (0.5 < xs - x < LIGHT_RANGE_M) if v4 else (0.5 < xs + LIGHT_AHEAD - x <= VISIBLE_LAMP_M): d_map = xs + LIGHT_AHEAD - x
+            if (0.5 < xs + LIGHT_AHEAD - x and xs - x < LIGHT_RANGE_M) if v4 else (0.5 < xs + LIGHT_AHEAD - x <= VISIBLE_LAMP_M): d_map = xs + LIGHT_AHEAD - x
         if d_map is not None:
             u, v = project(LIGHT_LATERAL, LIGHT_BASE + HOUSING[1] / 2, d_map)
             hh = max(FOCAL * HOUSING[1] / d_map, 6.); ww = max(FOCAL * HOUSING[0] / d_map, 6.)

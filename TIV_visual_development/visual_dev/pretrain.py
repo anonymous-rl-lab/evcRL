@@ -30,15 +30,17 @@ def make_sequences(n, seed, tag, coverage='v2', world=None):
     """生成 n 个 4 帧序列。coverage='v2'：原采样（60% x∈[2200,3000]，v∈[4,22]，相位均匀）。
     coverage='v3'：分层覆盖——30% 原区间；25% 近线 x∈[2900,3000]、v∈[0,12]；10% 停在线上 x∈[2994,3000]、v∈[0,2]；
     20% 全路线；15% 相位定向（x∈[2500,3000]，相位落在绿末/黄/红初 [26,38) s），使近距离与黄灯不再是覆盖缺口。"""
-    world = world or ('v4' if coverage == 'v4' else 'v2')
+    world = world or ('v4' if coverage in ('v4', 'v4b') else 'v2')
     cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=seed, world=world); rng = np.random.default_rng(seed + 1)
     seqs = []; xs = S.R.SIGNALS[0]; ca, cb, _ = S.R.CURVES[0]
     for i in range(n):
         eid = f'{tag}{i:05d}'; cam.new_episode(eid)
         t = float(rng.uniform(0., 600.)); off = float(rng.uniform(0., 90.))
-        if coverage == 'v4':   # 无地图世界：按道路事件分区覆盖
+        if coverage in ('v4', 'v4b'):   # 无地图世界：按道路事件分区覆盖；v4b：停在线上分区扩到线后 3 m（灯箱在线远侧 14 m，停车等待帧 d∈[11,20] m），并加近线低速接近分区
             u = rng.random()
-            if u < .20: x = float(rng.uniform(ca - 400. - 330., ca - 400.)); v = float(rng.uniform(4., 22.))      # 警示牌可见区
+            if coverage == 'v4b' and u < .08: x = float(rng.uniform(xs - 6., xs + 3.)); v = float(rng.uniform(0., 2.))       # v4b：停在线上/略过线等待
+            elif coverage == 'v4b' and u < .13: x = float(rng.uniform(xs - 30., xs - 2.)); v = float(rng.uniform(0., 6.))   # v4b：近线低速接近
+            elif u < .20: x = float(rng.uniform(ca - 400. - 330., ca - 400.)); v = float(rng.uniform(4., 22.))      # 警示牌可见区
             elif u < .30: x = float(rng.uniform(ca - 400., cb + 30.)); v = float(rng.uniform(4., 14.))            # 牌后到弯道/解除牌
             elif u < .55: x = float(rng.uniform(xs - 210., xs)); v = float(rng.uniform(0., 20.))                    # 灯 200 m 可见区
             elif u < .63: x = float(rng.uniform(xs - 6., xs)); v = float(rng.uniform(0., 2.))                       # 停在线上
@@ -222,7 +224,7 @@ def main(n_train=1600, n_dev=240, n_audit=32, steps=1200, batch=16, seed=4242, c
             print(f"预训练 step {step} loss {float(loss):.4f} | ROI头 acc {summ['all']['roi_head']['acc']:.3f} unknown召回 {summ['all']['roi_head']['unknown_recall']} | Z头(最新帧) acc {zh['acc'] if zh else None:.3f} | 检测 格一致 {det['all'].get('cell_ok_rate')} ≤2px {det['all'].get('hit_le2px')} 误检 {det['no_visible_light_frames']['false_alarm_rate']}", flush=True)
     enc.eval(); summ, det, rows = evaluate_vision(enc, dev); zh = z_head_on_latest(enc, dev); byd = roi_head_by_distance(enc, dev)
     print('ROI 头按距离分层（dev）:', json.dumps(byd, ensure_ascii=False), flush=True)
-    v4rep = evaluate_vision_v4(enc, dev) if coverage == 'v4' else None
+    v4rep = evaluate_vision_v4(enc, dev) if coverage in ('v4', 'v4b') else None
     if v4rep: print('v4 检测/距离/运行时灯色（dev）:', json.dumps(v4rep, ensure_ascii=False), flush=True)
     torch.save(dict(encoder=enc.state_dict(), steps=steps, batch=batch, seed=seed, dev_metrics=summ, pool_seed=seed, coverage=coverage), OUT / 'encoder.pt')
     grads = {}
@@ -239,7 +241,7 @@ def main(n_train=1600, n_dev=240, n_audit=32, steps=1200, batch=16, seed=4242, c
 
 if __name__ == '__main__':
     import argparse
-    ap = argparse.ArgumentParser(); ap.add_argument('--coverage', default='v2', choices=('v2', 'v3', 'v4')); ap.add_argument('--out', default=None); ap.add_argument('--steps', type=int, default=1200)
+    ap = argparse.ArgumentParser(); ap.add_argument('--coverage', default='v2', choices=('v2', 'v3', 'v4', 'v4b')); ap.add_argument('--out', default=None); ap.add_argument('--steps', type=int, default=1200)
     ap.add_argument('--n-train', type=int, default=1600); ap.add_argument('--n-dev', type=int, default=240)
     a = ap.parse_args()
     if a.out: OUT = ROOT / 'runs' / a.out
