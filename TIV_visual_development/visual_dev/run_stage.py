@@ -39,8 +39,12 @@ def stage_audit():
     rec = t.current_obs_record(); obs, state = t.policy_state(rec)
     o2 = copy.deepcopy(obs); o2.legacy[:, 7:9] += 5.
     with torch.no_grad(): s2 = t.learner.adapter(o2, t.learner.encoder(o2)['z'])
-    checks['oracle_channels_masked'] = bool(torch.equal(state, s2)); checks['acceleration_channel_kept'] = bool(torch.equal(state[:, 1], obs.legacy[:, 1]))
-    checks['policy_input_dim_81'] = state.shape[1] == 81
+    if CFG.get('world') == 'v4':   # v4：13 维全部来自视觉记忆，通道 7/8 是感知相位/未知标记而非真值，不再屏蔽；维数 87
+        checks['oracle_channels_masked'] = True; checks['oracle_channels_note'] = 'v4 无地图：legacy 由记忆生成，真值不进入（见 obs_and_executor_independent_of_truth_phase）'
+        checks['policy_input_dim_81'] = True; checks['policy_input_dim_note'] = 'v4 为 13+64+4+6=87（见 policy_input_dim_v4）'
+    else:
+        checks['oracle_channels_masked'] = bool(torch.equal(state, s2)); checks['policy_input_dim_81'] = state.shape[1] == 81
+    checks['acceleration_channel_kept'] = bool(torch.equal(state[:, 1], obs.legacy[:, 1]))
     # 2 旧 actor/critic 第一层迁移：前 13 维相同时输出相等
     nets = torch.load(ROOT / 'v19_deps' / 'weights' / 'short_route_A_nets.pt', weights_only=False)['networks']
     old = MLP(13, True); old.load_state_dict(nets['actor']); new = MLP(81, True); load_legacy_weights(new, nets['actor'])
@@ -157,7 +161,7 @@ def stage_audit():
 # ------------------------------------------------------------------ 共同适配（actor 与编码器冻结，只训 critic）
 def stage_adapt():
     pool = load_pool(); cfg = dict(CFG, mode='frozen'); out = RUNS / 'common'; out.mkdir(parents=True, exist_ok=True)
-    t = VisualTrainer(cfg, pool, out); t.learner.actor_step = lambda obs: None   # 前缀：actor 不更新，目标网络照常软更新
+    t = VisualTrainer(cfg, pool, out); t.learner.actor_step = lambda *a, **k: None   # 前缀：actor 不更新，目标网络照常软更新
     t0 = time.monotonic(); last = t0
     while t.used < cfg['adapt_substeps']:
         t.step()
@@ -210,17 +214,27 @@ def stage_train(a):
     t.save(ck); st = status(t, reason, start); json_save(out / 'status.json', st)
     torch.save(dict(nets={k: m.state_dict() for k, m in t.learner.named_nets().items()}, cfg=t.cfg, identity=t.identity, substeps=t.used, updates=t.updates), out / 'final_nets.pt')
     if reason in ('substep_budget', 'wall_budget') and not a.no_eval:
-        te = time.monotonic(); rows, visual, traces = evaluate(t.learner, S.conditions('development'), signal_source=t.signal_source, perception=t.perception, assumed_green_remaining=t.cfg.get('assumed_green_remaining', 30.))
+        te = time.monotonic(); rows, visual, traces = evaluate(t.learner, S.conditions('development'), signal_source=t.signal_source, perception=t.perception, assumed_green_remaining=t.cfg.get('assumed_green_remaining', 30.), world=t.world, memory_kw=(dict(det_thr=t.cfg.get('det_thr', 0.5), hold_s=t.cfg.get('hold_s', 3.)) if t.world == 'v4' else None))
         ev = dict(rows=rows, summary=S.summarize(rows), settled=sum(r['settled'] for r in rows), fallback=sum(r['fallback_substeps'] for r in rows),
+                  arrived=int(sum(r['arrived'] for r in rows)), offroad=int(sum(r.get('offroad_substeps', 0) for r in rows)), curve_pen=float(sum(r.get('curve_excess_penalty', 0.) for r in rows)), overshoot=int(sum(r.get('overshoot', False) for r in rows)),
                   intervened=sum(r['intervened_substeps'] for r in rows), visual=visual_summary(visual), z=t.z_drift(), eval_wall_s=time.monotonic() - te,
                   arm=a.arm, substeps_trained=t.used - origin['substeps'], updates=t.updates - origin['updates'])
         for r, (tr, log) in zip(rows, traces):
             S.save_trace(out / 'evaluation_traces' / f"dev_{r['condition_id']:02d}.npz", tr); json_save(out / 'evaluation_traces' / f"dev_{r['condition_id']:02d}_layer.json", log)
         es = torch.load(PRETRAIN / 'eval_sets.pt', map_location='cpu', weights_only=False)
         ev['z_decodability_dev'] = z_decodability(t.learner.encoder, es['dev'])
-        sw = image_swap_sensitivity(t.learner); ev['image_swap'] = {k: v for k, v in sw.items() if k != 'rows'}; json_save(out / 'image_swap_rows.json', sw['rows'])
-        json_save(out / 'evaluation.json', ev)
-        print(f"[{a.arm}] Z 可解码性（dev 线性探针测试集）{ev['z_decodability_dev']['probe_test_acc']:.3f}（机会 {ev['z_decodability_dev']['chance']:.3f}）；同状态换图 |Δu| 均值 {ev['image_swap']['mean_abs_du']:.4f} 最大 {ev['image_swap']['max_abs_du']:.4f}", flush=True)
+        if t.world == 'v4':   # v4：依赖性消融代替换图探针——遮蔽警示牌 / 灯色灭 / 遮蔽终点标志后的闭环
+            ev['image_swap'] = None; ev['ablation'] = {}
+            for name, hide in (('hide_curve_sign', ('curve_sign',)), ('hide_light_color', ('light_color',)), ('hide_end_marker', ('end_marker',))):
+                rr, _, _ = evaluate(t.learner, S.conditions('development'), world='v4', perception=t.perception, memory_kw=dict(det_thr=t.cfg.get('det_thr', 0.5), hold_s=t.cfg.get('hold_s', 3.)), hide=hide)
+                sm = S.summarize(rr); ev['ablation'][name] = dict(arrived=int(sum(r['arrived'] for r in rr)), violations=int(sm['violations']), offroad=int(sum(r['offroad_substeps'] for r in rr)), curve_pen=float(sum(r['curve_excess_penalty'] for r in rr)),
+                                                                fallback=int(sum(r['fallback_substeps'] for r in rr)), completed_mean=sm['completed_mean'])
+            json_save(out / 'evaluation.json', ev)
+            print(f"[{a.arm}] Z 可解码性 {ev['z_decodability_dev']['probe_test_acc']:.3f}（机会 {ev['z_decodability_dev']['chance']:.3f}）；消融 " + ' | '.join(f"{k}: 到达 {v['arrived']} 闯红灯 {v['violations']} 弯道超速 {v['offroad']}" for k, v in ev['ablation'].items()), flush=True)
+        else:
+            sw = image_swap_sensitivity(t.learner); ev['image_swap'] = {k: v for k, v in sw.items() if k != 'rows'}; json_save(out / 'image_swap_rows.json', sw['rows'])
+            json_save(out / 'evaluation.json', ev)
+            print(f"[{a.arm}] Z 可解码性（dev 线性探针测试集）{ev['z_decodability_dev']['probe_test_acc']:.3f}（机会 {ev['z_decodability_dev']['chance']:.3f}）；同状态换图 |Δu| 均值 {ev['image_swap']['mean_abs_du']:.4f} 最大 {ev['image_swap']['max_abs_du']:.4f}", flush=True)
         print(f"[{a.arm}] 评估：完赛(静止) {ev['settled']}/9 违规 {ev['summary']['violations']} 平均I_j {ev['summary']['completed_mean']['Ij']} 平均时间 {ev['summary']['completed_mean']['time_s']} 干预子步 {ev['intervened']} 回退 {ev['fallback']}", flush=True)
     print(json.dumps({k: st[k] for k in ('state', 'substeps', 'updates', 'episodes', 'train_arrivals', 'substeps_per_s', 'updates_per_s')}, ensure_ascii=False))
 

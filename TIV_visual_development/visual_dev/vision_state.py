@@ -159,4 +159,5 @@ class VisionMemory:
         return int(self.sig['seen'] and self.sig['age'] <= 0.)
 
     def snapshot(self):
-        return dict(curve=dict(self.curve), sig=dict(self.sig), end=dict(self.end))
+        f = lambda d: {k: (None if isinstance(v, float) and not math.isfinite(v) else v) for k, v in d.items()}   # inf → None（JSON 安全）
+        return dict(curve=f(self.curve), sig=f(self.sig), end=f(self.end))

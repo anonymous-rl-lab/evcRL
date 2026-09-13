@@ -325,7 +325,7 @@ class VisualTrainer:
             policy_delay=cfg['policy_delay'], target_noise=cfg['target_noise'], target_clip=cfg['target_clip'],
             critic_action=cfg.get('critic_action', 'command'), actor_clip_ste=bool(cfg.get('actor_clip_ste', False))))
         self.signal_source = cfg.get('signal_source', 'truth'); self.world = cfg.get('world', 'v2')
-        self.perception = Perception(ROOT / cfg['pretrained_encoder'], cfg.get('perception_source', 'roi_head'), green_threshold=cfg.get('green_threshold', 0.), min_consecutive=cfg.get('min_consecutive', 1), det_thr=cfg.get('det_thr', 0.5)) if (self.signal_source == 'perceived' or self.world == 'v4') else None
+        self.perception = Perception(ROOT / cfg['pretrained_encoder'], cfg.get('perception_source', 'roi_head'), green_threshold=cfg.get('green_threshold', 0.), min_consecutive=cfg.get('min_consecutive', 1), det_thr=(cfg['det_thr'].get('traffic_light', 0.5) if isinstance(cfg.get('det_thr'), dict) else cfg.get('det_thr', 0.5))) if (self.signal_source == 'perceived' or self.world == 'v4') else None
         from vision_state import VisionMemory
         self.memory = VisionMemory(det_thr=cfg.get('det_thr', 0.5), hold_s=cfg.get('hold_s', 3.), init_votes=cfg.get('init_votes', 2), consistency_m=cfg.get('consistency_m', 40.)) if self.world == 'v4' else None
         if self.perception is not None and isinstance(cfg.get('det_thr'), dict): self.perception.det_thr = float(cfg['det_thr'].get('traffic_light', 0.5))
