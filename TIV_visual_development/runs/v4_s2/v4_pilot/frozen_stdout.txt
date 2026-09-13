@@ -1,0 +1,24 @@
+[frozen] 子步 421/9000 更新 106 eps 4 完赛 3 q_loss 336.18 vis 0.841 enc_grad 0.00e+00
+[frozen] 子步 855/9000 更新 215 eps 5 完赛 4 q_loss 319.35 vis 1.363 enc_grad 0.00e+00
+[frozen] 子步 1268/9000 更新 319 eps 6 完赛 5 q_loss 172.43 vis 0.701 enc_grad 0.00e+00
+[frozen] 子步 1670/9000 更新 420 eps 7 完赛 6 q_loss 270.26 vis 0.929 enc_grad 0.00e+00
+[frozen] 子步 2103/9000 更新 529 eps 8 完赛 7 q_loss 142.80 vis 0.657 enc_grad 0.00e+00
+[frozen] 子步 2506/9000 更新 630 eps 9 完赛 8 q_loss 268.41 vis 1.331 enc_grad 0.00e+00
+[frozen] 子步 2941/9000 更新 739 eps 10 完赛 9 q_loss 302.57 vis 1.425 enc_grad 0.00e+00
+[frozen] 子步 3346/9000 更新 841 eps 11 完赛 10 q_loss 177.08 vis 1.119 enc_grad 0.00e+00
+[frozen] 子步 3743/9000 更新 941 eps 12 完赛 10 q_loss 194.42 vis 0.466 enc_grad 0.00e+00
+[frozen] 子步 4171/9000 更新 1048 eps 12 完赛 10 q_loss 177.31 vis 0.661 enc_grad 0.00e+00
+[frozen] 子步 4607/9000 更新 1157 eps 12 完赛 10 q_loss 230.28 vis 0.367 enc_grad 0.00e+00
+[frozen] 子步 5023/9000 更新 1261 eps 13 完赛 10 q_loss 208.90 vis 0.735 enc_grad 0.00e+00
+[frozen] 子步 5435/9000 更新 1364 eps 14 完赛 11 q_loss 122.42 vis 0.632 enc_grad 0.00e+00
+[frozen] 子步 5850/9000 更新 1468 eps 15 完赛 12 q_loss 88.13 vis 0.827 enc_grad 0.00e+00
+[frozen] 子步 6286/9000 更新 1577 eps 15 完赛 12 q_loss 104.26 vis 0.492 enc_grad 0.00e+00
+[frozen] 子步 6686/9000 更新 1677 eps 15 完赛 12 q_loss 58.30 vis 0.488 enc_grad 0.00e+00
+[frozen] 子步 7098/9000 更新 1780 eps 16 完赛 12 q_loss 141.41 vis 0.355 enc_grad 0.00e+00
+[frozen] 子步 7506/9000 更新 1882 eps 16 完赛 12 q_loss 94.69 vis 1.088 enc_grad 0.00e+00
+[frozen] 子步 7918/9000 更新 1985 eps 16 完赛 12 q_loss 50.40 vis 0.519 enc_grad 0.00e+00
+[frozen] 子步 8350/9000 更新 2093 eps 17 完赛 12 q_loss 86.84 vis 0.563 enc_grad 0.00e+00
+[frozen] 子步 8767/9000 更新 2198 eps 18 完赛 13 q_loss 48.59 vis 1.016 enc_grad 0.00e+00
+[frozen] Z 可解码性 0.983（机会 0.517）；消融 hide_curve_sign: 到达 3 闯红灯 0 弯道超速 82 | hide_light_color: 到达 1 闯红灯 6 弯道超速 0 | hide_end_marker: 到达 0 闯红灯 2 弯道超速 0
+[frozen] 评估：完赛(静止) 2/9 违规 2 平均I_j 88.72115307181215 平均时间 209.75 干预子步 6874 回退 30
+{"state": "substep_budget", "substeps": 9001, "updates": 2257, "episodes": 19, "train_arrivals": 14, "substeps_per_s": 6.944112798810984, "updates_per_s": 1.741235705690078}

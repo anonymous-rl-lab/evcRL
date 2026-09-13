@@ -1,0 +1,22 @@
+[supervised] 子步 454/9000 更新 114 eps 4 完赛 3 q_loss 329.19 vis 0.833 enc_grad 1.67e+01
+[supervised] 子步 917/9000 更新 230 eps 5 完赛 4 q_loss 284.86 vis 0.706 enc_grad 1.28e+01
+[supervised] 子步 1381/9000 更新 346 eps 6 完赛 5 q_loss 188.55 vis 0.709 enc_grad 1.18e+01
+[supervised] 子步 1836/9000 更新 460 eps 7 完赛 6 q_loss 238.59 vis 0.839 enc_grad 1.70e+01
+[supervised] 子步 2296/9000 更新 576 eps 9 完赛 7 q_loss 360.95 vis 0.700 enc_grad 9.31e+00
+[supervised] 子步 2756/9000 更新 691 eps 10 完赛 8 q_loss 350.05 vis 0.848 enc_grad 1.23e+01
+[supervised] 子步 3232/9000 更新 810 eps 11 完赛 9 q_loss 196.44 vis 0.391 enc_grad 9.13e+00
+[supervised] 子步 3683/9000 更新 923 eps 12 完赛 10 q_loss 208.22 vis 0.476 enc_grad 1.11e+01
+[supervised] 子步 4135/9000 更新 1036 eps 12 完赛 10 q_loss 226.59 vis 0.871 enc_grad 1.07e+01
+[supervised] 子步 4591/9000 更新 1150 eps 12 完赛 10 q_loss 151.55 vis 0.348 enc_grad 2.03e+01
+[supervised] 子步 5055/9000 更新 1266 eps 13 完赛 10 q_loss 175.52 vis 0.757 enc_grad 2.11e+01
+[supervised] 子步 5525/9000 更新 1384 eps 14 完赛 11 q_loss 157.86 vis 0.850 enc_grad 1.14e+01
+[supervised] 子步 5965/9000 更新 1494 eps 14 完赛 11 q_loss 134.57 vis 0.307 enc_grad 1.16e+01
+[supervised] 子步 6421/9000 更新 1608 eps 15 完赛 11 q_loss 86.01 vis 0.487 enc_grad 1.28e+01
+[supervised] 子步 6885/9000 更新 1724 eps 15 完赛 11 q_loss 120.80 vis 0.420 enc_grad 5.85e+00
+[supervised] 子步 7346/9000 更新 1840 eps 16 完赛 12 q_loss 33.17 vis 0.684 enc_grad 1.34e+01
+[supervised] 子步 7807/9000 更新 1956 eps 18 完赛 13 q_loss 72.33 vis 0.615 enc_grad 1.25e+01
+[supervised] 子步 8276/9000 更新 2074 eps 19 完赛 13 q_loss 72.52 vis 0.516 enc_grad 7.02e+00
+[supervised] 子步 8742/9000 更新 2191 eps 20 完赛 14 q_loss 39.08 vis 0.848 enc_grad 1.55e+01
+[supervised] Z 可解码性 0.983（机会 0.517）；消融 hide_curve_sign: 到达 3 闯红灯 0 弯道超速 93 | hide_light_color: 到达 2 闯红灯 5 弯道超速 0 | hide_end_marker: 到达 0 闯红灯 2 弯道超速 0
+[supervised] 评估：完赛(静止) 3/9 违规 2 平均I_j 77.89184342569017 平均时间 238.16666666666666 干预子步 5794 回退 8
+{"state": "substep_budget", "substeps": 9002, "updates": 2256, "episodes": 21, "train_arrivals": 15, "substeps_per_s": 7.664313648373972, "updates_per_s": 1.920761118721582}

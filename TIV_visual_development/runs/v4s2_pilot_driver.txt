@@ -1,0 +1,5 @@
+supervised 退出码 0
+frozen 退出码 0
+joint 退出码 0
+joint_head 退出码 0
+PILOT_DONE
