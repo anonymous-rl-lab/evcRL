@@ -21,5 +21,6 @@ evsim_v9/logs/*
 !TIV_visual_development/runs/pretrain_v4b/audit_set.npz
 !TIV_visual_development/runs/v4b/common/common_nets.pt
 !TIV_visual_development/runs/v4/common/common_nets.pt
+!TIV_visual_development/runs/v4r/common/common_nets.pt
 !TIV_visual_development/runs/v4*/v4_pilot/*/final_nets.pt
 !TIV_visual_development/runs/v4*/v4_pilot/*/evaluation_traces/*.npz
