@@ -1,0 +1,23 @@
+{
+  "substeps": 2403,
+  "decisions": 602,
+  "critic_updates": 503,
+  "episodes": 4,
+  "train_arrivals": 4,
+  "wall_s": 197.67915430200082,
+  "replay_size": 583,
+  "frames": 2408,
+  "frame_store_MiB": 141.09375,
+  "last_diag": {
+    "q_loss": 229.28900146484375,
+    "vision_loss": 1.1228270530700684,
+    "encoder_grad": 0.0,
+    "actor_loss": null,
+    "updates": 500,
+    "step": 2391
+  },
+  "identity": {
+    "sources": "74f8c57a4913562067046c58c7fea6c315a34937ea0b8ff444f9304678fd4e4e",
+    "config": "2f927e7da64d8ec0284b775087d696882902b851daed20a3538203a81b2946df"
+  }
+}
