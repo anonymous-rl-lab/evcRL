@@ -1,0 +1,1221 @@
+{
+ "rows": [
+  {
+   "Ij": 89.41337958222839,
+   "jerk_rms": 0.5691761767901615,
+   "jerk_p95": 1.999999999999995,
+   "jerk_max": 2.0,
+   "a_min": -2.9130450189113617,
+   "a_max": 2.597841703891754,
+   "time_s": 276.0,
+   "E_Wh": 477.4650520840234,
+   "friction_Wh": 19.41376283750947,
+   "R": -39.26874187502497,
+   "nominal_limited_steps": 450,
+   "safety_override_steps": 34,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 2.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.127216317257515,
+     "time_s": 36.5,
+     "jerk_max": 2.0
+    },
+    "curve": {
+     "Ij": 19.46979652170222,
+     "time_s": 56.5,
+     "jerk_max": 2.0
+    },
+    "signal": {
+     "Ij": 44.9323631889287,
+     "time_s": 88.0,
+     "jerk_max": 2.0
+    },
+    "terminal": {
+     "Ij": 0.0,
+     "time_s": 51.5,
+     "jerk_max": 0.0
+    },
+    "other": {
+     "Ij": 15.884003554339959,
+     "time_s": 43.5,
+     "jerk_max": 2.0
+    }
+   },
+   "trace_steps": 552,
+   "ledger_error": -1.2789769243681803e-13,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4037.762148692718,
+   "end_v": 0.04436512041091356,
+   "stops": 1,
+   "soc_start": 0.85,
+   "temperature_K": 288.15,
+   "offset_s": 0.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 0,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 0,
+   "intervened_substeps": 463,
+   "mean_abs_command_gap": 2.1806434747624226,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 82,
+    "yellow": 0,
+    "green": 6,
+    "off": 0,
+    "unknown": 464
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 120,
+   "camera_appearance_seed": 1000000,
+   "camera_appearance": {
+    "brightness": 0.8258727320521675,
+    "sky": [
+     90,
+     100,
+     130
+    ],
+    "road": 77,
+    "fog_m": 1471.7878382456765,
+    "noise": 5.9696690277471385,
+    "occluder": [
+     false,
+     96.82519730260579,
+     6.477931463576958,
+     2.7512950206391613
+    ]
+   }
+  },
+  {
+   "Ij": 76.10355149831764,
+   "jerk_rms": 0.5977404696071583,
+   "jerk_p95": 1.999999999767164,
+   "jerk_max": 2.0,
+   "a_min": -3.0,
+   "a_max": 2.598818647861481,
+   "time_s": 213.0,
+   "E_Wh": 521.6802661612178,
+   "friction_Wh": 34.30092680038349,
+   "R": -35.82048958180388,
+   "nominal_limited_steps": 377,
+   "safety_override_steps": 15,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 1.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.127720111890135,
+     "time_s": 36.5,
+     "jerk_max": 2.0
+    },
+    "curve": {
+     "Ij": 18.900377060412836,
+     "time_s": 58.0,
+     "jerk_max": 2.0
+    },
+    "signal": {
+     "Ij": 19.305869568903212,
+     "time_s": 58.0,
+     "jerk_max": 2.0
+    },
+    "terminal": {
+     "Ij": 17.81260051589616,
+     "time_s": 25.0,
+     "jerk_max": 2.0
+    },
+    "other": {
+     "Ij": 10.9569842412153,
+     "time_s": 35.5,
+     "jerk_max": 2.0
+    }
+   },
+   "trace_steps": 426,
+   "ledger_error": -4.263256414560601e-14,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4035.125304048749,
+   "end_v": 0.025395755989342655,
+   "stops": 0,
+   "soc_start": 0.85,
+   "temperature_K": 288.15,
+   "offset_s": 30.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 1,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 0,
+   "intervened_substeps": 385,
+   "mean_abs_command_gap": 2.4273566623714284,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 20,
+    "yellow": 0,
+    "green": 14,
+    "off": 0,
+    "unknown": 392
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 60,
+   "camera_appearance_seed": 1000001,
+   "camera_appearance": {
+    "brightness": 0.7871489175492035,
+    "sky": [
+     230,
+     170,
+     120
+    ],
+    "road": 104,
+    "fog_m": 939.8263284053038,
+    "noise": 2.9377968402737675,
+    "occluder": [
+     false,
+     156.11704859216468,
+     5.4516616994000575,
+     3.116667965031797
+    ]
+   }
+  },
+  {
+   "Ij": 61.71542829331118,
+   "jerk_rms": 0.5548041297706151,
+   "jerk_p95": 1.9999999990686774,
+   "jerk_max": 2.0,
+   "a_min": -3.5,
+   "a_max": 2.598578131198883,
+   "time_s": 200.5,
+   "E_Wh": 496.96772299109256,
+   "friction_Wh": 17.612506731523496,
+   "R": -33.930838027679386,
+   "nominal_limited_steps": 385,
+   "safety_override_steps": 13,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 1.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.125318250565961,
+     "time_s": 36.5,
+     "jerk_max": 2.0
+    },
+    "curve": {
+     "Ij": 18.6969515988552,
+     "time_s": 57.0,
+     "jerk_max": 2.0
+    },
+    "signal": {
+     "Ij": 0.0,
+     "time_s": 49.5,
+     "jerk_max": 0.0
+    },
+    "terminal": {
+     "Ij": 30.520547111655798,
+     "time_s": 27.5,
+     "jerk_max": 2.0
+    },
+    "other": {
+     "Ij": 3.37261133223422,
+     "time_s": 30.0,
+     "jerk_max": 2.0
+    }
+   },
+   "trace_steps": 401,
+   "ledger_error": -5.684341886080802e-14,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4001.92253288172,
+   "end_v": 0.04930251554613638,
+   "stops": 0,
+   "soc_start": 0.85,
+   "temperature_K": 288.15,
+   "offset_s": 60.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 2,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 0,
+   "intervened_substeps": 391,
+   "mean_abs_command_gap": 2.6231250394248575,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 0,
+    "yellow": 0,
+    "green": 18,
+    "off": 0,
+    "unknown": 383
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 99,
+   "camera_appearance_seed": 1000002,
+   "camera_appearance": {
+    "brightness": 0.8212989151602682,
+    "sky": [
+     150,
+     190,
+     235
+    ],
+    "road": 99,
+    "fog_m": 661.3497817994157,
+    "noise": 2.616876790203107,
+    "occluder": [
+     false,
+     210.3250055756062,
+     6.239039059740858,
+     3.2393100869658067
+    ]
+   }
+  },
+  {
+   "Ij": 77.2733434592469,
+   "jerk_rms": 0.5698051541486043,
+   "jerk_p95": 2.0,
+   "jerk_max": 2.000000000000007,
+   "a_min": -3.1532159699332,
+   "a_max": 2.598819422721863,
+   "time_s": 238.0,
+   "E_Wh": 653.3429094558143,
+   "friction_Wh": 175.479926643727,
+   "R": -42.56034474040921,
+   "nominal_limited_steps": 396,
+   "safety_override_steps": 42,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 12.5,
+   "windows": {
+    "launch": {
+     "Ij": 9.126471550825302,
+     "time_s": 36.5,
+     "jerk_max": 2.0
+    },
+    "curve": {
+     "Ij": 17.75838619815937,
+     "time_s": 57.5,
+     "jerk_max": 2.000000000000007
+    },
+    "signal": {
+     "Ij": 25.532662135110098,
+     "time_s": 87.0,
+     "jerk_max": 2.0
+    },
+    "terminal": {
+     "Ij": 24.855823575152137,
+     "time_s": 30.5,
+     "jerk_max": 2.0
+    },
+    "other": {
+     "Ij": 0.0,
+     "time_s": 26.5,
+     "jerk_max": 0.0
+    }
+   },
+   "trace_steps": 476,
+   "ledger_error": 1.0658141036401503e-13,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 3999.394631658266,
+   "end_v": 0.014924837897224652,
+   "stops": 1,
+   "soc_start": 0.9,
+   "temperature_K": 263.15,
+   "offset_s": 0.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": 0.5,
+   "condition_id": 3,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 7,
+   "intervened_substeps": 406,
+   "mean_abs_command_gap": 2.213669520603575,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 81,
+    "yellow": 0,
+    "green": 6,
+    "off": 0,
+    "unknown": 389
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 120,
+   "camera_appearance_seed": 1000003,
+   "camera_appearance": {
+    "brightness": 0.9510708583510877,
+    "sky": [
+     150,
+     190,
+     235
+    ],
+    "road": 90,
+    "fog_m": 1418.3100746601515,
+    "noise": 5.272006646168867,
+    "occluder": [
+     false,
+     121.75617739745499,
+     6.482277475519184,
+     3.385426779468701
+    ]
+   }
+  },
+  {
+   "Ij": 76.04420582767463,
+   "jerk_rms": 0.601045035395249,
+   "jerk_p95": 2.0,
+   "jerk_max": 2.000000000000007,
+   "a_min": -3.1113283038139343,
+   "a_max": 2.5981361508369445,
+   "time_s": 210.5,
+   "E_Wh": 642.1550245417917,
+   "friction_Wh": 164.010081244043,
+   "R": -39.9575808835044,
+   "nominal_limited_steps": 374,
+   "safety_override_steps": 15,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 1.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.127104370788654,
+     "time_s": 36.5,
+     "jerk_max": 2.000000000000007
+    },
+    "curve": {
+     "Ij": 18.74616593765354,
+     "time_s": 57.0,
+     "jerk_max": 2.000000000000007
+    },
+    "signal": {
+     "Ij": 19.94684336571879,
+     "time_s": 58.0,
+     "jerk_max": 2.0
+    },
+    "terminal": {
+     "Ij": 23.23549479282877,
+     "time_s": 26.5,
+     "jerk_max": 2.0
+    },
+    "other": {
+     "Ij": 4.988597360684889,
+     "time_s": 32.5,
+     "jerk_max": 2.0
+    }
+   },
+   "trace_steps": 421,
+   "ledger_error": 1.0658141036401503e-13,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4012.2157769546384,
+   "end_v": 0.04435974148672098,
+   "stops": 0,
+   "soc_start": 0.9,
+   "temperature_K": 263.15,
+   "offset_s": 30.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 4,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 0,
+   "intervened_substeps": 382,
+   "mean_abs_command_gap": 2.4443986219876663,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 21,
+    "yellow": 0,
+    "green": 13,
+    "off": 0,
+    "unknown": 387
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 60,
+   "camera_appearance_seed": 1000004,
+   "camera_appearance": {
+    "brightness": 0.6603705966000104,
+    "sky": [
+     150,
+     190,
+     235
+    ],
+    "road": 75,
+    "fog_m": 1491.3988003269478,
+    "noise": 7.457578467352812,
+    "occluder": [
+     true,
+     160.53905929391433,
+     5.799868061196702,
+     3.076226186895753
+    ]
+   }
+  },
+  {
+   "Ij": 64.10411274315658,
+   "jerk_rms": 0.5633356839291328,
+   "jerk_p95": 1.9999999999999996,
+   "jerk_max": 2.000000000000007,
+   "a_min": -3.5,
+   "a_max": 2.5980701327323916,
+   "time_s": 202.0,
+   "E_Wh": 586.8490258852213,
+   "friction_Wh": 112.3732811006953,
+   "R": -37.28656493186794,
+   "nominal_limited_steps": 388,
+   "safety_override_steps": 15,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 1.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.1253213232339,
+     "time_s": 36.5,
+     "jerk_max": 2.0
+    },
+    "curve": {
+     "Ij": 19.894856243665398,
+     "time_s": 57.5,
+     "jerk_max": 2.000000000000007
+    },
+    "signal": {
+     "Ij": 0.0,
+     "time_s": 49.5,
+     "jerk_max": 0.0
+    },
+    "terminal": {
+     "Ij": 30.35633509535952,
+     "time_s": 26.5,
+     "jerk_max": 2.0
+    },
+    "other": {
+     "Ij": 4.7276000808977745,
+     "time_s": 32.0,
+     "jerk_max": 2.0
+    }
+   },
+   "trace_steps": 404,
+   "ledger_error": 2.1316282072803006e-14,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4013.381261114807,
+   "end_v": 0.04429355706482807,
+   "stops": 0,
+   "soc_start": 0.9,
+   "temperature_K": 263.15,
+   "offset_s": 60.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 5,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 0,
+   "intervened_substeps": 394,
+   "mean_abs_command_gap": 2.64049601012696,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 0,
+    "yellow": 0,
+    "green": 18,
+    "off": 0,
+    "unknown": 386
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 99,
+   "camera_appearance_seed": 1000005,
+   "camera_appearance": {
+    "brightness": 1.067772654823079,
+    "sky": [
+     200,
+     205,
+     215
+    ],
+    "road": 84,
+    "fog_m": 2390.315915218932,
+    "noise": 1.7285994814799885,
+    "occluder": [
+     true,
+     212.33765324956852,
+     4.460955227802985,
+     2.798006162648449
+    ]
+   }
+  },
+  {
+   "Ij": 78.93334397126971,
+   "jerk_rms": 0.575288985702241,
+   "jerk_p95": 1.9999999999999996,
+   "jerk_max": 2.0,
+   "a_min": -3.5,
+   "a_max": 2.5985404729843142,
+   "time_s": 238.5,
+   "E_Wh": 719.3860934570221,
+   "friction_Wh": 245.2540733207497,
+   "R": -44.97789936445272,
+   "nominal_limited_steps": 392,
+   "safety_override_steps": 37,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 10.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.12130661066745,
+     "time_s": 36.5,
+     "jerk_max": 2.0
+    },
+    "curve": {
+     "Ij": 20.398774500954442,
+     "time_s": 57.0,
+     "jerk_max": 2.0
+    },
+    "signal": {
+     "Ij": 23.343205662808998,
+     "time_s": 87.0,
+     "jerk_max": 2.0
+    },
+    "terminal": {
+     "Ij": 24.73976605485719,
+     "time_s": 28.5,
+     "jerk_max": 2.0
+    },
+    "other": {
+     "Ij": 1.3302911419816403,
+     "time_s": 29.5,
+     "jerk_max": 1.232687014934451
+    }
+   },
+   "trace_steps": 477,
+   "ledger_error": 7.815970093361102e-14,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4000.3949013711526,
+   "end_v": 0.011563515807211044,
+   "stops": 1,
+   "soc_start": 0.95,
+   "temperature_K": 263.15,
+   "offset_s": 0.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 6,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 6,
+   "intervened_substeps": 402,
+   "mean_abs_command_gap": 2.1775334541351676,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 82,
+    "yellow": 0,
+    "green": 6,
+    "off": 0,
+    "unknown": 389
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 120,
+   "camera_appearance_seed": 1000006,
+   "camera_appearance": {
+    "brightness": 0.6766679071406445,
+    "sky": [
+     200,
+     205,
+     215
+    ],
+    "road": 94,
+    "fog_m": 2332.633817722611,
+    "noise": 2.3252447632135156,
+    "occluder": [
+     false,
+     167.22442697927414,
+     6.265841594112423,
+     3.233500285186599
+    ]
+   }
+  },
+  {
+   "Ij": 86.23815101400439,
+   "jerk_rms": 0.6370452048379922,
+   "jerk_p95": 2.0,
+   "jerk_max": 2.6446205015562256,
+   "a_min": -2.885242625832614,
+   "a_max": 2.598017132282257,
+   "time_s": 212.5,
+   "E_Wh": 715.7416344332435,
+   "friction_Wh": 237.4872018573146,
+   "R": -42.766698839596664,
+   "nominal_limited_steps": 378,
+   "safety_override_steps": 14,
+   "jerk_override_steps": 1,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 1.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.12481199940948,
+     "time_s": 36.5,
+     "jerk_max": 2.000000000000007
+    },
+    "curve": {
+     "Ij": 19.34729818290087,
+     "time_s": 57.0,
+     "jerk_max": 2.0000000000000027
+    },
+    "signal": {
+     "Ij": 19.267240280205968,
+     "time_s": 58.0,
+     "jerk_max": 2.000000000000007
+    },
+    "terminal": {
+     "Ij": 29.128533779854052,
+     "time_s": 25.0,
+     "jerk_max": 2.6446205015562256
+    },
+    "other": {
+     "Ij": 9.370266771634007,
+     "time_s": 36.0,
+     "jerk_max": 2.0
+    }
+   },
+   "trace_steps": 425,
+   "ledger_error": 1.0658141036401503e-13,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4039.262768642756,
+   "end_v": 0.002370770040913628,
+   "stops": 0,
+   "soc_start": 0.95,
+   "temperature_K": 263.15,
+   "offset_s": 30.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 7,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 1,
+   "intervened_substeps": 386,
+   "mean_abs_command_gap": 2.444313129783781,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 21,
+    "yellow": 0,
+    "green": 13,
+    "off": 0,
+    "unknown": 391
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 60,
+   "camera_appearance_seed": 1000007,
+   "camera_appearance": {
+    "brightness": 1.0045360562736478,
+    "sky": [
+     150,
+     190,
+     235
+    ],
+    "road": 103,
+    "fog_m": 372.19303415164006,
+    "noise": 4.3528328592410155,
+    "occluder": [
+     true,
+     96.55997154312652,
+     5.7841437916761365,
+     2.0264606826593665
+    ]
+   }
+  },
+  {
+   "Ij": 67.30103703705714,
+   "jerk_rms": 0.5750805393314276,
+   "jerk_p95": 2.0,
+   "jerk_max": 2.000000000000007,
+   "a_min": -3.00000000179487,
+   "a_max": 2.5982357978820803,
+   "time_s": 203.5,
+   "E_Wh": 629.181270448065,
+   "friction_Wh": 154.18571714486126,
+   "R": -38.93052573613028,
+   "nominal_limited_steps": 391,
+   "safety_override_steps": 14,
+   "jerk_override_steps": 0,
+   "physical_violation_steps": 0,
+   "stopped_time_s": 1.0,
+   "windows": {
+    "launch": {
+     "Ij": 9.126173836739454,
+     "time_s": 36.5,
+     "jerk_max": 2.000000000000007
+    },
+    "curve": {
+     "Ij": 20.71675663621938,
+     "time_s": 57.0,
+     "jerk_max": 2.0000000000000027
+    },
+    "signal": {
+     "Ij": 0.0,
+     "time_s": 49.5,
+     "jerk_max": 0.0
+    },
+    "terminal": {
+     "Ij": 29.536867115707615,
+     "time_s": 25.5,
+     "jerk_max": 2.0
+    },
+    "other": {
+     "Ij": 7.921239448390685,
+     "time_s": 35.0,
+     "jerk_max": 2.0
+    }
+   },
+   "trace_steps": 407,
+   "ledger_error": 6.394884621840902e-14,
+   "arrived": true,
+   "deadline": false,
+   "violations": 0,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0,
+   "safety_infeasible": 0,
+   "end_x": 4038.3337346947387,
+   "end_v": 0.005158184360622042,
+   "stops": 0,
+   "soc_start": 0.95,
+   "temperature_K": 263.15,
+   "offset_s": 60.0,
+   "initial_speed": 16.0,
+   "terminal_penalty": 0.0,
+   "green_start_latency_s": null,
+   "condition_id": 8,
+   "settled": true,
+   "overshoot": false,
+   "fallback_substeps": 0,
+   "intervened_substeps": 396,
+   "mean_abs_command_gap": 2.6471444289358637,
+   "signal_source": "vision_memory",
+   "perception_source": "roi_head",
+   "world": "v4",
+   "hide": [],
+   "curve_excess_penalty": 0.0,
+   "offroad_substeps": 0,
+   "perceived_counts": {
+    "red": 0,
+    "yellow": 0,
+    "green": 17,
+    "off": 0,
+    "unknown": 390
+   },
+   "perceived_green_truth_red_substeps": 0,
+   "perceived_nongreen_truth_green_substeps": 98,
+   "camera_appearance_seed": 1000008,
+   "camera_appearance": {
+    "brightness": 1.018233245438596,
+    "sky": [
+     150,
+     190,
+     235
+    ],
+    "road": 97,
+    "fog_m": 1077.741952074266,
+    "noise": 7.729473748118941,
+    "occluder": [
+     false,
+     182.73355024458198,
+     4.742053809720815,
+     2.453044877018632
+    ]
+   }
+  }
+ ],
+ "summary": {
+  "n": 9,
+  "completed": 9,
+  "failures": 0,
+  "violations": 0,
+  "physical_violations": 0,
+  "completed_mean": {
+   "Ij": 75.23628371402963,
+   "jerk_rms": 0.5825912643902869,
+   "jerk_p95": 1.9999999998706484,
+   "jerk_max": 2.071624500172917,
+   "time_s": 221.61111111111111,
+   "E_Wh": 604.7521110508325,
+   "R": -39.49996488671883,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0
+  },
+  "all_condition_mean": {
+   "Ij": 75.23628371402963,
+   "jerk_rms": 0.5825912643902869,
+   "jerk_p95": 1.9999999998706484,
+   "jerk_max": 2.071624500172917,
+   "time_s": 221.61111111111111,
+   "E_Wh": 604.7521110508325,
+   "R": -39.49996488671883,
+   "overspeed_time_s": 0.0,
+   "overspeed_max": 0.0
+  },
+  "max_jerk": 2.6446205015562256,
+  "max_overspeed": 0.0
+ },
+ "settled": 9,
+ "fallback": 14,
+ "intervened": 3605,
+ "visual": {
+  "housing_px_h:0-4": {
+   "roi_head": {
+    "n": 72,
+    "acc": 0.9861111111111112,
+    "red_to_green": 0,
+    "green_to_nongreen": 1,
+    "unknown_rate": 0.013888888888888888,
+    "known_acc": 0.9861111111111112,
+    "unknown_recall": null,
+    "n_known": 72,
+    "n_unknown": 0
+   },
+   "z_head": {
+    "n": 72,
+    "acc": 0.9722222222222222,
+    "red_to_green": 0,
+    "green_to_nongreen": 2,
+    "unknown_rate": 0.0,
+    "known_acc": 0.9722222222222222,
+    "unknown_recall": null,
+    "n_known": 72,
+    "n_unknown": 0
+   }
+  },
+  "housing_px_h:4-8": {
+   "roi_head": {
+    "n": 14,
+    "acc": 0.7857142857142857,
+    "red_to_green": 0,
+    "green_to_nongreen": 3,
+    "unknown_rate": 0.21428571428571427,
+    "known_acc": 0.7857142857142857,
+    "unknown_recall": null,
+    "n_known": 14,
+    "n_unknown": 0
+   },
+   "z_head": {
+    "n": 14,
+    "acc": 1.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": 1.0,
+    "unknown_recall": null,
+    "n_known": 14,
+    "n_unknown": 0
+   }
+  },
+  "housing_px_h:8-16": {
+   "roi_head": {
+    "n": 19,
+    "acc": 0.8947368421052632,
+    "red_to_green": 0,
+    "green_to_nongreen": 1,
+    "unknown_rate": 0.10526315789473684,
+    "known_acc": 0.8947368421052632,
+    "unknown_recall": null,
+    "n_known": 19,
+    "n_unknown": 0
+   },
+   "z_head": {
+    "n": 19,
+    "acc": 0.8947368421052632,
+    "red_to_green": 0,
+    "green_to_nongreen": 2,
+    "unknown_rate": 0.0,
+    "known_acc": 0.8947368421052632,
+    "unknown_recall": null,
+    "n_known": 19,
+    "n_unknown": 0
+   }
+  },
+  "housing_px_h:16-inf": {
+   "roi_head": {
+    "n": 6,
+    "acc": 1.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 1.0,
+    "known_acc": null,
+    "unknown_recall": 1.0,
+    "n_known": 0,
+    "n_unknown": 6
+   },
+   "z_head": {
+    "n": 6,
+    "acc": 0.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": null,
+    "unknown_recall": 0.0,
+    "n_known": 0,
+    "n_unknown": 6
+   }
+  },
+  "lamp_px_d:0-1e-09": {
+   "roi_head": {
+    "n": 6,
+    "acc": 1.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 1.0,
+    "known_acc": null,
+    "unknown_recall": 1.0,
+    "n_known": 0,
+    "n_unknown": 6
+   },
+   "z_head": {
+    "n": 6,
+    "acc": 0.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": null,
+    "unknown_recall": 0.0,
+    "n_known": 0,
+    "n_unknown": 6
+   }
+  },
+  "lamp_px_d:1e-09-3": {
+   "roi_head": {
+    "n": 104,
+    "acc": 0.9519230769230769,
+    "red_to_green": 0,
+    "green_to_nongreen": 4,
+    "unknown_rate": 0.04807692307692308,
+    "known_acc": 0.9519230769230769,
+    "unknown_recall": null,
+    "n_known": 104,
+    "n_unknown": 0
+   },
+   "z_head": {
+    "n": 104,
+    "acc": 0.9615384615384616,
+    "red_to_green": 0,
+    "green_to_nongreen": 4,
+    "unknown_rate": 0.0,
+    "known_acc": 0.9615384615384616,
+    "unknown_recall": null,
+    "n_known": 104,
+    "n_unknown": 0
+   }
+  },
+  "lamp_px_d:3-6": {
+   "roi_head": {
+    "n": 1,
+    "acc": 0.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 1,
+    "unknown_rate": 1.0,
+    "known_acc": 0.0,
+    "unknown_recall": null,
+    "n_known": 1,
+    "n_unknown": 0
+   },
+   "z_head": {
+    "n": 1,
+    "acc": 1.0,
+    "red_to_green": 0,
+    "green_to_nongreen": 0,
+    "unknown_rate": 0.0,
+    "known_acc": 1.0,
+    "unknown_recall": null,
+    "n_known": 1,
+    "n_unknown": 0
+   }
+  },
+  "all": {
+   "roi_head": {
+    "n": 111,
+    "acc": 0.9459459459459459,
+    "red_to_green": 0,
+    "green_to_nongreen": 5,
+    "unknown_rate": 0.10810810810810811,
+    "known_acc": 0.9428571428571428,
+    "unknown_recall": 1.0,
+    "n_known": 105,
+    "n_unknown": 6
+   },
+   "z_head": {
+    "n": 111,
+    "acc": 0.9099099099099099,
+    "red_to_green": 0,
+    "green_to_nongreen": 4,
+    "unknown_rate": 0.0,
+    "known_acc": 0.9619047619047619,
+    "unknown_recall": 0.0,
+    "n_known": 105,
+    "n_unknown": 6
+   }
+  }
+ },
+ "z": {
+  "z_drift": 1.416825771331787,
+  "z_std": 0.7911413311958313
+ },
+ "eval_wall_s": 32.79927925100128,
+ "arm": "joint",
+ "substeps_trained": 9002,
+ "updates": 2258,
+ "evaluation_version": "v2e: 每工况独立相机外观种子 + 噪声流分离；换图两色同外观同噪声并记录投影后动作",
+ "final_nets_identity": {
+  "sources": "1cee8569dec19e81c571f6983cb32f451b80d8adf4949250fae2673023d31081",
+  "config": "f424582f7ab2b8a96db9c44f16c6d8290f4211e8986af3afb52b567e82b1b00d"
+ },
+ "z_decodability_dev": {
+  "n": 118,
+  "probe_test_acc": 0.9830508232116699,
+  "probe_test_known_acc": 0.9830508232116699,
+  "probe_train_acc": 1.0,
+  "signal_z_head_acc": 0.991525411605835,
+  "chance": 0.5169491767883301,
+  "class_counts": [
+   61,
+   12,
+   45,
+   0,
+   0
+  ]
+ },
+ "image_swap": null,
+ "arrived": 9,
+ "offroad": 0,
+ "curve_pen": 0.0,
+ "overshoot": 0,
+ "ablation": {
+  "hide_curve_sign": {
+   "arrived": 9,
+   "violations": 0,
+   "offroad": 81,
+   "curve_pen": 316.1991153862151,
+   "fallback": 36,
+   "completed_mean": {
+    "Ij": 77.77743013602634,
+    "jerk_rms": 0.5712513750854512,
+    "jerk_p95": 1.7134675531275205,
+    "jerk_max": 4.3281516083012965,
+    "time_s": 222.0,
+    "E_Wh": 572.5456652471279,
+    "R": -38.37164394889662,
+    "overspeed_time_s": 0.0,
+    "overspeed_max": 0.0
+   }
+  },
+  "hide_light_color": {
+   "arrived": 3,
+   "violations": 5,
+   "offroad": 0,
+   "curve_pen": 0.0,
+   "fallback": 47,
+   "completed_mean": {
+    "Ij": 99.61662004961465,
+    "jerk_rms": 0.6910231084701511,
+    "jerk_p95": 2.0,
+    "jerk_max": 5.333333333333336,
+    "time_s": 207.0,
+    "E_Wh": 657.7774134885565,
+    "R": -40.239986885587946,
+    "overspeed_time_s": 0.0,
+    "overspeed_max": 0.0
+   }
+  },
+  "hide_end_marker": {
+   "arrived": 0,
+   "violations": 0,
+   "offroad": 0,
+   "curve_pen": 0.0,
+   "fallback": 13,
+   "completed_mean": {
+    "Ij": null,
+    "jerk_rms": null,
+    "jerk_p95": null,
+    "jerk_max": null,
+    "time_s": null,
+    "E_Wh": null,
+    "R": null,
+    "overspeed_time_s": null,
+    "overspeed_max": null
+   }
+  }
+ }
+}
