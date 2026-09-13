@@ -1,0 +1,10 @@
+[门 1] 复用已有 v4 预训练
+检测召回(阈值0.5口径，信息量，工作点由校准阈值+记忆门控决定) {'traffic_light': 0.728, 'curve_sign': 0.839, 'end_marker': 0.778, 'release_sign': 0.459} 误检 {'traffic_light': 0.005, 'curve_sign': 0.009, 'end_marker': 0.01, 'release_sign': 0.002} 灯色 教师ROI已知 0.996 运行时(阈值0.5) 0.728 Z头已知 0.983 -> 通过（决定性判据在门 2 闭环）
+阈值写入配置 configs/v4_cpu_s1.json {'traffic_light': 0.4, 'curve_sign': 0.5, 'end_marker': 0.55, 'release_sign': 0.2}
+[门 2] 闭环探针
+oracle 到达 9 违规 0 | 视觉 到达 9 违规 0 弯道超速子步 0 回退 18 -> 通过
+[门 3] 审计
+[门 4] 共同适配
+[门 4] joint_head 600 子步烟测
+[门 4] joint 600 子步烟测
+GATES_1_4_PASSED

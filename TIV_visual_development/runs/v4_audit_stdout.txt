@@ -1,4 +1,4 @@
-/home/user/evcrl/TIV_visual_development/visual_dev/run_stage.py:138: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+/home/user/evcRL/TIV_visual_development/visual_dev/run_stage.py:138: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
   checks['actor_desaturated_at_fork'] = bool(pre.mean() < 1.5); checks['actor_pre_activation_mean'] = float(pre.mean())
 {
