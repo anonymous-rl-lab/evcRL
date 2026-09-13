@@ -1,0 +1,3 @@
+[门 1] 复用已有 v4 预训练
+检测召回 {'traffic_light': 0.728, 'curve_sign': 0.839, 'end_marker': 0.778, 'release_sign': 0.459} 误检 {'traffic_light': 0.005, 'curve_sign': 0.009, 'end_marker': 0.01, 'release_sign': 0.002} 运行时灯色已知 0.728 -> 不通过
+GATE1_FAILED: 指标不达标

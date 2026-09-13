@@ -63,6 +63,18 @@
  "pretrain_subdir": "pretrain_v4",
  "pool_coverage": "v4",
  "world": "v4",
- "det_thr": 0.5,
- "hold_s": 3.0
+ "det_thr": {
+  "traffic_light": 0.4,
+  "curve_sign": 0.5,
+  "end_marker": 0.55,
+  "release_sign": 0.2
+ },
+ "hold_s": 3.0,
+ "det_thr_note": "由 v4_calibrate_thresholds.py 在 dev 上按误检 ≤1% 校准（存在性分数=类别平衡校准的热图峰值）；已有轨迹维持阈值为其 0.5 倍",
+ "pretrain_steps": 6000,
+ "pool_sizes": {
+  "train": 3200,
+  "dev": 320,
+  "audit": 32
+ }
 }

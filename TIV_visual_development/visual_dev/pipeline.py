@@ -4,7 +4,7 @@
 执行层：v19_deps/code/curve_layer.py（comfort_v2 r2：jerk 可行区间 + 绿灯结束可达性 + 80 km/h 上界），
 其信息访问（模拟器已知信号时刻）保持原样并在三臂间相同；相机由同一位姿与同一绝对时刻相位驱动。
 """
-import copy, hashlib, json, os, random, sys, time
+import copy, hashlib, json, math, os, random, sys, time
 from collections import deque
 from pathlib import Path
 os.environ['EVSIM_ROUTE'] = 'mini'          # 必须在导入 route20/env20 之前
@@ -109,13 +109,21 @@ class VisionEnv(SmoothEnv):
     def _passable(self, k, xs):   # 基类不再调用（_stop_targets 已覆盖），保留以防
         g, _, _ = self.memory.executor_signal() if self.memory is not None else (None, None, None); return bool(g)
 
+    A_COMFORT = 1.5   # 感知目标的舒适包络减速度 m/s²：对记忆中的停车/入弯目标，执行层把速度上限压到 sqrt(v_t² + 2·A_COMFORT·d)，
+                      # 使停车在感知距离误差下仍可行（真值执行层靠精确距离在最后时刻制动；感知距离有 10–30 m 误差时必须提前）
+
     def project(self, cmd):
         fallback = S.E.Route20.project(self, cmd)   # 基类投影：jerk/执行器盒 + a_safe（来自记忆目标）
         targets = [(max(t[0] - self.x, 0.), t[1]) for t in self._stop_targets()]
         limit = self.memory.v_limit() if self.memory is not None else S.R.V_FREE
+        for d_t, v_t in targets:   # 舒适包络：由感知目标推出的速度上限
+            limit = min(limit, math.sqrt(max(v_t * v_t + 2. * self.A_COMFORT * d_t, 0.)))
         result, info = C.project(self.v, self.a, cmd, targets, fallback, vmax=limit)
         result = min(result, C.brake_bound(max(limit - self.v, 0.)))
         lower = info.get('lower'); upper = None if info.get('upper') is None else min(info['upper'], C.brake_bound(max(limit - self.v, 0.)))
+        if not info['fallback'] and self.v > limit + 1e-6:   # 高于包络：在 jerk 可行区间内减速（vmax 只阻止加速，不会主动减速）
+            a_env = max((limit - self.v) / S.E.DT, lower); result = min(result, a_env); upper = min(upper, a_env) if upper is not None else a_env
+            info['envelope_braking'] = True
         green, remaining, d_line = self.memory.executor_signal(self.assumed_green_remaining) if self.memory is not None else (None, None, None)
         if not info['fallback'] and green:
             action, extra = C.signal_project(self.v, self.a, cmd, (lower, upper), d_line, remaining, limit)
@@ -164,7 +172,7 @@ class Perception:
         dets = {}
         for c, name in enumerate(CLASSES):
             d = decode_detections(out, c); dets[name] = dict(score=float(d['score'][0, -1]), dist_m=float(d['dist_m'][0, -1]), box=[float(v) for v in d['box'][0, -1]])
-        roi = predicted_roi(dets['traffic_light']['box'], H, W).numpy() if dets['traffic_light']['score'] >= self.det_thr else np.zeros((H, W), np.float32)
+        roi = predicted_roi(dets['traffic_light']['box'], H, W).numpy() if dets['traffic_light']['score'] >= self.det_thr * getattr(self, 'roi_ratio', 0.5) else np.zeros((H, W), np.float32)   # ROI 用较低阈值（灯色由记忆的轨迹门控决定是否采纳）
         latest['roi_pred'] = roi.astype(np.float32); probs = None
         if roi.sum() > 0:
             obs2 = obs_from_frames(store, [rec], use_pred_roi=True)
@@ -388,6 +396,7 @@ class VisualTrainer:
         for _ in range(c['repeat']):
             _, r, done, info = self.env.step(S.command(u)); reward += r; self.used += 1; n += 1
             self.capture()
+            if self.world == 'v4' and self.env.x > S.R.LENGTH + 100.: done = True; info = dict(info, overshoot=True)   # v4：冲出终点 100 m 终止
             if done: break
         jw = float(c.get('jerk_weight', 0.))
         if jw > 0.:   # v3 可选：学习信号加累计 jerk 惩罚（环境回报与轨迹记录不变）
@@ -518,9 +527,10 @@ def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perce
             for _ in range(4):
                 if env.x >= 3999 and env.v <= .3: cmd = 0.
                 _, r, d, info = env.step(cmd); cap()
-                done = bool(info['red_crossing'] or (info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6) or env.t >= 600)
+                overshoot = env.x > S.R.LENGTH + 100.   # v4：无地图时可能冲过终点；驶出终点 100 m 视为失败终止
+                done = bool(info['red_crossing'] or (info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6) or env.t >= 600 or overshoot)
                 if done: break
-        m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6),
+        m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= 1e-6 and abs(env.a) <= 1e-6), overshoot=bool(env.x > S.R.LENGTH + 100.),
             fallback_substeps=sum(l['fallback'] for l in env.layer_log), intervened_substeps=sum(l['intervened'] for l in env.layer_log),
             mean_abs_command_gap=float(np.mean([abs(l['applied'] - l['command']) for l in env.layer_log])),
             signal_source=('vision_memory' if world == 'v4' else signal_source), perception_source=None if perception is None else perception.source, world=world, hide=list(hide),
