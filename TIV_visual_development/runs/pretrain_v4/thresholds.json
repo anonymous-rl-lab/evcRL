@@ -1,5 +1,5 @@
 {
- "encoder": "runs/pretrain_v4_long/encoder.pt",
+ "encoder": "runs/pretrain_v4/encoder.pt",
  "fa_max": 0.01,
  "recommended": {
   "traffic_light": 0.4,

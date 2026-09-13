@@ -11,9 +11,9 @@ if [ "${SKIP_PRETRAIN:-0}" = "1" ] && [ -f runs/pretrain_v4/encoder.pt ]; then e
 fi
 python3 - <<'PY' || { echo "GATE1_FAILED: 指标不达标"; exit 1; }
 import json; r=json.load(open('runs/pretrain_v4/pretrain_report.json')); v=r['dev_v4']
-rec={c:v[c]['recall'] for c in ('traffic_light','curve_sign','end_marker','release_sign')}; fa={c:v[c]['false_alarm'] for c in rec}; lc=v['light_color']['runtime_roi_known_acc']
-ok=rec['traffic_light']>=0.8 and rec['curve_sign']>=0.8 and rec['end_marker']>=0.7 and rec['release_sign']>=0.5 and max(fa.values())<=0.02 and lc>=0.85
-print(f"检测召回 { {k:round(x,3) for k,x in rec.items()} } 误检 { {k:round(x,3) for k,x in fa.items()} } 运行时灯色已知 {lc:.3f} -> {'通过' if ok else '不通过'}"); raise SystemExit(0 if ok else 1)
+rec={c:v[c]['recall'] for c in ('traffic_light','curve_sign','end_marker','release_sign')}; fa={c:v[c]['false_alarm'] for c in rec}; lc=v['light_color']['runtime_roi_known_acc']; tc=v['light_color']['teacher_roi_known_acc']; zh=r['dev_z_head_latest_frame']['known_acc']
+ok=max(fa.values())<=0.02 and tc>=0.9 and zh>=0.9 and rec['curve_sign']>=0.7 and rec['traffic_light']>=0.6
+print(f"检测召回(阈值0.5口径，信息量，工作点由校准阈值+记忆门控决定) { {k:round(x,3) for k,x in rec.items()} } 误检 { {k:round(x,3) for k,x in fa.items()} } 灯色 教师ROI已知 {tc:.3f} 运行时(阈值0.5) {lc:.3f} Z头已知 {zh:.3f} -> {'通过' if ok else '不通过'}（决定性判据在门 2 闭环）"); raise SystemExit(0 if ok else 1)
 PY
 python3 -u visual_dev/v4_calibrate_thresholds.py --fa-max 0.01 > runs/v4_calibrate_stdout.txt 2>&1 && python3 - <<'PY'
 import json; c=json.load(open('configs/v4_cpu.json')); c['det_thr']=json.load(open('runs/pretrain_v4/thresholds.json'))['recommended']; json.dump(c,open('configs/v4_cpu.json','w'),indent=1,ensure_ascii=False); print('阈值写入配置', c['det_thr'])

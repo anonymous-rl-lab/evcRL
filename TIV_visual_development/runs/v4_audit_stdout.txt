@@ -1,0 +1,39 @@
+/home/user/evcrl/TIV_visual_development/visual_dev/run_stage.py:138: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  checks['actor_desaturated_at_fork'] = bool(pre.mean() < 1.5); checks['actor_pre_activation_mean'] = float(pre.mean())
+{
+ "passed": true,
+ "checks": {
+  "oracle_channels_masked": true,
+  "policy_input_dim_81": true,
+  "acceleration_channel_kept": true,
+  "actor_migration_exact": true,
+  "critic_migration_exact_action_last_column": true,
+  "no_future_frames": true,
+  "command_is_pre_projection": true,
+  "executor_intervention_logged": true,
+  "cross_episode_rejected": true,
+  "joint_td_reaches_encoder_after_critic_updates": true,
+  "joint_td_zero_at_fork_is_expected": true,
+  "supervised_frozen_td_blocked": true,
+  "vision_reaches_encoder": true,
+  "actor_never_moves_encoder": true,
+  "exact_resume": true,
+  "executor_independent_of_arm": true,
+  "box_labels_in_unit_range": true,
+  "empty_roi_outputs_unknown": true,
+  "vision_loss_reaches_z_projection": true,
+  "joint_head_td_reaches_temporal_only": true,
+  "critic_trained_on_applied_action": true,
+  "actor_ste_clip_active": true,
+  "actor_desaturated_at_fork": true,
+  "lambda_c_positive_all_arms": true,
+  "obs_and_executor_independent_of_truth_phase": true,
+  "executor_targets_from_memory_only": true,
+  "no_map_or_truth_calls_in_control": true,
+  "policy_obs_from_memory_not_env_obs": true,
+  "policy_input_dim_v4": true,
+  "roi_is_predicted_at_runtime": true,
+  "perception_encoder_frozen_and_shared": true
+ }
+}

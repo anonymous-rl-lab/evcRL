@@ -71,7 +71,8 @@ class InputAdapter(nn.Module):
     def forward(self,obs,z):
         o=obs.legacy.clone()
         if self.information_mode=='vision_memory':   # v4：legacy 13 维已全部来自视觉记忆（无地图、无真值），不再屏蔽；附加 6 维记忆元信息
-            meta=torch.cat([obs.valid[:,-1:].float(),obs.age_s[:,-1:].clamp(0,10),obs.association_valid.float(),torch.zeros_like(obs.v2x_valid),obs.extra.float()],1)
+            extra=obs.extra.float() if obs.extra is not None else torch.zeros(o.shape[0],6,device=o.device)   # 离线池样本无记忆元信息 → 0
+            meta=torch.cat([obs.valid[:,-1:].float(),obs.age_s[:,-1:].clamp(0,10),obs.association_valid.float(),torch.zeros_like(obs.v2x_valid),extra],1)
             return torch.cat([o,z,meta],1)
         o[:,7]=-1.
         if self.information_mode=='camera_map':
