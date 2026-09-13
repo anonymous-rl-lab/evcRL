@@ -18,8 +18,10 @@ SIGN_AHEAD, LIGHT_AHEAD, LIGHT_RANGE = 400., 14., 200.
 
 
 class VisionMemory:
+    GREEN_S = 30.0    # v4s：定时信号的绿灯时长（公开配时，与 renderer.signal_color 一致）；只在观测到绿灯起始后用于推算剩余
+    V_CROSS = 1.0     # v4s：未见绿灯起始时到停止线的目标速度上限（随时可停：v²/(2·3.5) ≤ d 在 d ≥ 0.25 m 内成立）
     def __init__(self, det_thr=0.5, hold_s=3.0, curve_len_max=1000., release_grace_m=5., init_votes=2, vote_window=3, consistency_m=40., expire_s=4.0, light_expire_s=10.0,
-                 gain=0.4, margin_rel=0.15, margin_abs=6.0, color_freeze_m=8.0, dist_freeze_m=15.0, expire_far_m=60.0, maintain_ratio=0.5, end_bias_m=15.0, no_light_near_end_m=100.0,
+                 gain=0.4, margin_rel=0.15, margin_abs=8.0, color_freeze_m=8.0, dist_freeze_m=15.0, expire_far_m=60.0, maintain_ratio=0.5, end_bias_m=15.0, no_light_near_end_m=100.0,
                  stationary_expire_s=10.0):
         """gain：已有轨迹的距离更新增益（推算值与新测量的加权），抑制逐帧抖动；margin_rel/abs：执行层目标的感知不确定性余量，
         目标距离 = 估计 − (margin_rel·估计 + margin_abs)（红灯停车与入弯限速都提前，保守）；color_freeze_m：停止线估计小于该距离时不再更新灯色（近距离灯色不可靠，且已无法改变决策）。"""
@@ -30,7 +32,8 @@ class VisionMemory:
         self.gain = gain; self.margin_rel = margin_rel; self.margin_abs = margin_abs; self.color_freeze_m = color_freeze_m
         self.dist_freeze_m = dist_freeze_m; self.expire_far_m = expire_far_m   # 近线（<15 m）距离只按车速推算不再用视觉更新；轨迹只在目标仍远（>60 m）且长时间未见时过期
         self.stationary_expire_s = stationary_expire_s   # v4r：车已静止且连续该时长无任何灯检出 → 丢弃灯轨迹（幻影灯保护：真实红灯在近距离检出稳定，幻影或被遮的绿灯不会持续检出）
-        # v4r 参数依据（种子 0 开发工况）：终点估计误差 −11…+36 m，end_bias_m=15 使偏短 ≤14 m 仍到达、偏长 ≤85 m 不算冲出；margin_abs=6 使停止线估计偏长 ≤3 m 时仍停在线前 ≥3 m（灯距 ≥17 m，灯色可靠区）
+        # v4r 参数依据（种子 0 开发工况）：终点估计误差 −11…+36 m，end_bias_m=15 使偏短 ≤14 m 仍到达、偏长 ≤85 m 不算冲出
+        # v4s：margin_abs=8——三种子四臂评估轨迹 3247 个近线样本的停止线距离估计误差（估计−真值）：10–20 m 段 p95 +3.3/p99 +7.8，20–30 m 段 p95 +9.5/p99 +12.8；余量 0.15d+8 在 20–30 m 覆盖约 p98
         self.maintain_ratio = maintain_ratio   # 迟滞：已有轨迹的维持阈值 = 建轨阈值 × maintain_ratio（近距离/绿灯等弱响应下不丢轨迹）
         self.end_bias_m = end_bias_m; self.no_light_near_end_m = no_light_near_end_m   # 终点区（终点估计 < 100 m）不建信号灯轨迹：本世界终点线附近无信号灯，红色立柱易被误检为红灯
         self.reset()
@@ -46,7 +49,7 @@ class VisionMemory:
 
     def reset(self):
         self.curve = dict(d_est=None, announced=False, active=False, age=math.inf, release_d=None, traveled_since_entry=0.)
-        self.sig = dict(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False)
+        self.sig = dict(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, onset_seen=False, green_elapsed=0., last_known='unknown')
         self.end = dict(d_est=None, age=math.inf)
         self.last_dets = None; self.votes = {n: [] for n in ('traffic_light', 'curve_sign', 'end_marker', 'release_sign')}; self.mismatch = {n: 0 for n in self.votes}
 
@@ -74,6 +77,7 @@ class VisionMemory:
             tr['age'] += dt
         if self.curve['release_d'] is not None: self.curve['release_d'] -= ds
         if self.curve['active']: self.curve['traveled_since_entry'] += ds
+        if self.sig['seen'] and self.sig['last_known'] == 'green': self.sig['green_elapsed'] += dt   # v4s：绿灯已持续时间（用于推算剩余）
         # 弯道警示牌
         hit, ok = self._vote('curve_sign', dets); cs = dets.get('curve_sign')
         if hit and not self.curve['active'] and (self.curve['announced'] or ok):
@@ -103,17 +107,21 @@ class VisionMemory:
                 else:
                     phase = PHASES[int(np.argmax(color_probs))]; conf = float(np.max(color_probs))
                 self.sig['dur'] = self.sig['dur'] + dt if (self.sig['seen'] and phase == self.sig['phase']) else 0.
+                if phase == 'green' and self.sig['last_known'] in ('red', 'yellow', 'off'):   # v4s：观测到绿灯起始（非绿→绿）
+                    self.sig['onset_seen'] = True; self.sig['green_elapsed'] = 0.
+                elif phase in ('red', 'yellow', 'off'): self.sig['onset_seen'] = False; self.sig['green_elapsed'] = 0.
+                if phase != 'unknown': self.sig['last_known'] = phase
                 self.sig.update(d_line=fused, phase=phase, conf=conf, age=0., seen=True); self.mismatch['traffic_light'] = 0
         elif self.sig['seen'] and self.sig['age'] > self.hold_s and self.sig['phase'] != 'unknown':
             self.sig['phase'] = 'unknown'; self.sig['conf'] = 0.
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < -5.:
-            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
+            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, onset_seen=False, green_elapsed=0., last_known='unknown')
         if self.sig['seen'] and v < 0.5 and self.sig['age'] > self.stationary_expire_s:   # 静止等待中长时间无检出：幻影灯（弯道出口解除牌误判为灯等）→ 丢弃，避免永久停车
-            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
+            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, onset_seen=False, green_elapsed=0., last_known='unknown')
         # v4r 停稳锁存：红灯/未知相位前一旦停稳（v<0.05）就把停车目标锁在当前位置，直到相位为绿或轨迹丢弃。
         # 否则停止线距离估计偏长时车会缓慢蠕行到线上（灯距 ≈14 m 的近距离灯色不可靠区），绿灯后无法起步。
         if self.sig['seen'] and self.sig['phase'] != 'green':
-            if v < 0.05: self.sig['hold'] = True
+            if v < 0.5: self.sig['hold'] = True   # 蠕行（<0.5 m/s）也锁存：种子 2 联合臂以 0.2–0.5 m/s 蠕行过线闯红灯
         else: self.sig['hold'] = False
         # 终点
         hit, ok = self._vote('end_marker', dets); em = dets.get('end_marker')
@@ -128,7 +136,7 @@ class VisionMemory:
         if self.curve['announced'] and not self.curve['active'] and self.curve['d_est'] is not None and (self.curve['d_est'] - SIGN_AHEAD) > self.expire_far_m and self.curve['age'] > self.expire_s:
             self.curve.update(d_est=None, announced=False, age=math.inf)
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] > self.expire_far_m and self.sig['age'] > self.light_expire_s:
-            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False)
+            self.sig.update(d_line=None, phase='unknown', conf=0., age=math.inf, dur=0., seen=False, hold=False, onset_seen=False, green_elapsed=0., last_known='unknown')
 
     # ---------------------------------------------------------------- 三方共享的接口
     def v_limit(self):
@@ -140,6 +148,8 @@ class VisionMemory:
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['phase'] != 'green':
             out.append((x + self._margin(self.sig['d_line']), 0.0))                       # 保守：按不确定性余量提前停
             if self.sig.get('hold'): out.append((x, 0.0))                                 # 停稳锁存：保持原地
+        elif self.sig['seen'] and self.sig['d_line'] is not None and self.sig['phase'] == 'green' and not self.sig['onset_seen'] and self.sig['d_line'] > 0.:
+            out.append((x + self._margin(self.sig['d_line']), self.V_CROSS, 2.0))          # v4s：绿灯但未见起始（剩余未知）→ 以随时可停的包络接近，到余量点（与停车目标同一位置）时 ≤ V_CROSS
         if self.curve['announced'] and not self.curve['active'] and self.curve['d_est'] is not None:
             out.append((x + max(self._margin(self.curve['d_est']) - S.E.MARGIN, 0.), V_CURVE, 2.0))
         if self.end['d_est'] is not None:
@@ -149,7 +159,8 @@ class VisionMemory:
     def executor_signal(self, assumed_green_remaining=30.):
         """(前方信号是否可通行, 假定剩余绿灯时间, 停止线距离估计)。"""
         if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] > 0.:
-            return self.sig['phase'] == 'green', assumed_green_remaining, self._margin(self.sig['d_line'])
+            remaining = max(self.GREEN_S - self.sig['green_elapsed'], 0.) if self.sig['onset_seen'] else assumed_green_remaining   # v4s：见过起始则精确推算（定时信号，绿灯 30 s 为公开配时）
+            return self.sig['phase'] == 'green', remaining, self._margin(self.sig['d_line'])
         return None, None, None
 
     def legacy(self, v, a, soc, T, t_end, t, t_budget):

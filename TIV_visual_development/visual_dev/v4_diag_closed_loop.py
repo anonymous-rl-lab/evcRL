@@ -21,7 +21,7 @@ def main():
         for k, L in enumerate(traces[0][1]):
             m = L.get('memory', {}); det = L.get('perceived_detail', {}).get('dets', {}); g = lambda d, kk: (round(d.get(kk, 0), 2) if isinstance(d.get(kk), float) else d.get(kk))
             c = m.get('curve', {}); s = m.get('sig', {}); e = m.get('end', {})
-            print(k, 'x', round(L.get('x', 0)), 'v', round(L.get('v', 0), 1), 'vlim', round(L.get('v_limit', 0), 1), '| 弯 d', g(c, 'd_est'), 'ann', c.get('announced'), 'act', c.get('active'), 'rel', g(c, 'release_d'), '| 灯 d', g(s, 'd_line'), s.get('phase'), 'age', g(s, 'age'), '| 终 d', g(e, 'd_est'),
+            print(k, 'x', round(L.get('x', 0)), 'v', round(L.get('v', 0), 1), 'vlim', round(L.get('v_limit', 0), 1), '| 弯 d', g(c, 'd_est'), 'ann', c.get('announced'), 'act', c.get('active'), 'rel', g(c, 'release_d'), '| 灯 d', g(s, 'd_line'), s.get('phase'), 'age', g(s, 'age'), 'onset', s.get('onset_seen'), 'gel', g(s, 'green_elapsed'), 'hold', s.get('hold'), '| 终 d', g(e, 'd_est'),
                   '| 检 牌', (g(det.get('curve_sign', {}), 'score'), round(det.get('curve_sign', {}).get('dist_m', 0))), '灯', (g(det.get('traffic_light', {}), 'score'), round(det.get('traffic_light', {}).get('dist_m', 0))), '终', (g(det.get('end_marker', {}), 'score'), round(det.get('end_marker', {}).get('dist_m', 0))), '解', (g(det.get('release_sign', {}), 'score'), round(det.get('release_sign', {}).get('dist_m', 0))),
                   '| 感知', L.get('perceived'), '真绿', L.get('truth_green'), '目标', [(round(t[0]), t[1]) for t in L.get('targets', [])], 'fb', L.get('fallback'), file=f)
     f.close()
