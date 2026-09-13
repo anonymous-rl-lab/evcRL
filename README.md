@@ -109,15 +109,16 @@ TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.
 - 三臂小规模结论（单种子，公平评估）：三臂均 9/9 静止完赛、0 违规；ROI 头行驶中已知类 ≥0.975，Z 探针 0.925–0.950；图像灯色改变会影响三臂的指令与执行（可行的 111 对换图：四子步平均动作差 冻结 0.035、监督 0.080、联合 0.772），F/S 的响应在首子步被执行约束抑制，联合臂幅度更大；但联合臂没有性能改善（I_j +25.6 即 +44%，9 工况全部更差，时间 +1.4 s，能耗 +1.3 Wh，R −0.16）。结构性原因（报告第 8.1 节）：执行层持有真值相位使视觉对回报没有边际价值；TD 梯度进入编码器后只造成表示漂移，把迁移来的饱和 actor 拉出饱和区、指令变宽、经 jerk 受限执行层变成颠簸；actor 的 Z 列范数只有旧列的 2%。改进方案见第 8.2 节（执行层接口改为感知输出、回报加舒适性项、残差动作空间、联合臂稳定化、近距离数据覆盖、归因消融）。执行层仍读取真值信号并主导实际动作（三臂实际动作分布相同，名义限制占 86–93%），`lambda_c=0`。可写进论文的表述：TD 反馈能够进入视觉编码器并伴随更强的灯色相关指令响应；当前单种子开发实验尚未建立驾驶性能、舒适性或训练效率的改善。下一步是公平比较与作用归因（执行层信息接口改为感知输出、加 `lambda_c>0` 臂、多种子），不是扩大规模。
 - 一键：`cd TIV_visual_development && STOP_BEFORE_ARMS=1 bash runs/run_v2_gated.sh pilot_v2`（门 1–3），通过后 `bash runs/run_pilot.sh pilot_v2 9000`；重评估 `python3 visual_dev/reevaluate.py --tag pilot_v2`；汇总 `python3 visual_dev/summarize_pilot.py --tag pilot_v2`。
 
-### 8.2 v4：无地图、靠视觉获取道路事件信息（三种子规模运行，`TIV_visual_development/reports/REPORT_v4_zh.md`）
+### 8.2 v4：无地图、靠视觉获取道路事件信息（三种子规模运行，`TIV_visual_development/reports/REPORT_v4_zh.md`；2026-09-13 独立审计后修订）
 
-按第四轮专家意见把地图信息同时从 actor、critic、执行层退出：弯道由实体警示牌（入弯点上游 400 m）与出口解除牌提供，信号灯只在 200 m 内可见且无倒计时，ROI 由检测器预测，三方共享同一份视觉记忆（`visual_dev/vision_state.py`），真值只用于渲染/物理/裁判。分级门禁（编码器 → 闭环探针 → 审计 31 项 → 适配与烟测 → 四臂）后，三种子各四臂 9000 子步（`runs/v4r*/v4_pilot/`）：
+按第四轮专家意见把地图信息同时从 actor、critic、执行层退出：弯道由实体警示牌（入弯点上游 400 m）与出口解除牌提供，信号灯只在 200 m 内可见且无倒计时，ROI 由检测器预测，三方共享同一份视觉记忆（`visual_dev/vision_state.py`）。**架构准确的说法是：冻结的视觉感知与记忆执行器 + 不同训练方式的策略视觉表示**——执行层用的检测器始终冻结，RL 只更新策略的 Z 编码器；本轮不能证明“TD3 反馈改善部署检测器”。分级门禁（编码器 → 闭环探针 → 审计 31 项 → 适配与烟测）后，三种子各四臂 9000 子步（`runs/v4r*/v4_pilot/`），评估删除终点真值旁路后重做：
 
-- 12 条臂里 9 条 9/9 到达、0 违规；全部 108 个 episode 弯道超速 0；遮蔽消融方向一致（隐藏警示牌 → 弯道超速、灯色灭 → 闯红灯、隐藏终点 → 不到达），驾驶确实依赖视觉。
-- 仅监督臂相对冻结臂在三个种子上一致改善（I_j −6…−12、能耗 −14…−49 Wh）；整网联合臂与冻结骨干联合臂的差异在种子间异号，critic 反馈训练编码器没有带来一致收益。
-- 6 个失败全部在种子 2：4 次闯红灯是无倒计时下的两难区（黄灯起始时物理不可停），1 次蠕行过线，1 次近线灯色误判死锁；均归因到感知/执行层结构性限制，已在报告 7.5/7.6/9 节写明，候选修正在分支 `v4s-executor`。
-- 过程中修复了渲染器缺陷（停在停止线上灯箱被隐藏）并加入记忆稳健性规则（终点偏置、停车余量、幻影灯过期、停稳锁存）；两次重训编码器（v4b 覆盖）未过闭环门 2，记录在 `runs/_failed/`。
-- 一键：`cd TIV_visual_development && bash runs/run_v4_gated.sh`（门 1–4 + 种子 0）；多种子 `bash runs/run_seeds_local.sh v4r_cpu.json v4r_cpu_s1.json v4r_cpu_s2.json`；重评估 `python3 visual_dev/reevaluate.py --tag v4_pilot --runs v4r --pretrain pretrain_v4`；失败归因 `python3 visual_dev/v4_violation_analysis.py`。
+- 全部 27 工况计入分母：仅监督臂 S 是唯一 27/27 到达、0 信号违规、全工况平均回报最高的臂；F 24/27、J 26/27、JH 25/27；108 个 episode 弯道超速 0；遮蔽消融方向一致（隐藏警示牌 → 弯道超速、灯色灭 → 闯红灯、隐藏终点 → 不到达）。常量命令 u=+1 + 同一执行层的参照已能 9/9 到达、0 违规，学习型策略的增量须相对它度量。
+- 配对差只在同种子、双方都到达的工况上算并标明 n：S−F 的舒适性差三个种子异号（−12.3 / −6.2 / +4.1），撤回此前“逐种子一致改善”的说法；J、JH 相对 F 在种子间异号，联合更新未显示一致收益。
+- 6 个失败全在种子 2：4 次闯红灯是黄灯起始时理想刹停距离已不够（无倒计时两难区），1 次红灯前蠕行过线，1 次近线灯色误判死锁；归因表见报告 8.5 节。
+- 审计整改（报告 7.7）：配对差分母、评估终点旁路、两套编码器表述、jerk 越界（各臂 9–17/27 回合越界，峰值 10–12 m/s³）、`vision_state.py` 纳入源码身份、记忆观测/承诺分离与扩展 `extra` 接口（`extra_dim=10`，需重训）；critic 动作契约诊断（报告 7.8：执行层干预 88–95% 子步，首子步 `applied` 作 critic 动作存在混叠且命令对后续 2 s 解释力接近零）——训练前须重定动作契约。
+- 过程记录：渲染器缺陷修复（停在停止线上灯箱被隐藏）、记忆稳健性规则（终点偏置、停车余量、幻影灯过期、停稳锁存）、两次 v4b 编码器重训未过闭环门 2（`runs/_failed/`）、v4s 执行层候选（分支 `v4s-executor`）。
+- 一键：`cd TIV_visual_development && bash runs/run_v4_gated.sh`（门 1–4 + 种子 0）；多种子 `bash runs/run_seeds_local.sh v4r_cpu.json v4r_cpu_s1.json v4r_cpu_s2.json`；重评估 `python3 visual_dev/reevaluate.py --tag v4_pilot --runs v4r --pretrain pretrain_v4`；失败归因 `python3 visual_dev/v4_violation_analysis.py`；完整交付包 `bash runs/make_delivery.sh <目录>`。
 
 ### 8.1 交接包原状态（接入前）
 

@@ -29,7 +29,7 @@ def main():
                     # 时序约定（审计整改）：signal_green[j] 是第 j 子步结束时刻 t1 的真值相位；相位由绿转非绿发生在子步 j 内。
                     # 事件时刻的车辆状态取子步 j 的起点 (x0, v0)（最晚的“仍是绿灯”的已知状态，保守：真实起始略晚于此）。只在过线前 40 子步（20 s）内找切换，否则不属于同一相位事件。
                     onset = [j for j in range(max(1, k - 40), k + 1) if g[j - 1] > 0.5 and g[j] < 0.5]; j = onset[-1] if onset else None
-                    if v_cross < 1.0: rec.update(kind='红灯蠕行过线', crossing_speed=round(v_cross, 2), mem_phase_at_cross=log[k].get('memory', {}).get('sig', {}).get('phase'), mem_hold_at_cross=log[k].get('memory', {}).get('sig', {}).get('hold'))
+                    if v_cross < 2.0: rec.update(kind='红灯蠕行过线（<2 m/s）', crossing_speed=round(v_cross, 2), mem_phase_at_cross=log[k].get('memory', {}).get('sig', {}).get('phase'), mem_hold_at_cross=log[k].get('memory', {}).get('sig', {}).get('hold'))
                     elif j is not None:
                         d = XS - V[j, C.index('x0')]; v = V[j, C.index('v0')]
                         rec.update(kind='闯红灯（黄灯起始后）', yellow_onset_substep=j, d_line_at_onset=round(float(d), 1), v_at_onset=round(float(v), 1), min_stop_dist=round(float(v * v / 7.), 1), stoppable_ideal=bool(v * v / 7. <= d),
