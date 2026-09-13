@@ -19,7 +19,7 @@ SIGN_AHEAD, LIGHT_AHEAD, LIGHT_RANGE = 400., 14., 200.
 
 class VisionMemory:
     def __init__(self, det_thr=0.5, hold_s=3.0, curve_len_max=1000., release_grace_m=5., init_votes=2, vote_window=3, consistency_m=40., expire_s=4.0, light_expire_s=10.0,
-                 gain=0.4, margin_rel=0.15, margin_abs=3.0, color_freeze_m=8.0, dist_freeze_m=15.0, expire_far_m=60.0, maintain_ratio=0.5):
+                 gain=0.4, margin_rel=0.15, margin_abs=3.0, color_freeze_m=8.0, dist_freeze_m=15.0, expire_far_m=60.0, maintain_ratio=0.5, end_bias_m=8.0, no_light_near_end_m=100.0):
         """gain：已有轨迹的距离更新增益（推算值与新测量的加权），抑制逐帧抖动；margin_rel/abs：执行层目标的感知不确定性余量，
         目标距离 = 估计 − (margin_rel·估计 + margin_abs)（红灯停车与入弯限速都提前，保守）；color_freeze_m：停止线估计小于该距离时不再更新灯色（近距离灯色不可靠，且已无法改变决策）。"""
         """det_thr：检测门控阈值（float 或 dict 类别→阈值）；init_votes/vote_window：新建轨迹需最近 vote_window 帧中 ≥init_votes 帧过阈值；
@@ -29,6 +29,7 @@ class VisionMemory:
         self.gain = gain; self.margin_rel = margin_rel; self.margin_abs = margin_abs; self.color_freeze_m = color_freeze_m
         self.dist_freeze_m = dist_freeze_m; self.expire_far_m = expire_far_m   # 近线（<15 m）距离只按车速推算不再用视觉更新；轨迹只在目标仍远（>60 m）且长时间未见时过期
         self.maintain_ratio = maintain_ratio   # 迟滞：已有轨迹的维持阈值 = 建轨阈值 × maintain_ratio（近距离/绿灯等弱响应下不丢轨迹）
+        self.end_bias_m = end_bias_m; self.no_light_near_end_m = no_light_near_end_m   # 终点区（终点估计 < 100 m）不建信号灯轨迹：本世界终点线附近无信号灯，红色立柱易被误检为红灯
         self.reset()
 
     def _fuse(self, tracked, new):
@@ -88,7 +89,8 @@ class VisionMemory:
             self.curve.update(d_est=None, announced=False, active=False, age=math.inf, release_d=None, traveled_since_entry=0.)
         # 信号灯
         hit, ok = self._vote('traffic_light', dets); lt = dets.get('traffic_light')
-        if hit and (self.sig['seen'] or ok) and lt['dist_m'] <= LIGHT_RANGE + LIGHT_AHEAD and color_probs is not None:
+        near_end = self.end['d_est'] is not None and self.end['d_est'] < self.no_light_near_end_m
+        if hit and (self.sig['seen'] or (ok and not near_end)) and lt['dist_m'] <= LIGHT_RANGE + LIGHT_AHEAD and color_probs is not None:
             new_d = float(lt['dist_m']) - LIGHT_AHEAD
             if self._accept('traffic_light', self.sig['d_line'] if self.sig['seen'] else None, new_d) or (self.mismatch['traffic_light'] >= 3 and lt['score'] >= self.thr('traffic_light') and ok):
                 near = self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < self.dist_freeze_m
@@ -130,7 +132,7 @@ class VisionMemory:
         if self.curve['announced'] and not self.curve['active'] and self.curve['d_est'] is not None:
             out.append((x + max(self._margin(self.curve['d_est']) - S.E.MARGIN, 0.), V_CURVE, 2.0))
         if self.end['d_est'] is not None:
-            out.append((x + self.end['d_est'] + 2.0, 0.0))   # 终点：固定锚点（估计可为负 → 立即停），偏后 2 m 保证过线到达；不随车移动
+            out.append((x + self.end['d_est'] + self.end_bias_m, 0.0))   # 终点：固定锚点，偏后 end_bias_m（估计偏短会停在终点线前而不算到达；停在线后无代价）
         return out
 
     def executor_signal(self, assumed_green_remaining=30.):
