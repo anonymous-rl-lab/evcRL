@@ -2,3 +2,14 @@
 [frozen] 子步 975/9000 更新 245 eps 6 完赛 5 q_loss 439.11 vis 0.742 enc_grad 0.00e+00
 [frozen] 子步 1427/9000 更新 358 eps 6 完赛 5 q_loss 293.63 vis 1.018 enc_grad 0.00e+00
 [frozen] 子步 1874/9000 更新 470 eps 7 完赛 6 q_loss 213.46 vis 0.843 enc_grad 0.00e+00
+[frozen] 子步 2350/9000 更新 589 eps 8 完赛 7 q_loss 219.40 vis 0.760 enc_grad 0.00e+00
+[frozen] 子步 2790/9000 更新 699 eps 9 完赛 8 q_loss 98.45 vis 0.572 enc_grad 0.00e+00
+[frozen] 子步 3260/9000 更新 817 eps 10 完赛 9 q_loss 105.46 vis 0.462 enc_grad 0.00e+00
+[frozen] 子步 3721/9000 更新 933 eps 11 完赛 10 q_loss 214.60 vis 0.466 enc_grad 0.00e+00
+[frozen] 子步 4152/9000 更新 1041 eps 12 完赛 11 q_loss 107.83 vis 0.958 enc_grad 0.00e+00
+[frozen] 子步 4598/9000 更新 1154 eps 14 完赛 12 q_loss 142.70 vis 0.367 enc_grad 0.00e+00
+[frozen] 子步 5045/9000 更新 1266 eps 15 完赛 12 q_loss 106.97 vis 0.735 enc_grad 0.00e+00
+[frozen] 子步 5504/9000 更新 1381 eps 16 完赛 13 q_loss 63.70 vis 0.861 enc_grad 0.00e+00
+[frozen] 子步 5975/9000 更新 1499 eps 17 完赛 14 q_loss 89.74 vis 1.142 enc_grad 0.00e+00
+[frozen] 子步 6450/9000 更新 1618 eps 18 完赛 15 q_loss 68.17 vis 0.509 enc_grad 0.00e+00
+[frozen] 子步 6913/9000 更新 1734 eps 19 完赛 16 q_loss 52.09 vis 0.473 enc_grad 0.00e+00
