@@ -82,6 +82,7 @@
   "end_bias_m": 15.0,
   "margin_abs": 6.0,
   "stationary_expire_s": 10.0,
-  "note": "vision_state.VisionMemory 默认值（代码内），依据种子 0（runs/v4）开发工况的终点估计误差与灯前停车位置统计"
+  "note": "vision_state.VisionMemory 默认值（代码内）：终点偏置 15 m、停车余量 6 m、静止 10 s 无检出丢弃灯轨迹、红灯前停稳后锁存位置直到绿灯；依据种子 0（runs/v4）开发工况统计",
+  "stop_hold_latch": true
  }
 }
