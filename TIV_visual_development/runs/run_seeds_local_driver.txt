@@ -1,0 +1,8 @@
+开始 Sun Sep 13 05:31:21 UTC 2026 磁盘剩余 13 GB
+== 种子配置 v4r_cpu_s1.json → runs/v4r_s1 Sun Sep 13 05:31:21 UTC 2026
+supervised 批内退出码 0 Sun Sep 13 05:57:40 UTC 2026
+frozen 批内退出码 0 Sun Sep 13 05:59:40 UTC 2026
+joint 批内退出码 0 Sun Sep 13 06:26:22 UTC 2026
+joint_head 批内退出码 0 Sun Sep 13 06:26:22 UTC 2026
+SEED_DONE v4r_cpu_s1.json Sun Sep 13 06:26:29 UTC 2026
+== 种子配置 v4r_cpu_s2.json → runs/v4r_s2 Sun Sep 13 06:26:29 UTC 2026
