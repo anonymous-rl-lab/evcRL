@@ -1,6 +1,6 @@
 # Offline event diagnostics
 
-Run `python verification/diagnostics/audit_events.py` from the paper root, or use its absolute path. Requirements: Python 3, NumPy, SciPy. No PyTorch, checkpoint, image inference, environment step, or vehicle rollout is invoked.
+Run `python verification/diagnostics/audit_events.py` from the analysis folder, or use its absolute path. Requirements: Python 3, NumPy, SciPy. No PyTorch, checkpoint, image inference, environment step, or vehicle rollout is invoked.
 
 Inputs:
 
