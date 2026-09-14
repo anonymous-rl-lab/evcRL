@@ -34,7 +34,7 @@ The archived 20 km code reads `EVSIM_ROUTE` at import: the visual, comfort and t
 | `long_route/scripts/run_gates.sh` | check_env, six verify.py checks, eight regression tests pass (`long_route/results/gates.txt`) |
 | `software/EvcRL`: 26 contract tests; camera `paper_v25` vs archived `VisionEnv`, structured 4/20 km vs archived `env20` | pass; bit-identical (`software/EvcRL/SOFTWARE_VERIFICATION.json`) |
 
-The manuscript text refers to EvcRL 0.1.0 with ten software tests; this repository ships the hardened 0.0.1 release (26 tests, frozen `paper_v25` rule identity, bit-exact against the archived simulators). The packaged rules are unchanged; only the packaging and its verification changed.
+The manuscript and this repository refer to EvcRL 0.0.1, the hardened release (26 tests, pinned `paper_v25` rule identity, bit-exact against the archived simulators). Its packaged rules are those of the 0.1.0 draft the paper package originally shipped; only the packaging and its verification changed (`software/EvcRL/CHANGELOG.md`).
 
 ## Assets not in the repository
 

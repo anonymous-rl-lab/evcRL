@@ -98,7 +98,7 @@ def check(m,s):
     ck('two aligned jerk windows',acc['flag_count']==acc['actual_exceedances']==99 and acc['post_adoption_flags']==acc['post_adoption_actual_exceedances']==88 and '99 versus 88' in s)
     ck('nominal propagation decomposition',r'e^{\rm prop}=-a_{k+1}\delta^2/2' in m)
     ck('candidate actual condition',all(t in m for t in [r'$p\ge15$',r'$c<15$',r'$c<p$']))
-    ck('standalone software scope','locally installable EvcRL 0.1.0' in m and 'Ten software tests' in s)
+    ck('standalone software scope','locally installable EvcRL 0.0.1' in m and 'Twenty-six software tests' in s)
     ck('algorithm 3 bounded','Algorithm 3 — Experimental guarded memory update' in s)
     ck('short known biographies',all('**'+n+'** is with the School' in m for n in ['Ziran Peng','Zeyu Fan']))
 
