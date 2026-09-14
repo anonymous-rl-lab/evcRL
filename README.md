@@ -1,140 +1,45 @@
-# evcRL：TIV v19 长程环境感知 TD3 的复现、核对、训练调试与视觉 Z 接入
+# evcRL — Environment-Aware Reinforcement Learning for Electric Vehicle Eco-Driving with Smooth Execution
 
-本仓库针对论文《Energy Efficiency Optimization of Electric Vehicles with Environment-Aware Reinforcement Learning: Value, Control, and Smooth Execution》（TIV v19）的**20 km 长程环境感知 TD3** 主实验，给出可一键执行的复现流程、逐项的论文↔代码核对、本次实际运行得到的复现结果、发现的复现障碍及其处理，以及对训练行为（先升后降、critic 偏差）的调试诊断。所有说明为中文；所有结论都来自本目录中实际执行过的脚本与保存的输出。
+Companion repository of the manuscript *Environment-Aware Reinforcement Learning for Electric Vehicle Eco-Driving with Smooth Execution* (TIV, v27; main paper and supplement under `paper/`). The repository contains the environment package, the frozen experiment code, the archived records behind every table of the paper, and scripts that regenerate those tables from the records or re-run the frozen policies through the archived simulators.
 
-> 一句话结论：论文长程实验的**代码与论文陈述逐项一致**；论文 Table II/III/S1–S4/F1 及 8 个选中检查点的 12 工况评估**可在本环境中精确复现（误差 0）**；但**跨 torch/numpy 版本重新训练不是位一致的**，重训只能得到同一协议下的新样本，不能期望逐种子重现论文数字。真正阻塞复现的是两处工程问题（发布目录布局与 `evaluate_checkpoint.py` 不匹配；短程研究的断点加载硬校验运行时版本），本目录已给出绕过脚本并验证。
+## Paper protocol → repository map
 
-## 1. 目录内容
+| Paper | Directory | Contents | Regenerate / verify |
+|---|---|---|---|
+| Sec. III-D, Supp. C — reusable environment interface | `software/EvcRL/` | `evcrl` Gymnasium package (camera 4 km, structured 20 km), wheel + sdist, contract tests, bit-exact equivalence records against the archived simulators | `pip install software/EvcRL/dist/evcrl-0.0.1-py3-none-any.whl`; `pytest software/EvcRL/tests` |
+| P-V — Sec. VI-C, Supp. B, G (Tables V, VI, S6–S8) | `visual/` | procedural camera, detector pretraining, event memory, release-aware executor, TD3 arms F/S/J/JH; frozen detector and 12 policy checkpoints; 27 evaluation records per arm; constant-command probe; reproduction wrapper | `python visual/tables.py`; `python visual/reproduction/reproduce_visual.py check --root visual` |
+| P-B, P-LP — Sec. IV–V, VI-D/E, Supp. E, H (Tables VII, VIII, S9–S17, Figs. 2, S3) | `visual/runs/v5_timing/`, `visual/visual_dev/v5_timing_experiment.py`, `visual/visual_dev/v6_theory_lp.py`; `paper/verification/` | 864 short-branch records from two frozen approach states; sampled LP reference; record calculators | `python visual/visual_dev/v5_timing_experiment.py summarize6 --tag v6_formal_v22`; paper calculators below |
+| P-C — Sec. VI-A, Supp. F.1–F.4 (Tables III, S2–S4, Fig. S2) | `comfort/` | archived complete-executor development package (r0/r1/r2), settled baseline traces, extracted frozen actors A/B | `python comfort/reproduce.py [--rollout]` |
+| P-T — Sec. VI-B, Supp. F.5–F.8 (Table IV, S5, Fig. 3) | `timing/` | self-contained timing-use experiment: frozen actor A, paired color/timing records | `python timing/code/audit.py`; `python timing/verify_tables.py` |
+| Reference context — Sec. VI-F, Supp. I | `long_route/` | frozen 20 km simulator and TD3 trainer, eight archived seeds (curves, selected checkpoints, references), gates, checkpoint replay, retraining scripts | `bash long_route/scripts/run_gates.sh`; `python long_route/scripts/replay_selected_checkpoints.py` |
+| Manuscript, supplement, figures, record calculators — Supp. J | `paper/` | Markdown/PDF/TeX sources, figure generators, verification calculators and their frozen inputs/outputs | `python paper/verification/check_v27.py` and the calculators listed in `paper/verification/VERIFICATION_v27.md` |
 
-| 路径 | 内容 |
+Seed indices 0/1/2 of the visual study are training seeds 7/8/9 and run directories `visual/runs/v4r`, `v4r_s1`, `v4r_s2`. Arms F/S/J/JH are `frozen`, `supervised`, `joint`, `joint_head`.
+
+## Environment
+
+Python ≥ 3.10, NumPy, SciPy, Pillow, Gymnasium (for `evcrl`), PyTorch CPU (policy inference and training; no CUDA is used anywhere), Matplotlib (figures). The record calculators and table scripts need NumPy/SciPy only. Every simulation runs single-threaded on a CPU; set `OMP_NUM_THREADS=1`.
+
+The archived 20 km code reads `EVSIM_ROUTE` at import: the visual, comfort and timing packages set it to `mini` (4 km) themselves; the long-route scripts unset it. Do not import the 4 km and 20 km stacks in one process.
+
+## What was verified in this repository state
+
+| Check | Result |
 |---|---|
-| `evsim_v9/` | 冻结的 20 km 模拟器与 TD3 训练器，从 `long_route/code_evsim_v9.tgz` 原样解出（SHA-256 见 `reference/code_evsim_v9.tgz.sha256`），未修改任何源码 |
-| `reference/` | 论文八种子归档：`bench_curves/`（8 条训练曲线，每条 20 个检查点的 12 工况网格）、`bench_results.json`（验证集选点结果）、`refs_fixed.json`（DP/驾驶员/定速参考）、`cruise_baseline.json`、`recomputed_v17.json`、`selected_checkpoints/`（8 个验证集选中的检查点权重） |
-| `scripts/` | 复现脚本（中文注释与提示），见第 2 节 |
-| `results/` | 本次会话实际运行产生的记录：门禁输出、烟测、检查点回放、屏蔽响应、Table F1 诊断、短程 actor 复现、重训曲线与对比 |
-| `docs/paper_code_audit.md` | 论文 ↔ 代码逐项核对表（模型、奖励、观测、执行层、TD3 超参数、评估协议）及踩坑清单 |
-| `visual_z_framework/` | 用户交付的视觉编码 Z 交接框架（原样保留；本次仅运行其 11 项契约测试并核对 v19 源码哈希与真实 actor 迁移，均通过） |
+| `visual/tables.py`: Table V, S6, S7 regenerated from the 108 evaluation records and the constant-command probe | all values match the paper |
+| `visual/reproduction/reproduce_visual.py`: seed-0 S (current protocol) and JH (legacy protocol) re-run through the repository sources | all nine conditions bit-identical to the archived records (`visual/reproduction/verification_seed0.json`) |
+| `comfort/reproduce.py`: Tables III, S3, S4 and the arrival-cut numbers from the archived traces; frozen actors A/B re-run through both executors | all values match; complete-executor trajectories bit-identical, original-executor trajectories within 1e-8 (`comfort/reports/reproduction_checks.json`) |
+| `timing/code/audit.py`, `timing/code/analyze.py pilot`, `timing/verify_tables.py` | source/weight identity intact; Tables IV and S5 and the condition-7 event match (`timing/reports/table_checks.json`) |
+| `paper/verification/*`: framework, diagnostics, target-memory calculators, preparation checks, `check_v27.py` (418 assertions) | all pass; regenerated outputs identical to the delivered package |
+| `long_route/scripts/run_gates.sh` | check_env, six verify.py checks, eight regression tests pass (`long_route/results/gates.txt`) |
+| `software/EvcRL`: 26 contract tests; camera `paper_v25` vs archived `VisionEnv`, structured 4/20 km vs archived `env20` | pass; bit-identical (`software/EvcRL/SOFTWARE_VERIFICATION.json`) |
 
-## 2. 环境与一键运行
+The manuscript text refers to EvcRL 0.1.0 with ten software tests; this repository ships the hardened 0.0.1 release (26 tests, frozen `paper_v25` rule identity, bit-exact against the archived simulators). The packaged rules are unchanged; only the packaging and its verification changed.
 
-依赖：Python ≥ 3.10（本次 3.11.15），numpy（本次 2.4.6），torch CPU（本次 2.14.0+cu130，未使用 CUDA），scipy 仅短程执行层测试需要。训练与评估全程单线程 CPU；不要使用 GPU（64 单元 MLP，环境积分是瓶颈）。
+## Assets not in the repository
 
-```bash
-cd tiv_long_horizon_repro
-bash scripts/run_gates.sh                     # 门禁：check_env / verify.py 六项 / 8 项回归 / 视觉框架 11 项测试
-bash scripts/smoke_bit_identity.sh            # 12k 步位一致烟测（期望 R=-387.723，last-3=-394.262）
-python3 scripts/replay_selected_checkpoints.py # 论文 8 个选中检查点回放，网格误差应为 0
-python3 scripts/channel_masks.py              # Table S3 selected 三列（环境感知通道屏蔽响应）
-python3 scripts/diagnose_curves.py            # 归档 8 条曲线的逐检查点诊断表
-SEEDS="0 1 2" JOBS=3 bash scripts/train_repro.sh   # 按冻结协议重训（500 万步/种子，4 核约 3 小时）
-python3 scripts/compare_curves.py             # 重训曲线 vs 归档曲线逐检查点比较 + 论文选点规则计分
-TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.py  # 短程研究 actor 提取与复现
-```
+Regenerable large assets are ignored: the supervised image pools and evaluation sets (`visual/runs/pretrain_v4/pool.pt`, `eval_sets.pt`; regenerate with `visual/visual_dev/regen_pool.py`), training resume checkpoints and replay stores, and the 20 km training outputs under `long_route/evsim_v9/out`. The complete `resume.pt` checkpoints of the comfort study's actors are replaced by the extracted actor tensors in `comfort/frozen_actor_replay/`, whose provenance is recorded there.
 
-`scripts/train_repro.sh` 的 `TAG` 不能与 `evsim_v9/out/` 中已有运行重名（`run_batch.py` 拒绝覆盖）。
+## Licence
 
-## 3. 论文思想在代码中的落点（长程主实验）
-
-- **环境感知（structured environment awareness）**：策略输入是 13 维结构化观测（`env20.py obs()`）：车速、上一实际加速度、剩余距离、当前限速、400 m 内弯道距离/限速、1000 m 内信号距离/相位/剩余相位时间、SOC、电池温度、剩余任务时间、已用时间。信号信息只在 1000 m 广播范围内可见（SPaT 边界），范围外只给距离；这是论文“环境感知不是视觉编码器”的实现含义。
-- **任务目标**：L 型奖励 r = −P_b Δt/E0 − λ_T Δt − 超速项（`env20.py step()`），λ_T=0.08 等价于 8 kW 的时间影子价格，与 DP 参考的 Lagrangian 一致；未完成距离按 15 单位/km 收费，1312.5 s 截止为真实终止。
-- **执行层（式 (3)）**：`env20.py project()`：jerk 裁剪 → 执行器箱 → 安全上限 a_safe → 非负速度。安全上限保证不闯红灯与终点停车；弯道由包络处理。
-- **学习器**：TD3 双 critic、延迟 actor、目标动作噪声，加上 **20 个决策的无折扣行为回报多步目标**（`td3_run.py` 第 246–258 行滑动窗口），FIFO 125000 决策转移，OU 探索，85% 路内探索起点。
-- **评估协议**：12 工况（三组电池 × 4 个信号偏移），偏移 {0,45} 选检查点、{22.5,67.5} 报告；末 8 检查点均值为 late；参考为 DP 跟踪轨迹、三种驾驶员、18.5 m/s 定速规则。
-
-完整的逐项核对见 `docs/paper_code_audit.md`。
-
-## 4. 本次实际复现结果
-
-| 检查 | 结果 | 记录 |
-|---|---|---|
-| 三道门禁（verify.py 六项、8 项回归、视觉框架 11 项） | 全部通过 | `results/gates.txt` |
-| 12k 步 seed 0 烟测 | R=−387.723、last-3=−394.262，与冻结 README 位一致（需 `--log 6000`） | `results/smoke/` |
-| 8 个验证集选中检查点回放 | 12 工况网格与训练日志最大 \|ΔR\| = 0.0，报告集分数与 `bench_results.json` 一致（Table III） | `results/replay/` |
-| Table II/III/S1/S2/S4 重算 | `analysis_metrics.py` 输出与保留的 `recomputed_v17.json` 704 个数值全部一致 | 见 docs 第 5 节 |
-| Table S3 屏蔽响应 selected 列 | 8 个种子的 (电池, SPaT, 弯道) 三元组与论文完全一致 | `results/channel_masks_selected.json` |
-| Table S3 late 列 | 与归档 `channel_late8.json` 逐值一致 | `results/channel_late8_regenerated.json` |
-| Table F1 网络斜率诊断 | 与归档共有键逐值一致 | `results/critic_gradient2_regenerated.json` |
-| 论文 v19 自带审计 `audit_v19.py` | 398 项旧数值比对 + 650 项新检查全部通过 | `results/audit_v19_rerun.json` |
-| 短程研究 A/B actor 九工况评估（附录 J-C 的 77.861 / 49.083） | 18 条行程逐工况 I_j 误差 0.0；A 的张量与 SPaT 包 `actor_A.pt` 完全一致 | `results/short_route/` |
-| 按冻结协议重训 seeds 0/1/2 × 500 万步 | 三种子选点报告集 R −176.34/−175.09/−174.55（均 6/6，均优于 attentive 与定速规则）；late −179.05/−181.02/−178.42；先升后降全部重现 | `results/train/` |
-
-## 5. 发现的复现问题与处理
-
-1. **发布目录布局与 `evaluate_checkpoint.py` 不匹配**：该脚本要求 `<tag>_s<seed>.json` 与检查点同目录，而发布包把权重与曲线分开存放，直接调用抛 `FileNotFoundError`。处理：`scripts/replay_selected_checkpoints.py` 显式配对并做同样的 1e-6 一致性断言；已验证 8/8 通过。
-2. **短程舒适性研究断点加载硬校验运行时**：`study.py Trainer.load` 要求 torch/numpy 版本与断点内记录（2.8.0+cpu / 2.3.5）逐字相同，否则 `ValueError('runtime mismatch')`；`TIV_comfort_v2/code/rollout_layer.py` 也只为取 actor 而调用它，导致 Table IV 的评估脚本在其它版本上完全无法运行。处理：`scripts/short_route_frozen_actor.py` 仅提取 actor 六个张量（与 SPaT 实验做法一致），校验源码哈希，并用原 `study.rollout` 复现 A/B 的九个开发工况：逐工况 I_j 误差为 0。这不是修改冻结代码，而是提供不依赖运行时相等的评估入口；真正“精确续训”仍需相同运行时。
-3. **跨版本重训不位一致**：12k 步位一致，但第一个 25 万步检查点已分叉（seed 0：归档记录步 250001 / 12 工况 R −198.07，本次 250000 / −198.34）。原因是长时间训练对浮点微小差异（不同 torch 版本的 GEMM/优化器内核）呈混沌放大。结论：论文逐种子数字只能通过检查点回放精确复现；重训是同协议的新样本，评价标准应是“验证集选点后的报告集分数是否落在论文报告的种子分布内”，见第 6 节。
-4. **烟测 last-3 依赖记录间隔**：README 中 −394.262 仅在 `--log 6000` 下成立；其它间隔末检查点 R 仍为 −387.723。已在 `scripts/smoke_bit_identity.sh` 固定。
-5. **`long_route/data/refs_fixed.json` 指纹与冻结代码不同**（b72133bb… vs 04500faf…）：这是后期带 `K_FRIC/W_EVENT` 训练旋钮版本的“重盖章”副本，1861 个数值与 `evsim_v9/frozen/refs_fixed.json` 完全一致；训练器只读 frozen/ 下的文件，不要互相覆盖。
-6. **依赖缺口**：`TIV_comfort_v2/code/test_layer.py` 需要 scipy；`EVSIM_ROUTE` 若被 `study.py` 设为 `mini` 会把 20 km 环境切成 4 km（所有长程脚本先 `unset`）；受限网络下 PyTorch CPU 索引不可达时 PyPI 的 cu130 轮子同样可用（代码不触碰 CUDA）。
-
-## 6. 本次重训结果（seeds 0/1/2，冻结协议，500 万步）
-
-运行：`SEEDS="0 1 2" JOBS=3 STEPS=5000000 TAG=repro`，3 进程并行于 4 核 CPU（torch 2.14.0 / numpy 2.4.6），每种子 20 个检查点；曲线、日志、`analyze.py` 选点结果与三个验证集选中检查点的权重均在 `results/train/`。按论文协议：仅用验证偏移 {0,45} 选检查点，用报告偏移 {22.5,67.5} 计分；late 为末 8 检查点报告集均值（样本 SD）。工况匹配的参考：attentive 驾驶员 −177.473，18.5 m/s 定速规则 −177.290。
-
-| 种子 | 本次选中步 | 本次报告集 R | 完赛 | 本次 late-8 均值 (SD) | 论文选中步 | 论文报告集 R | 耗时/分 |
-|---|---|---|---|---|---|---|---|
-| s0 | 3500002 | -176.342 | 6/6 | -179.050 (2.00) | 4500000 | -173.490 | 117 |
-| s1 | 2500003 | -175.093 | 6/6 | -181.017 (4.68) | 4000002 | -175.468 | 119 |
-| s2 | 3500000 | -174.550 | 6/6 | -178.416 (4.44) | 5000000 | -174.936 | 119 |
-
-- **选点成绩**：三个种子的验证集选中检查点都以 6/6 完赛并同时超过 attentive 与定速规则（三种子均值 -175.33，SD 0.92）；论文八种子的选点均值为 −177.37（SD 3.31），其中 5/8 超过规则。本次三个种子都落在论文报告的种子分布之内（论文最好 −173.49，最差 −181.74）。
-- **late 成绩**：三个种子末 8 检查点均值 -179.49（SD 1.36），没有一个超过定速规则；论文 late 均值 −183.15（SD 5.75），2/8 超过规则。本次 seed 1 的 late（−181.02）明显好于论文 seed 1（−191.12），因为论文 seed 1 在 225 万–375 万步之间经历了 0/6 完赛的塌陷，而本次 seed 1 在 175 万步塌陷一次（0/6）后恢复；这正是跨版本不位一致后“同协议不同样本”的表现。
-- **逐检查点不重合**：`compare_curves.py` 的 Δ报告R 列在 −31 到 +47 之间摆动，选中步也不同（本次 350 万/250 万/350 万步，论文 450 万/400 万/500 万步）。因此不能用“某个检查点的数字对不上”来判断代码有错；能判断代码正确的是第 4 节的回放与重算（误差 0）。
-- **先升后降在三个种子上全部重现**（图 `results/train/curves_vs_archived.png`，诊断表 `results/train/curve_diagnostics_repro.md`）：验证集峰值在 250 万–350 万步，其后报告集分数回落 3–7 个单位、完赛数出现 2–5/6 的波动；critic 起点偏差 Q(s0)−MC 全程在 −35 到 −99 之间，seed 2 尤其悲观（−60 到 −89）却在 175 万–400 万步之间连续 6/6 完赛，再次说明偏差量本身不决定驾驶成绩。
-
-![重训与归档曲线对比](results/train/curves_vs_archived.png)
-
-结论：在本环境重新训练得到的是**与论文同一协议、同一结论结构**（验证集选点有增益，late 无平均优势，先升后降，critic 系统性低估）的独立样本；论文逐种子数字的精确复现只能通过归档检查点回放完成（第 4 节）。
-
-## 7. 训练调试诊断：为什么会“先升后降”
-
-从归档 8 条曲线（`results/curve_diagnostics_archived.md`）与本次重训曲线（`results/train/curve_diagnostics_repro.md`）中可以直接读出以下事实，它们与论文 VII-C 及冻结包 README “未修复项”一致：
-
-- **验证集峰值位置在 250 万–500 万步间随种子漂移**，峰值后报告集分数回落 2–10 个单位；这就是论文采用“20 个检查点 + 验证集选点”而不是“训练到收敛”的原因。
-- **critic 在起点状态系统性低估**：Q(s0) − MC 从 −25 左右逐步扩大到 −50 至 −95（seed 3 达 −96.6）。本次用冻结包自带的 n-step 探针（`probe_nstep_bias.py`，把 19 个后续决策换成含 OU 噪声的行为动作、尾部用真实回放而非 critic）测 seed 0 选中 actor（450 万步）：五个起点的噪声 20 步目标相对无噪声真实回报只偏移 −0.2 到 −1.8（`results/nstep_probe_s0_selected.json`；冻结包 DEBUG_REPORT 在 30 万步模型上测得约 −9）。因此该检查点 −58.6 的偏差主要不是多步行为回报污染，而是通过 min(Q1′,Q2′) 与目标动作噪声反复 bootstrap 累积的悲观误差加函数逼近误差。偏差本身不直接决定驾驶成绩（seed 2 偏差 −30 至 −65 却全程完赛），但它随训练增大，与后期退化同步。
-- **回放池构成与完赛率耦合**：`buf_arrived` 低于约 0.4 时（seed 1 的 250 万–375 万步、seed 6 的 400 万步后），报告集完赛数掉到 0–3；池内几乎全是超时 episode 时，critic 看不到完整行程的价值结构，巡航速度滑到 15.24 m/s 的到达阈值以下（`cruise_v` 12–13 m/s），形成 README 所述的“bootstrap 洞”。
-- **训练脚本没有实现错误**：n-step 队列、终止标志、目标公式、延迟更新、Polyak 更新、探索与回放均与论文一致（docs 第 4 节）；冻结包 README 列出的负结果消融（整形、priming、γ<1、放宽截止、Retrace）本次未重复，也不应重复。
-
-因此“准确复现论文思想”的正确表述是：论文报告的是**验证集选点后的成绩与 late 均值的分离**、以及跨种子无稳定平均优势；任何重训都应按同一协议报告 selected 与 late 两个数，而不是取最好一次。
-
-## 8. 视觉编码 Z 框架：已按交接文档接入并运行（`TIV_visual_development/`）
-
-本目录第 1–7 节是论文正文长程实验的核对与重训。用户交付的三份文档（设计、Codex 任务、框架骨架）要求的是另一件事：把摄像头图像编码 Z 接进 TD3、由 critic 反馈训练编码器，并与平滑执行层一起进入训练。这部分在 `TIV_visual_development/` 完成，当前报告为 `TIV_visual_development/reports/REPORT_zh.md`（v2，按独立审计 `TIV_Visual_Experiment_Audit_v1.md` 修复后重跑；v1 归档为 `REPORT_v1_zh.md`），要点：
-
-- 同步只读程序化渲染器（v19 无 RGB 传感器，本机无 3D 引擎）：由原环境位姿与同一时刻信号相位驱动，2 Hz、96×160，逐 episode 随机光照/雾/噪声/遮挡；灯箱位于停止线远侧 14 m；真值只进标签。
-- 训练环境执行层换成 comfort_v2 r2 的完整 jerk 可行执行层（环境感知 + 动作平滑一起进入训练），信息访问三臂相同，执行层独立性为实测审计项。
-- 按审计修复：框标签“格内偏移 + 归一化尺寸”参数化（可表示性 0 违例）、空 ROI 强制 unknown、`association_valid` 与地图关联/ROI 分开、`signal_z` 头使视觉监督训练到 Z 末端、源码/数据/权重哈希进入断点、权重与固定审计样本入库。对抗式代码审查（3 视角 + 逐条反驳核验）又修了检测链路：热图焦点损失按正样本归一化 + 先验偏置 π=0.01、检测评估口径（格一致率/中心误差/≤2 px 命中/阈值召回/误检率）、格分配规则受控对比后固定 floor、事件注意力对热图 detach；受控探针结果在 `runs/probes/`。
-- 分级门禁 `runs/run_v2_gated.sh`：门 1 预训练（≤2 px 命中 0.846、格一致 0.754、ROI 已知 0.951、Z 已知 0.973）→ 门 2 审计 19/19 → 门 3 共同适配 + 联合臂烟测 → 门 4 三臂 9000 子步。
-- 第二轮专家复核指出两处评估随机数问题（九工况共用相机生成器导致外观随轨迹长度漂移；换图检查第一对外观不同），已修并用三臂已导出权重重新评估（`visual_dev/reevaluate.py`），未重训。
-- 三臂小规模结论（单种子，公平评估）：三臂均 9/9 静止完赛、0 违规；ROI 头行驶中已知类 ≥0.975，Z 探针 0.925–0.950；图像灯色改变会影响三臂的指令与执行（可行的 111 对换图：四子步平均动作差 冻结 0.035、监督 0.080、联合 0.772），F/S 的响应在首子步被执行约束抑制，联合臂幅度更大；但联合臂没有性能改善（I_j +25.6 即 +44%，9 工况全部更差，时间 +1.4 s，能耗 +1.3 Wh，R −0.16）。结构性原因（报告第 8.1 节）：执行层持有真值相位使视觉对回报没有边际价值；TD 梯度进入编码器后只造成表示漂移，把迁移来的饱和 actor 拉出饱和区、指令变宽、经 jerk 受限执行层变成颠簸；actor 的 Z 列范数只有旧列的 2%。改进方案见第 8.2 节（执行层接口改为感知输出、回报加舒适性项、残差动作空间、联合臂稳定化、近距离数据覆盖、归因消融）。执行层仍读取真值信号并主导实际动作（三臂实际动作分布相同，名义限制占 86–93%），`lambda_c=0`。可写进论文的表述：TD 反馈能够进入视觉编码器并伴随更强的灯色相关指令响应；当前单种子开发实验尚未建立驾驶性能、舒适性或训练效率的改善。下一步是公平比较与作用归因（执行层信息接口改为感知输出、加 `lambda_c>0` 臂、多种子），不是扩大规模。
-- 一键：`cd TIV_visual_development && STOP_BEFORE_ARMS=1 bash runs/run_v2_gated.sh pilot_v2`（门 1–3），通过后 `bash runs/run_pilot.sh pilot_v2 9000`；重评估 `python3 visual_dev/reevaluate.py --tag pilot_v2`；汇总 `python3 visual_dev/summarize_pilot.py --tag pilot_v2`。
-
-### 8.2 v4：无地图、靠视觉获取道路事件信息（三种子规模运行，`TIV_visual_development/reports/REPORT_v4_zh.md`；2026-09-13 独立审计后修订）
-
-按第四轮专家意见把地图信息同时从 actor、critic、执行层退出：弯道由实体警示牌（入弯点上游 400 m）与出口解除牌提供，信号灯只在 200 m 内可见且无倒计时，ROI 由检测器预测，三方共享同一份视觉记忆（`visual_dev/vision_state.py`）。**架构准确的说法是：冻结的视觉感知与记忆执行器 + 不同训练方式的策略视觉表示**——执行层用的检测器始终冻结，RL 只更新策略的 Z 编码器；本轮不能证明“TD3 反馈改善部署检测器”。分级门禁（编码器 → 闭环探针 → 审计 31 项 → 适配与烟测）后，三种子各四臂 9000 子步（`runs/v4r*/v4_pilot/`），评估删除终点真值旁路后重做：
-
-- 全部 27 工况计入分母：仅监督臂 S 是唯一 27/27 到达、0 信号违规、全工况平均回报最高的臂；F 24/27、J 26/27、JH 25/27；108 个 episode 弯道超速 0；遮蔽消融方向一致（隐藏警示牌 → 弯道超速、灯色灭 → 闯红灯、隐藏终点 → 不到达）。常量命令 u=+1 + 同一执行层的参照已能 9/9 到达、0 违规，学习型策略的增量须相对它度量。
-- 配对差只在同种子、双方都到达的工况上算并标明 n：S−F 的舒适性差三个种子异号（−12.3 / −6.2 / +4.1），撤回此前“逐种子一致改善”的说法；J、JH 相对 F 在种子间异号，联合更新未显示一致收益。
-- 6 个失败全在种子 2：4 次闯红灯是黄灯起始时理想刹停距离已不够（无倒计时两难区），1 次红灯前蠕行过线，1 次近线灯色误判死锁；归因表见报告 8.5 节。
-- 审计整改（报告 7.7）：配对差分母、评估终点旁路、两套编码器表述、jerk 越界（各臂 9–17/27 回合越界，峰值 10–12 m/s³）、`vision_state.py` 纳入源码身份、记忆观测/承诺分离与扩展 `extra` 接口（`extra_dim=10`，需重训）；critic 动作契约诊断（报告 7.8：执行层干预 88–95% 子步，首子步 `applied` 作 critic 动作存在混叠且命令对后续 2 s 解释力接近零）——训练前须重定动作契约。
-- 过程记录：渲染器缺陷修复（停在停止线上灯箱被隐藏）、记忆稳健性规则（终点偏置、停车余量、幻影灯过期、停稳锁存）、两次 v4b 编码器重训未过闭环门 2（`runs/_failed/`）、v4s 执行层候选（分支 `v4s-executor`）。
-- 一键：`cd TIV_visual_development && bash runs/run_v4_gated.sh`（门 1–4 + 种子 0）；多种子 `bash runs/run_seeds_local.sh v4r_cpu.json v4r_cpu_s1.json v4r_cpu_s2.json`；重评估 `python3 visual_dev/reevaluate.py --tag v4_pilot --runs v4r --pretrain pretrain_v4`；失败归因 `python3 visual_dev/v4_violation_analysis.py`；完整交付包 `bash runs/make_delivery.sh <目录>`。
-
-### 8.3 v5 时机实验：执行条件收紧后是否必须更早知道（`TIV_visual_development/reports/REPORT_v5_timing_zh.md`）
-
-冻结三个 v4r 仅监督权重（检测器、编码器、actor、记忆全部冻结），从同一份冻结接近状态（含视觉记忆、图像历史、随机流）复制 36 条短程分支：信号情境（需停车/允许通行）× jerk 上限（2/4 m/s³，三处参数统一）× 视觉条件（正常/中等延迟/较晚可见，整灯在指定位置前不出现在图像里）。延迟位置由备份制动距离推导并在烟测后冻结（jerk 2 需采纳距离 ≥ 109.3 m，jerk 4 ≥ 98.1 m）。结果：正常可见两种条件都平顺；中等延迟（采纳距离 109 m）时 jerk 2 在采纳后的第一个决策即应急制动、jerk 4 保持平顺（3/3 权重）；较晚可见两者都应急；事后扫描显示边界正好差一帧（11 m ≈ 0.5 s），与解析阈值一致。36 条分支 0 违规。评价接口为“2 s 命令 → 4 子步执行 → 状态与累计代价”，不用旧 critic。脚本 `visual_dev/v5_timing_experiment.py`（freeze / select / run / sweep / summarize）。
-
-### 8.4 v6 闭环实验：定理 1 的三个边界在实际链路里的位置（`TIV_visual_development/reports/REPORT_v6_closure_zh.md`）
-
-把定理结构（灯位置已知、灯色 Δ 后可知、R/G 两情境、共同准备、jerk 上限）搬到已部署离散车辆模型上求两阶段 LP（`visual_dev/v6_theory_lp.py`），再在同一冻结感知/记忆/执行层下测量：常量命令执行族 + 三个冻结 S 策略，两个冻结状态（v0 22.2 / 16 m/s），信息条件 早知 / 延迟-最小准备 / 延迟-保守，jerk 2/3/4，8–9 档采纳距离，共 864 条分支。结果：早信息无代价；最小准备在 LP 的“无额外代价边界”之前零代价保留两种响应，越过后失去平顺停车；保守准备始终平顺但每个延迟都付通行代价（+0.5 到 +3.5 s）；边界随 jerk 与速度按备份制动距离移动，测量与 LP 预测差在一个感知网格步内。灯色延迟施加在感知输出处（图像入口只隐藏灯色需要检测器认出灭灯灯箱，两轮微调仍不达标且损害亮灯闭环，未采用）。
-
-### 8.1 交接包原状态（接入前）
-
-`visual_z_framework/` 的 11 项契约测试在本环境全部通过（含 `TIV_BASE` 下的 v19 四个源码哈希核对与真实 actor 权重迁移）。它是接口原型：无摄像头渲染器、无预训练骨干、无视觉数据，`SceneCameraNotConnected.capture` 明确抛出 `NotImplementedError`。因此本次**没有也不能**启动 F/S/J 三臂视觉训练；v19 环境本身没有 RGB 传感器，接入需先按交接文档实现同步只读渲染器。该框架对原 13 维观测的处理（屏蔽真值灯色/倒计时通道 7、8，保留上一实际加速度通道 1）与本目录核对的观测定义一致。
-
-## 9. 建议的下一步
-
-1. 若目标是**精确复现论文数字**：只需第 4 节前 9 行的流程，不需要重训。
-2. 若目标是**在同一协议下增加种子**：用 `scripts/train_repro.sh` 换 `SEEDS/TAG`，每种子 4 核约 100 分钟；用 `compare_curves.py` 按论文规则计分并与 `bench_results.json` 的种子分布比较。
-3. 若目标是**改善后期退化**：先在小规模（≤100 万步、固定种子对照）验证，候选方向为带重要性修正或截断的多步目标、按完赛分层的回放采样（`--balance` 已实现但未在正式协议使用）；冻结包 README 第 5 节列出的负结果不要重跑。
-4. 视觉分支：先做公平比较与作用归因——执行层的信号信息接口改为感知输出、同一执行层下加 `lambda_c>0` 臂、多种子（`TIV_visual_development/reports/REPORT_zh.md` 第 8 节）；检测几何/尺寸修正为可选，不是前置条件。
+Apache License 2.0 (`LICENSE`).

@@ -1,9 +1,0 @@
-复用已有 runs/common/common.pt
-joint 退出码 0
-supervised 退出码 0
-frozen 退出码 0
-findfont: Failed to find font weight normal for WenQuanYi Zen Hei, now using 500.
-findfont: Failed to find font weight normal for WenQuanYi Zen Hei, now using 500.
-findfont: Failed to find font weight normal for WenQuanYi Zen Hei, now using 500.
-findfont: Failed to find font weight normal for WenQuanYi Zen Hei, now using 500.
-PILOT_DONE

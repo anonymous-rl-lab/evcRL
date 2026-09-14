@@ -1,0 +1,78 @@
+{
+ "purpose": "Repository-bound identity of visual/reproduction/protocol_identity.json validated by regenerating seed-0 arms with the wrapper and comparing every condition with the archived records",
+ "sources": {
+  "v19_deps/code/curve_layer.py": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0",
+  "v19_deps/code/effcal.py": "5f09b711f4aa55543984bd99f8f339d97be7a6672d44d2ce6953b8658d0be551",
+  "v19_deps/code/env20.py": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba",
+  "v19_deps/code/models.py": "b026d0e5839a34042b8eaa6a705735ef8784523ae072072251c74fe83bbf97e1",
+  "v19_deps/code/plant.py": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4",
+  "v19_deps/code/route20.py": "fde16d41f3c52d09f7b52b837a0ef1ba4237142ca0f45c3cbc64bc005cb41d2a",
+  "v19_deps/code/study.py": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+  "visual_dev/pipeline.py": "56d45d9220322251059b443ac57087cd21e0e1d126350e79953617cafa8d086b",
+  "visual_dev/reevaluate.py": "41045cfaed1bcbd07710d499a6ddb4b352820b5d5ad766e6f1ae8ad11bacf498",
+  "visual_dev/renderer.py": "e93f267f8a8dfa27e185539df0241bddb7f1d370aac9a5a32f4bb06f6aabd573",
+  "visual_dev/vision_state.py": "2d00ae56860e1c590e5605a123fa4c8b1cd37e07a9279feee729e75456018ceb",
+  "visual_z/__init__.py": "96bfdeca42295bf9bf012436b706de6eb71cd3b08b445285268ffaa0a1a0a8cd",
+  "visual_z/checkpoint.py": "97ef42af080d7018735d72bbe35494069793c18672ecdee54c13863d7e165aec",
+  "visual_z/contracts.py": "1490ae975df76f990215636a8c2897eaed274901227d4465f3d7846c744fa90b",
+  "visual_z/learner.py": "c2e3d94bd1713352218871ba2852589833bec499dcf6c183e4324e6413db9e4e",
+  "visual_z/model.py": "d6555c7fb8e17a83e5c8ed646735a392e8f20efb86963237c628369a0aea2065",
+  "visual_z/replay.py": "d80223a1e9ccd4874ebb58a44aef9a01ed19917a3558ce18f7159d1dcefe8206"
+ },
+ "runtime": {
+  "python": "3.11.15",
+  "torch": "2.14.0+cu130",
+  "numpy": "2.4.6"
+ },
+ "runs": {
+  "supervised": {
+   "seed_index": 0,
+   "run_dir": "v4r",
+   "protocol": "current",
+   "episodes": 9,
+   "checkpoint_sha256": "f72de9c54cfc016e0d95b7c723c45b9e8520b07398579757d28d29cf95c9d558",
+   "detector_sha256": "a7f5cf923d8bac02611447d594569b7153838eb7608ba01c7801c8c1a956734a",
+   "max_abs_difference_vs_archived": {
+    "R": 0.0,
+    "time_s": 0.0,
+    "Ij": 0.0,
+    "E_Wh": 0.0,
+    "violations": 0.0,
+    "settled": 0.0,
+    "jerk_override_steps": 0.0,
+    "fallback_substeps": 0.0,
+    "offroad_substeps": 0.0
+   },
+   "identical": true,
+   "condition0": {
+    "time_s": 239.5,
+    "R": -37.292158815410524
+   }
+  },
+  "joint_head": {
+   "seed_index": 0,
+   "run_dir": "v4r",
+   "protocol": "legacy",
+   "episodes": 9,
+   "checkpoint_sha256": "305abaa70c33edc313120ddd7958a594649842b8efa01b0d9df0e48699c95fba",
+   "detector_sha256": "a7f5cf923d8bac02611447d594569b7153838eb7608ba01c7801c8c1a956734a",
+   "max_abs_difference_vs_archived": {
+    "R": 0.0,
+    "time_s": 0.0,
+    "Ij": 0.0,
+    "E_Wh": 0.0,
+    "violations": 0.0,
+    "settled": 0.0,
+    "jerk_override_steps": 0.0,
+    "fallback_substeps": 0.0,
+    "offroad_substeps": 0.0
+   },
+   "identical": true,
+   "condition0": {
+    "time_s": 239.5,
+    "R": -37.235210510052276
+   }
+  }
+ },
+ "result": "PASS"
+}

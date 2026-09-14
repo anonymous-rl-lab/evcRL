@@ -1,9 +1,0 @@
-{
- "n_visible_frames": 305,
- "true_cell_att_share_mean": 0.008552699699699738,
- "true_cell_att_share_max": 0.021266818157728563,
- "att_max_over_mean": 8.988517490203696,
- "att_normalized_entropy": 0.99539974263457,
- "event_vs_gap_relative_diff": 0.5703436299181376,
- "note": "份额=真值灯格 att / 全帧 att 之和；均匀池化时份额=1/960=0.00104、熵=1、event 与 GAP 相对差=0"
-}

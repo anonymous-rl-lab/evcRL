@@ -1,6 +1,0 @@
-runs/run_pilot_v3.sh: line 18:  3345 Killed                  nohup python3 -u visual_dev/run_stage.py train --arm $arm --tag "$TAG" --substeps "$SUBSTEPS" --seconds 7200 > "runs/$SUB/$TAG/${arm}_stdout.txt" 2>&1
-supervised 退出码 0
-frozen 退出码 137
-joint 退出码 0
-joint_head 退出码 0
-PILOT_FAILED

@@ -1,0 +1,369 @@
+{
+  "summary": {
+    "episodes": 27,
+    "records": 12081,
+    "original_mismatch_records": 0,
+    "local_guard_rejections": 3,
+    "recursive_guard_rejections": 4,
+    "m1_phase_differences": 0,
+    "m2_phase_differences": 2,
+    "scientific_vehicle_rollouts": 0,
+    "new_training_steps": 0,
+    "gate_pass": true,
+    "scope": "recursive memory under fixed recorded motion/detections; not changed policy trajectories"
+  },
+  "episodes": [
+    {
+      "seed": 0,
+      "condition": 0,
+      "records": 479,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 1,
+      "recursive_guard_rejections": 1,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 1
+    },
+    {
+      "seed": 0,
+      "condition": 1,
+      "records": 422,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 0,
+      "condition": 2,
+      "records": 411,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 0,
+      "condition": 3,
+      "records": 485,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 0,
+      "condition": 4,
+      "records": 420,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 0,
+      "condition": 5,
+      "records": 408,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 0,
+      "condition": 6,
+      "records": 483,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 0,
+      "condition": 7,
+      "records": 422,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 0,
+      "condition": 8,
+      "records": 410,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 0,
+      "records": 479,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 1,
+      "records": 422,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 2,
+      "records": 408,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 3,
+      "records": 483,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 4,
+      "records": 417,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 5,
+      "records": 407,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 6,
+      "records": 480,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 7,
+      "records": 420,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 1,
+      "condition": 8,
+      "records": 407,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 0,
+      "records": 480,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 1,
+      "records": 420,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 2,
+      "records": 405,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 3,
+      "records": 773,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 1,
+      "recursive_guard_rejections": 2,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 1
+    },
+    {
+      "seed": 2,
+      "condition": 4,
+      "records": 421,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 1,
+      "recursive_guard_rejections": 1,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 5,
+      "records": 410,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 6,
+      "records": 480,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 7,
+      "records": 420,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    },
+    {
+      "seed": 2,
+      "condition": 8,
+      "records": 409,
+      "original_mismatch_records": 0,
+      "local_guard_rejections": 0,
+      "recursive_guard_rejections": 0,
+      "m1_phase_differences": 0,
+      "m2_phase_differences": 0
+    }
+  ],
+  "selected_events": [
+    {
+      "seed": 0,
+      "condition": 0,
+      "index": 303,
+      "v": 5.34002599648225,
+      "x": 2984.6893062906793,
+      "original_distance": 10.43013450710204,
+      "original_margin": -2.5408856366289534,
+      "original_guard": false,
+      "local_guard_distance": 15.402653093496152,
+      "local_guard_margin": 1.6857551618060427,
+      "local_guard_guard": true,
+      "recursive_odometry_distance": 10.14080225420776,
+      "recursive_odometry_margin": -2.7868180515890906,
+      "recursive_odometry_guard": false,
+      "recursive_guard_distance": 15.089287224623611,
+      "recursive_guard_margin": 1.4193941732643829,
+      "recursive_guard_guard": true
+    },
+    {
+      "seed": 2,
+      "condition": 3,
+      "index": 304,
+      "v": 5.309348840098626,
+      "x": 2985.9905851866447,
+      "original_distance": 12.264973654942764,
+      "original_margin": -1.5604494677398923,
+      "original_guard": false,
+      "local_guard_distance": 12.159405315369535,
+      "local_guard_margin": -1.6501825563771382,
+      "local_guard_guard": false,
+      "recursive_odometry_distance": 12.030435819057416,
+      "recursive_odometry_margin": -1.7598066282424396,
+      "recursive_odometry_guard": false,
+      "recursive_guard_distance": 17.743006128472842,
+      "recursive_guard_margin": 3.0958781347606736,
+      "recursive_guard_guard": false
+    },
+    {
+      "seed": 2,
+      "condition": 6,
+      "index": 305,
+      "v": 5.800013803098837,
+      "x": 2986.901621700248,
+      "original_distance": 13.819134180831444,
+      "original_margin": -2.803767003265655,
+      "original_guard": false,
+      "local_guard_distance": 13.819134180831657,
+      "local_guard_margin": -2.803767003265474,
+      "local_guard_guard": false,
+      "recursive_odometry_distance": 13.691742804867708,
+      "recursive_odometry_margin": -2.912049672834831,
+      "recursive_odometry_guard": false,
+      "recursive_guard_distance": 13.691742804867708,
+      "recursive_guard_margin": -2.912049672834831,
+      "recursive_guard_guard": false
+    }
+  ],
+  "phase_changes": [
+    {
+      "seed": 0,
+      "condition": 0,
+      "index": 367,
+      "t": 183.5,
+      "original": "unknown",
+      "candidate": "green",
+      "original_d": null,
+      "candidate_d": -1.6185440556100659
+    },
+    {
+      "seed": 2,
+      "condition": 3,
+      "index": 586,
+      "t": 293.0,
+      "original": "unknown",
+      "candidate": "green",
+      "original_d": null,
+      "candidate_d": -2.492908168689411
+    }
+  ],
+  "mismatches": []
+}

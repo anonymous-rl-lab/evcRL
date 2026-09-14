@@ -1,0 +1,40 @@
+{
+  "decision": "STOP_AFTER_PILOT",
+  "reporting_started": false,
+  "reason": "One color-only trip is incomplete following a red crossing; full-trip/window means are not matched complete-route effects. Eight common completed pairs are exactly identical.",
+  "all_condition_means_interpretation": "Observed records include unequal completion; no improvement percentages or travel-time trade-off are claimed from these means.",
+  "common_completed_pairs": 8,
+  "common_completed_traces_exactly_equal": true,
+  "first_action_divergence": {
+    "step": 355,
+    "t": 177.5,
+    "x": 2914.128404943736,
+    "color_action": 0.40801350474357606,
+    "timing_action": 0.15955635793507095,
+    "timing_reason": "stop",
+    "signal_distance_m": 85.87159505626414,
+    "speed_mps": 20.279559822789277,
+    "remaining_green_s": 2.5
+  },
+  "red_crossing_time_s": 181.89814930661942,
+  "timing_first_settled_signal_stop": {
+    "t": 186.0,
+    "x": 2997.9999999999854
+  },
+  "full_rollouts": 18,
+  "partial_audit_substeps": 64,
+  "new_training_steps": 0,
+  "new_optimizer_steps": 0,
+  "independent_training_seeds": 1,
+  "measured_rollout_wall_s": 2.936740408999867,
+  "mean_wall_s_per_trip": 0.16315224494443706,
+  "unstarted_reporting_plan": {
+    "configurations": 2,
+    "conditions_each": 18,
+    "total_trips": 36,
+    "estimated_rollout_wall_s": 5.873480817999734,
+    "scope": "One seed, frozen actor; no epochs and no training",
+    "external_compute_charge": 0,
+    "status": "NOT_STARTED_GATE_FAILED"
+  }
+}

@@ -1,0 +1,625 @@
+{
+  "v6_branches": 864,
+  "stop_branches": 432,
+  "pass_reference_rows": 102,
+  "visual_episodes": 27,
+  "base_executor_identical": true,
+  "adoption_diff_from_recorded_truth_correct_event": 0,
+  "stop_target_precedes_color_adoption": 408,
+  "backup_recompute_max_error": 0.0,
+  "lp_rerun_max_lossG_error": 0.0,
+  "system_S_means": {
+    "R": -39.42269457928392,
+    "time_s": 223.72222222222223,
+    "E_Wh": 597.9143555973931,
+    "Ij": 88.1351082041785
+  },
+  "high_speed_next_grid_checks": [
+    {
+      "jerk": 2.0,
+      "delta": 8.5,
+      "status": "infeasible"
+    },
+    {
+      "jerk": 3.0,
+      "delta": 9.0,
+      "status": "infeasible"
+    },
+    {
+      "jerk": 4.0,
+      "delta": 9.5,
+      "status": "infeasible"
+    }
+  ],
+  "system_F_completed_means": {
+    "time_s": 225.77083333333334,
+    "E_Wh": 625.8237729040442,
+    "Ij": 96.3105919718101
+  },
+  "stop_margin_groups": [
+    {
+      "tag": "v6_formal_v16",
+      "m_true": {
+        "n": 228,
+        "finite": 228,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          5.775458527268093,
+          26.29989472418646,
+          51.61868168825119,
+          79.14014188911233,
+          140.1626596822257
+        ]
+      },
+      "m_est": {
+        "n": 228,
+        "finite": 228,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          5.1612949137265645,
+          31.166056111377685,
+          50.02243250295727,
+          86.06067506152343,
+          158.3775325026363
+        ]
+      },
+      "release_margin": {
+        "n": 228,
+        "finite": 228,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          8.657700600853175,
+          12.773176053126946,
+          15.226437536237123,
+          16.0,
+          16.0
+        ]
+      }
+    },
+    {
+      "tag": "v6_formal_v22",
+      "m_true": {
+        "n": 204,
+        "finite": 204,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          10.43931867160984,
+          30.727218822097555,
+          49.340974619029005,
+          68.21156457364863,
+          111.14631538681886
+        ]
+      },
+      "m_est": {
+        "n": 204,
+        "finite": 204,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          11.892482214717432,
+          29.484624852216204,
+          48.47043423167333,
+          78.78065707736545,
+          112.89453615220063
+        ]
+      },
+      "release_margin": {
+        "n": 204,
+        "finite": 204,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          10.984134886527556,
+          14.710876752474931,
+          17.509058456551024,
+          20.619876664698335,
+          22.22222222222222
+        ]
+      }
+    }
+  ],
+  "visual_margin_summary": {
+    "m_true": {
+      "n": 27,
+      "finite": 27,
+      "missing": 0,
+      "infeasible": 0,
+      "negative": 0,
+      "quantiles": [
+        87.9787411858161,
+        92.85208653085404,
+        96.95292580655821,
+        99.55170881177408,
+        102.54770603101166
+      ]
+    },
+    "m_est": {
+      "n": 27,
+      "finite": 27,
+      "missing": 0,
+      "infeasible": 0,
+      "negative": 0,
+      "quantiles": [
+        35.594468858506914,
+        94.29479387071395,
+        98.22712877061629,
+        101.07116868760848,
+        106.14267137315535
+      ]
+    },
+    "m_target": {
+      "n": 27,
+      "finite": 18,
+      "missing": 9,
+      "infeasible": 0,
+      "negative": 0,
+      "quantiles": [
+        11.516614724692388,
+        52.57839444782984,
+        62.934560828532156,
+        67.15557011656763,
+        71.49725045902285
+      ]
+    },
+    "release_margin": {
+      "n": 27,
+      "finite": 27,
+      "missing": 0,
+      "infeasible": 0,
+      "negative": 0,
+      "quantiles": [
+        21.819016257507933,
+        22.22222222222222,
+        22.22222222222222,
+        22.22222222222222,
+        22.22222222222222
+      ]
+    }
+  },
+  "visual_nonpassable_first_colors": 18,
+  "visual_negative_est_episode_overrides": 0,
+  "stop_margin_cross": [
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_true",
+      "category": "negative",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_true",
+      "category": "nonnegative",
+      "n": 204,
+      "later_override": 111,
+      "full_approach_override": 113
+    },
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_true",
+      "category": "infeasible",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_true",
+      "category": "missing",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_est",
+      "category": "negative",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_est",
+      "category": "nonnegative",
+      "n": 204,
+      "later_override": 111,
+      "full_approach_override": 113
+    },
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_est",
+      "category": "infeasible",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v22",
+      "margin": "m_est",
+      "category": "missing",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_true",
+      "category": "negative",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_true",
+      "category": "nonnegative",
+      "n": 228,
+      "later_override": 84,
+      "full_approach_override": 84
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_true",
+      "category": "infeasible",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_true",
+      "category": "missing",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_est",
+      "category": "negative",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_est",
+      "category": "nonnegative",
+      "n": 228,
+      "later_override": 84,
+      "full_approach_override": 84
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_est",
+      "category": "infeasible",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    },
+    {
+      "tag": "v6_formal_v16",
+      "margin": "m_est",
+      "category": "missing",
+      "n": 0,
+      "later_override": 0,
+      "full_approach_override": 0
+    }
+  ],
+  "pass_reference_groups": [
+    {
+      "tag": "v6_formal_v16",
+      "info": "cons",
+      "observed_delta_time_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.02447230395796396,
+          0.8469273529150172,
+          1.3827398454955642
+        ]
+      },
+      "delay_actual_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          2.6475393161012164,
+          6.147539316101216,
+          7.147539316101216,
+          9.147539316101216,
+          11.147539316101216
+        ]
+      },
+      "residual_interp_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.02447230395796396,
+          0.756128083035237,
+          1.2595258642998028
+        ]
+      },
+      "residual_floor_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.02447230395796396,
+          0.8090896239887826,
+          1.3092545177178465
+        ]
+      },
+      "residual_ceil_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.02447230395796396,
+          0.6111547339062806,
+          1.1407277320035618
+        ]
+      }
+    },
+    {
+      "tag": "v6_formal_v16",
+      "info": "min",
+      "observed_delta_time_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.0,
+          0.006768889106751885,
+          2.3092323042505996
+        ]
+      },
+      "delay_actual_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          2.6475393161012164,
+          6.147539316101216,
+          7.147539316101216,
+          8.647539316101216,
+          10.647539316101216
+        ]
+      },
+      "residual_interp_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.0,
+          0.006768889106751885,
+          2.025604827357359
+        ]
+      },
+      "residual_floor_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.0,
+          0.006768889106751885,
+          2.117268018536315
+        ]
+      },
+      "residual_ceil_s": {
+        "n": 27,
+        "finite": 27,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.0,
+          0.006768889106751885,
+          1.8066281375839317
+        ]
+      }
+    },
+    {
+      "tag": "v6_formal_v22",
+      "info": "cons",
+      "observed_delta_time_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.1799999999999784,
+          0.5010146607662662,
+          1.0864960503305383,
+          2.204229935379736,
+          3.173047036524764
+        ]
+      },
+      "delay_actual_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          2.106228307593142,
+          4.356228307593142,
+          5.356228307593142,
+          6.731228307593142,
+          8.106228307593142
+        ]
+      },
+      "residual_interp_s": {
+        "n": 24,
+        "finite": 23,
+        "missing": 1,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.1799999999999784,
+          0.47935028978641014,
+          1.0605353307404357,
+          1.7064572361504884,
+          2.148644774766672
+        ]
+      },
+      "residual_floor_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.1799999999999784,
+          0.5010146607662662,
+          1.0864960503305383,
+          1.7797625168104305,
+          2.224988487657622
+        ]
+      },
+      "residual_ceil_s": {
+        "n": 24,
+        "finite": 23,
+        "missing": 1,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.1799999999999784,
+          0.47935028978641014,
+          1.0605353307404357,
+          1.4806764415388347,
+          1.8656505926054434
+        ]
+      }
+    },
+    {
+      "tag": "v6_formal_v22",
+      "info": "min",
+      "observed_delta_time_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.0,
+          0.2579742240408791,
+          1.447240596113943
+        ]
+      },
+      "delay_actual_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          2.106228307593142,
+          3.856228307593142,
+          4.856228307593142,
+          5.731228307593142,
+          7.106228307593142
+        ]
+      },
+      "residual_interp_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.0,
+          0.13797675992701253,
+          0.7605916479177557
+        ]
+      },
+      "residual_floor_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 0,
+        "quantiles": [
+          0.0,
+          0.0,
+          0.0,
+          0.18013182030561825,
+          0.8369353608087057
+        ]
+      },
+      "residual_ceil_s": {
+        "n": 24,
+        "finite": 24,
+        "missing": 0,
+        "infeasible": 0,
+        "negative": 1,
+        "quantiles": [
+          -0.08089156031820799,
+          0.0,
+          0.0,
+          0.026928475527886644,
+          0.6240046370669425
+        ]
+      }
+    }
+  ],
+  "claims": {
+    "lp_reference_is_vehicle_lower_bound": false,
+    "interpolation_is_LP_optimum": false,
+    "new_training_or_vehicle_rollouts": false,
+    "new_results_are_post_hoc_offline_diagnostics": true
+  }
+}

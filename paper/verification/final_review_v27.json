@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "main_pages": 10,
+  "SI_pages": 22,
+  "abstract_words": 215,
+  "main_numbered_equations": 19,
+  "SI_numbered_equations": 30,
+  "SI_numbered_tables": 19,
+  "SI_figures": 3,
+  "retained_SI_equation_bodies_unchanged": 30,
+  "publication_checks": 418,
+  "injected_errors_caught": 12,
+  "visual_QA": "All pages inspected; final changed table header and subsection layout rechecked.",
+  "new_training_steps": 0,
+  "new_vehicle_rollouts": 0,
+  "limitations": "Known critic action-semantic defect and fixed-motion replay limits are retained; no new driving benefit is claimed."
+}

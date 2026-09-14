@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "release_and_action_checks": 646,
+  "backup_monotonic_cases": 395,
+  "offline_failed_witness_lp": [
+    {
+      "arm": "A",
+      "condition_id": 7,
+      "stop_index": 0,
+      "lp_status": 2,
+      "message": "The problem is infeasible. (HiGHS Status 8: model_status is Infeasible; primal_status is None)"
+    }
+  ],
+  "scope": "Numerical audit of the declared discrete implementation; not a proof for arbitrary plants.",
+  "positive_speed_monotonic_cases": 150,
+  "changing_signal_episodes": 60,
+  "changing_signal_steps": 1410
+}

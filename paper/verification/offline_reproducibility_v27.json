@@ -1,0 +1,76 @@
+{
+  "status": "PASS",
+  "runs": [
+    {
+      "script": "verification/framework/audit_offline.py",
+      "exit_code": 0,
+      "elapsed_s": 1.365
+    },
+    {
+      "script": "verification/diagnostics/audit_events.py",
+      "exit_code": 0,
+      "elapsed_s": 1.7
+    },
+    {
+      "script": "verification/target_memory/audit_memory.py",
+      "exit_code": 0,
+      "elapsed_s": 2.178
+    }
+  ],
+  "output_comparisons": [
+    {
+      "file": "verification/framework/audit_results.json",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/framework/v6_adoption_margins.csv",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/framework/visual_adoption_margins.csv",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/framework/lp_reference_decomposition.csv",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/framework/margin_cross_table.csv",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/diagnostics/event_summary.json",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/diagnostics/pb_event_rows.csv",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/diagnostics/pv_event_rows.csv",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "reproduction/v6/theory_lp_complete.json",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "reproduction/v6/theory_lp_v16_complete.json",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/target_memory/memory_replay.json",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/target_memory/first_event_timing.json",
+      "comparison": "byte-identical to frozen numerical output"
+    },
+    {
+      "file": "verification/target_memory/event_accounting.json",
+      "comparison": "all 195 scientific rows and summary fields identical; reviewer-comparison fields removed"
+    }
+  ],
+  "new_training_steps": 0,
+  "new_vehicle_rollouts": 0
+}

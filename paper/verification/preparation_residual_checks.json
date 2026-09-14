@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "deterministic_cases": 288,
+  "randomized_cases": 72,
+  "max_abs_identity_error_s": 1.0547118733938987e-14,
+  "nonoptimal_reference_example": {
+    "optimal_information_gap_s": 0.3999999999999986,
+    "observed_policy_gap_s": -0.5333333333333314
+  },
+  "scope": "Exact integration in the declared three-ramp complete-route family; no vehicle training or rollout."
+}

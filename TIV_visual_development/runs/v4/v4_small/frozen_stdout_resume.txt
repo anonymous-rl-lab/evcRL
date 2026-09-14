@@ -1,4 +1,0 @@
-从断点恢复 5280
-[frozen] Z 可解码性 0.983（机会 0.517）；消融 hide_curve_sign: 到达 9 闯红灯 0 弯道超速 81 | hide_light_color: 到达 3 闯红灯 6 弯道超速 0 | hide_end_marker: 到达 0 闯红灯 0 弯道超速 0
-[frozen] 评估：完赛(静止) 8/9 违规 0 平均I_j 89.64946385303799 平均时间 274.5625 干预子步 4514 回退 43
-{"state": "substep_budget", "substeps": 3001, "updates": 753, "episodes": 10, "train_arrivals": 8, "substeps_per_s": 7.932705440772357, "updates_per_s": 1.990445583772604}

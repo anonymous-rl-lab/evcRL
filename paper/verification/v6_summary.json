@@ -1,0 +1,92 @@
+{
+  "policy_rows": [
+    {
+      "group": "v6_formal_v22",
+      "policy": "constant",
+      "label": "constant",
+      "n": 102,
+      "completed": 102,
+      "violations": 0,
+      "full_approach_no_recovery": 67,
+      "jerk_override_branches": 24,
+      "peak_jerk": 12.2
+    },
+    {
+      "group": "v6_formal_v22",
+      "policy": "runs/v4r/v4_pilot/supervised/final_nets.pt",
+      "label": "S0",
+      "n": 102,
+      "completed": 102,
+      "violations": 0,
+      "full_approach_no_recovery": 60,
+      "jerk_override_branches": 29,
+      "peak_jerk": 12.026143026351928
+    },
+    {
+      "group": "v6_formal_v22",
+      "policy": "runs/v4r_s1/v4_pilot/supervised/final_nets.pt",
+      "label": "S1",
+      "n": 102,
+      "completed": 102,
+      "violations": 0,
+      "full_approach_no_recovery": 73,
+      "jerk_override_branches": 20,
+      "peak_jerk": 11.332972096664598
+    },
+    {
+      "group": "v6_formal_v22",
+      "policy": "runs/v4r_s2/v4_pilot/supervised/final_nets.pt",
+      "label": "S2",
+      "n": 102,
+      "completed": 102,
+      "violations": 0,
+      "full_approach_no_recovery": 67,
+      "jerk_override_branches": 24,
+      "peak_jerk": 12.192331671714783
+    },
+    {
+      "group": "v6_formal_v16",
+      "policy": "constant",
+      "label": "constant",
+      "n": 114,
+      "completed": 114,
+      "violations": 0,
+      "full_approach_no_recovery": 94,
+      "jerk_override_branches": 18,
+      "peak_jerk": 12.2
+    },
+    {
+      "group": "v6_formal_v16",
+      "policy": "runs/v4r/v4_pilot/supervised/final_nets.pt",
+      "label": "S0",
+      "n": 114,
+      "completed": 114,
+      "violations": 0,
+      "full_approach_no_recovery": 79,
+      "jerk_override_branches": 32,
+      "peak_jerk": 12.187198066711426
+    },
+    {
+      "group": "v6_formal_v16",
+      "policy": "runs/v4r_s1/v4_pilot/supervised/final_nets.pt",
+      "label": "S1",
+      "n": 114,
+      "completed": 114,
+      "violations": 0,
+      "full_approach_no_recovery": 77,
+      "jerk_override_branches": 35,
+      "peak_jerk": 12.158624005317687
+    },
+    {
+      "group": "v6_formal_v16",
+      "policy": "runs/v4r_s2/v4_pilot/supervised/final_nets.pt",
+      "label": "S2",
+      "n": 114,
+      "completed": 114,
+      "violations": 0,
+      "full_approach_no_recovery": 94,
+      "jerk_override_branches": 18,
+      "peak_jerk": 12.169503045082092
+    }
+  ]
+}

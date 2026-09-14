@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "source_hash": "0f18ca5afd7e0864bd51728480641998254812608d2fa0c0d572a6fb9313d909",
+  "checks": [
+    "same_actor_and_observation_at_matched_states",
+    "actor_frozen_no_gradients",
+    "color_and_out_of_range_sensor_cannot_read_countdown",
+    "shared_stop_targets_do_not_read_out_of_range_color",
+    "red_and_unobserved_execution_identical",
+    "late_green_changes_action_without_disabling_physical_constraints",
+    "shadow_countdown_does_not_change_actual_color_action",
+    "interrupted_resumed_state_observation_and_trace_exactly_equal",
+    "independent_actual_jerk_energy_ledger_and_injected_error",
+    "frozen_route_deadline_actuator_and_jerk_parameters"
+  ],
+  "check_count": 10,
+  "late_green_witness": {
+    "color_action": 1.0,
+    "timing_action": 0.3653846150264144
+  },
+  "scope": "preflight and 32-step partial continuity checks; not a full-trip experiment"
+}

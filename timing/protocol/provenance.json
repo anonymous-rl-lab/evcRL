@@ -1,0 +1,18 @@
+{
+  "source_checkpoint": "TIV_comfort_v1/runs/development/s7/A/resume.pt",
+  "source_sha256": "37235a5f317eb9cccbcdd07ec574cde31406a43957368e36239d4b3ed759ce28",
+  "source_seed": 7,
+  "actor_variant": "A lambda=0",
+  "source_actor_updates": 37610,
+  "source_used": 340000,
+  "new_training_steps": 0,
+  "source_runtime": {
+    "torch": "2.8.0+cpu",
+    "numpy": "2.3.5"
+  },
+  "runtime": {
+    "torch": "2.8.0+cpu",
+    "numpy": "2.3.5"
+  },
+  "actor_sha256": "bfd534b1ba55ce722c7e08266c0e1e6f5c9ee773ad52c8e0e3e2c9934f81afac"
+}

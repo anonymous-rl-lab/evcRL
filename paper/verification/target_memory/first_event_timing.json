@@ -1,0 +1,3026 @@
+[
+  {
+    "branch_id": "02b7a605afda",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "02cae198ded8",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 16,
+    "relative": 0
+  },
+  {
+    "branch_id": "03f844fe29ae",
+    "tag": "v6_formal_v22",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0548319f4a0b",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 16,
+    "relative": 2
+  },
+  {
+    "branch_id": "0694ddeb1271",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "072dcca48582",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": 32,
+    "relative": 21
+  },
+  {
+    "branch_id": "073391fa95e9",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 31,
+    "relative": 17
+  },
+  {
+    "branch_id": "0a60e20cfd92",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0ac77d018bd8",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0cad23f8797e",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0cb4ac07cddb",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 41,
+    "relative": 33
+  },
+  {
+    "branch_id": "0d7df33d10a2",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0d8d8c7eafc8",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0ec26bcd4aa3",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "10646af7b13d",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 27,
+    "relative": 14
+  },
+  {
+    "branch_id": "10e1cd662c48",
+    "tag": "v6_formal_v22",
+    "adoption": 10,
+    "first_event": 41,
+    "relative": 31
+  },
+  {
+    "branch_id": "111ac26d3e46",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "11ba507fe3bf",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 31,
+    "relative": 23
+  },
+  {
+    "branch_id": "1300f8288caf",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": 28,
+    "relative": 23
+  },
+  {
+    "branch_id": "149d42957188",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 16,
+    "relative": 0
+  },
+  {
+    "branch_id": "14f8c89a577a",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "1699c052af5c",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 16,
+    "relative": 2
+  },
+  {
+    "branch_id": "171d06b54227",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "176c6f4ec527",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "182f0c763eaa",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 16,
+    "relative": 2
+  },
+  {
+    "branch_id": "190376f19ace",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "1909728ec7d6",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 32,
+    "relative": 24
+  },
+  {
+    "branch_id": "19d7ede23ce9",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 16,
+    "relative": 0
+  },
+  {
+    "branch_id": "1a51384df45e",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "1a552d076f43",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "1d9ac33d8def",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 40,
+    "relative": 24
+  },
+  {
+    "branch_id": "1ed854a27380",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 16,
+    "relative": 1
+  },
+  {
+    "branch_id": "1fb448dbd8df",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 27,
+    "relative": 8
+  },
+  {
+    "branch_id": "2029ab1c6b6a",
+    "tag": "v6_formal_v22",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "216cec629308",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 30,
+    "relative": 17
+  },
+  {
+    "branch_id": "21e65a2871fe",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "284bd8cc722c",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "29ad3ace2900",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "29fe54a0ad7c",
+    "tag": "v6_formal_v22",
+    "adoption": 10,
+    "first_event": 41,
+    "relative": 31
+  },
+  {
+    "branch_id": "2a0a5f6bfa79",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 28,
+    "relative": 10
+  },
+  {
+    "branch_id": "2a60ebc03655",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 31,
+    "relative": 18
+  },
+  {
+    "branch_id": "2c2344c89b18",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 16,
+    "relative": 0
+  },
+  {
+    "branch_id": "2cf42b61de6d",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "2e26116efd05",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 39,
+    "relative": 31
+  },
+  {
+    "branch_id": "307c7a4f12e3",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "30e50eaf6c06",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "314225c8012d",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "33229ec8646b",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "337fa6ff19b7",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "356176a93ee0",
+    "tag": "v6_formal_v22",
+    "adoption": 10,
+    "first_event": 39,
+    "relative": 29
+  },
+  {
+    "branch_id": "369efa07a4b0",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "36b85662bfa6",
+    "tag": "v6_formal_v22",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "37d15d32bc8c",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "39dc2f00a3bf",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "3a69b7b3d29f",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "3b1893c96211",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "3cd06d79793a",
+    "tag": "v6_formal_v22",
+    "adoption": 20,
+    "first_event": 29,
+    "relative": 9
+  },
+  {
+    "branch_id": "3cf6279a3660",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": 30,
+    "relative": 13
+  },
+  {
+    "branch_id": "433870f5d94a",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 28,
+    "relative": 9
+  },
+  {
+    "branch_id": "457071fb4542",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "460eb1b0b877",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 31,
+    "relative": 18
+  },
+  {
+    "branch_id": "4613735256cc",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "46815ddb2e68",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "46d25895a9ab",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "47b62ca4436c",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 30,
+    "relative": 14
+  },
+  {
+    "branch_id": "49b8f4cd0a0f",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "4a88ced791f5",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": 30,
+    "relative": 25
+  },
+  {
+    "branch_id": "4d2d1dfade40",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 31,
+    "relative": 17
+  },
+  {
+    "branch_id": "51530343203d",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "52952a3c7ec2",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 28,
+    "relative": 20
+  },
+  {
+    "branch_id": "52d17b278106",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5309da48bcaa",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5333916437a5",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 16,
+    "relative": 2
+  },
+  {
+    "branch_id": "53d1cc78bd69",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": 28,
+    "relative": 17
+  },
+  {
+    "branch_id": "546bab0b2d9b",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 39,
+    "relative": 20
+  },
+  {
+    "branch_id": "55360cab1af1",
+    "tag": "v6_formal_v22",
+    "adoption": 20,
+    "first_event": 38,
+    "relative": 18
+  },
+  {
+    "branch_id": "55b203a604a7",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "569afee6e717",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "575112638f3e",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 30,
+    "relative": 11
+  },
+  {
+    "branch_id": "57a7002dc4ed",
+    "tag": "v6_formal_v22",
+    "adoption": 10,
+    "first_event": 40,
+    "relative": 30
+  },
+  {
+    "branch_id": "59777ac663ec",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 39,
+    "relative": 31
+  },
+  {
+    "branch_id": "5990cd3a33c3",
+    "tag": "v6_formal_v22",
+    "adoption": 12,
+    "first_event": 28,
+    "relative": 16
+  },
+  {
+    "branch_id": "5b5d00061ace",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 16,
+    "relative": 1
+  },
+  {
+    "branch_id": "5b86a4ad0a5c",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 39,
+    "relative": 25
+  },
+  {
+    "branch_id": "5ccf7824a4b5",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5d1989713b7f",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5e015014c0f2",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5e491a1200a0",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "60732680fd4a",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 37,
+    "relative": 19
+  },
+  {
+    "branch_id": "60cd76267a20",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "611e34aa649e",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": 40,
+    "relative": 23
+  },
+  {
+    "branch_id": "62a00afc6ec5",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 31,
+    "relative": 16
+  },
+  {
+    "branch_id": "62f6cca10f52",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 40,
+    "relative": 22
+  },
+  {
+    "branch_id": "63ac6fa2f4e6",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": 30,
+    "relative": 25
+  },
+  {
+    "branch_id": "653bcdeafddb",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": 40,
+    "relative": 29
+  },
+  {
+    "branch_id": "6619ed2dcc4b",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "662725f9e91a",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "680e17d48fc0",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "687af60eeb89",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": 31,
+    "relative": 26
+  },
+  {
+    "branch_id": "69e12cbb14ad",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 29,
+    "relative": 13
+  },
+  {
+    "branch_id": "6c020d641e0d",
+    "tag": "v6_formal_v22",
+    "adoption": 20,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "6c4460033ee8",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "6d57d858d6c6",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 40,
+    "relative": 21
+  },
+  {
+    "branch_id": "6f56e3ff3606",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "7010734b8bf0",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 39,
+    "relative": 31
+  },
+  {
+    "branch_id": "705b45ae7029",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "734ec2007b80",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 28,
+    "relative": 14
+  },
+  {
+    "branch_id": "74f51308b711",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "76ebb6586c47",
+    "tag": "v6_formal_v22",
+    "adoption": 22,
+    "first_event": 40,
+    "relative": 18
+  },
+  {
+    "branch_id": "771bcea3ae39",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 30,
+    "relative": 22
+  },
+  {
+    "branch_id": "787a3feb606f",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 28,
+    "relative": 15
+  },
+  {
+    "branch_id": "79aa14710e9f",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "7c245f043ef4",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": 30,
+    "relative": 19
+  },
+  {
+    "branch_id": "7c8ffd52fb39",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 31,
+    "relative": 17
+  },
+  {
+    "branch_id": "7caa50a3d3c5",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 30,
+    "relative": 12
+  },
+  {
+    "branch_id": "7e3e75460f0e",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "7f9a2c367f2a",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 28,
+    "relative": 15
+  },
+  {
+    "branch_id": "806e6632dce4",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 30,
+    "relative": 14
+  },
+  {
+    "branch_id": "81a59eb04eb0",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 16,
+    "relative": -2
+  },
+  {
+    "branch_id": "81ac89bf1040",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": 28,
+    "relative": 7
+  },
+  {
+    "branch_id": "81d6e6fb4871",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "833c18f3d5c8",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 16,
+    "relative": 2
+  },
+  {
+    "branch_id": "83fabd84de17",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8617981e2bcb",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 31,
+    "relative": 16
+  },
+  {
+    "branch_id": "889f8cecef70",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 30,
+    "relative": 16
+  },
+  {
+    "branch_id": "897d6b8a2d46",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 27,
+    "relative": 8
+  },
+  {
+    "branch_id": "89fa23d11cb9",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 16,
+    "relative": 0
+  },
+  {
+    "branch_id": "8b667e2489ed",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8c4e5e54ebaf",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8c8573cd41b9",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": 30,
+    "relative": 13
+  },
+  {
+    "branch_id": "8e1bc8042fa0",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "92ff8a33cbc2",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 16,
+    "relative": 1
+  },
+  {
+    "branch_id": "9335e686384e",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 28,
+    "relative": 9
+  },
+  {
+    "branch_id": "94e1e8e0ce87",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "9611efc459cf",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 28,
+    "relative": 13
+  },
+  {
+    "branch_id": "99bce1c256d1",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": 28,
+    "relative": 11
+  },
+  {
+    "branch_id": "9a736af55ef8",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "9ad22a7357bd",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 16,
+    "relative": 1
+  },
+  {
+    "branch_id": "9bb90cb3822a",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 31,
+    "relative": 23
+  },
+  {
+    "branch_id": "9df9d49612bc",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": 30,
+    "relative": 25
+  },
+  {
+    "branch_id": "9e9d41bef3f5",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": 30,
+    "relative": 19
+  },
+  {
+    "branch_id": "9ff07369de96",
+    "tag": "v6_formal_v22",
+    "adoption": 5,
+    "first_event": 28,
+    "relative": 23
+  },
+  {
+    "branch_id": "a17d7ae24258",
+    "tag": "v6_formal_v22",
+    "adoption": 20,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a31b69d905fa",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 16,
+    "relative": -2
+  },
+  {
+    "branch_id": "a59ca54b0554",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 28,
+    "relative": 20
+  },
+  {
+    "branch_id": "a6d1cb655627",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a6e865fc6414",
+    "tag": "v6_formal_v22",
+    "adoption": 20,
+    "first_event": 40,
+    "relative": 20
+  },
+  {
+    "branch_id": "a8f9fd385890",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "acd7a286a219",
+    "tag": "v6_formal_v22",
+    "adoption": 20,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "addc36289063",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 30,
+    "relative": 22
+  },
+  {
+    "branch_id": "af904e44a3d5",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 16,
+    "relative": 1
+  },
+  {
+    "branch_id": "afe769823f43",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": 30,
+    "relative": 22
+  },
+  {
+    "branch_id": "b169f773028c",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b25b6c4069cf",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 27,
+    "relative": 14
+  },
+  {
+    "branch_id": "b531117fa1e0",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 16,
+    "relative": -2
+  },
+  {
+    "branch_id": "b702c0e68ab5",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b84800eca570",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 40,
+    "relative": 24
+  },
+  {
+    "branch_id": "b8956cd04da4",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b95d509dffd9",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b96f69b22a9c",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 16,
+    "relative": -2
+  },
+  {
+    "branch_id": "ba14a8d25280",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": 28,
+    "relative": 7
+  },
+  {
+    "branch_id": "ba20579ea032",
+    "tag": "v6_formal_v22",
+    "adoption": 12,
+    "first_event": 28,
+    "relative": 16
+  },
+  {
+    "branch_id": "bcc0b353f4a0",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c27244692541",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c29803f60049",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c346e8665554",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 29,
+    "relative": 14
+  },
+  {
+    "branch_id": "c410bf31190d",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c82065aedf9b",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 31,
+    "relative": 15
+  },
+  {
+    "branch_id": "c87e3d03b9ac",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": 30,
+    "relative": 9
+  },
+  {
+    "branch_id": "c92275ad9e56",
+    "tag": "v6_formal_v22",
+    "adoption": 10,
+    "first_event": 40,
+    "relative": 30
+  },
+  {
+    "branch_id": "ca5702fa9d71",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "cabf4c006828",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "cd75722fa309",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 16,
+    "relative": 1
+  },
+  {
+    "branch_id": "cd7de1a99ebf",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "ceee1448ed9e",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d04f03708aae",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d21ddb970e79",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 28,
+    "relative": 12
+  },
+  {
+    "branch_id": "d5fa551be11c",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 40,
+    "relative": 26
+  },
+  {
+    "branch_id": "d7e8325cb1e8",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "dac17bf9c3e8",
+    "tag": "v6_formal_v22",
+    "adoption": 21,
+    "first_event": 30,
+    "relative": 9
+  },
+  {
+    "branch_id": "dae74382475f",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 40,
+    "relative": 27
+  },
+  {
+    "branch_id": "db22facefbd2",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 16,
+    "relative": -2
+  },
+  {
+    "branch_id": "dd06ca9ca8dd",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": 16,
+    "relative": 0
+  },
+  {
+    "branch_id": "dfb48f450409",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": 40,
+    "relative": 23
+  },
+  {
+    "branch_id": "e37da99e3f5b",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 28,
+    "relative": 10
+  },
+  {
+    "branch_id": "e54d126a4a2d",
+    "tag": "v6_formal_v22",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "e7e2b916bb85",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "eb7fd2f91e58",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "ec8ac44ff890",
+    "tag": "v6_formal_v22",
+    "adoption": 18,
+    "first_event": 16,
+    "relative": -2
+  },
+  {
+    "branch_id": "f098e9c14848",
+    "tag": "v6_formal_v22",
+    "adoption": 13,
+    "first_event": 39,
+    "relative": 26
+  },
+  {
+    "branch_id": "f0b3a0d97f81",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 30,
+    "relative": 11
+  },
+  {
+    "branch_id": "f225a4a2ed86",
+    "tag": "v6_formal_v22",
+    "adoption": 10,
+    "first_event": 39,
+    "relative": 29
+  },
+  {
+    "branch_id": "f85ebe4be78d",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "f8e144979c78",
+    "tag": "v6_formal_v22",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fa29c0d2d733",
+    "tag": "v6_formal_v22",
+    "adoption": 17,
+    "first_event": 28,
+    "relative": 11
+  },
+  {
+    "branch_id": "fadb80877357",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 16,
+    "relative": 2
+  },
+  {
+    "branch_id": "fbde62e32451",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": 28,
+    "relative": 17
+  },
+  {
+    "branch_id": "fc7c6c94b061",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fcd6e810b3f7",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fcd7502e8d6b",
+    "tag": "v6_formal_v22",
+    "adoption": 8,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fcfa60694ec9",
+    "tag": "v6_formal_v22",
+    "adoption": 14,
+    "first_event": 28,
+    "relative": 14
+  },
+  {
+    "branch_id": "fd418fdb9bc1",
+    "tag": "v6_formal_v22",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fd859b490db7",
+    "tag": "v6_formal_v22",
+    "adoption": 15,
+    "first_event": 28,
+    "relative": 13
+  },
+  {
+    "branch_id": "ffb77cae7081",
+    "tag": "v6_formal_v22",
+    "adoption": 19,
+    "first_event": 27,
+    "relative": 8
+  },
+  {
+    "branch_id": "013810b0d452",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": 34,
+    "relative": 14
+  },
+  {
+    "branch_id": "01ed7776a8aa",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 37,
+    "relative": 14
+  },
+  {
+    "branch_id": "023a4e4b3b34",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "044d1a474adf",
+    "tag": "v6_formal_v16",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "05f67831784c",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": 37,
+    "relative": 9
+  },
+  {
+    "branch_id": "05fc86753c0b",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0a10f3d7da53",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0a59d0d47ef6",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": 37,
+    "relative": 16
+  },
+  {
+    "branch_id": "0ba4ead83675",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": 34,
+    "relative": 14
+  },
+  {
+    "branch_id": "0ba633b21c9c",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0bafa447d99a",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "0cbb987bd07f",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "15f00819aecc",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "17387f13d17f",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "17c0c29a8104",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "181357589666",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": 35,
+    "relative": 17
+  },
+  {
+    "branch_id": "18d4a70699f6",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": 36,
+    "relative": 25
+  },
+  {
+    "branch_id": "1bd9c50020f7",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 37,
+    "relative": 11
+  },
+  {
+    "branch_id": "1da7e87870bf",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": 35,
+    "relative": 20
+  },
+  {
+    "branch_id": "2025cd90691a",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "21ff8c680e51",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "22168eb5d89a",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "22826e4e2e25",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "245230ef36c8",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "24b69e0c47e2",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "24d28940562a",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "26694d430612",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "2676b6d9ca74",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": 35,
+    "relative": 20
+  },
+  {
+    "branch_id": "276a941960c5",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "27f2ab2ddc16",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "2934758504f6",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": 45,
+    "relative": 36
+  },
+  {
+    "branch_id": "295cee378c6e",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "29af8d254681",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "2a482f87560d",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "2ac0dcd93dfd",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "2bc6d5903d81",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": 36,
+    "relative": 27
+  },
+  {
+    "branch_id": "2c699c5dca73",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 34,
+    "relative": 15
+  },
+  {
+    "branch_id": "2dbd7d93af6a",
+    "tag": "v6_formal_v16",
+    "adoption": 30,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "2e9e5738c8b7",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "304309b1a036",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "318d156b7186",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": 37,
+    "relative": 13
+  },
+  {
+    "branch_id": "33f3ee09ddc0",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "34b78e80f75f",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 37,
+    "relative": 11
+  },
+  {
+    "branch_id": "36be5120e2a9",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": 35,
+    "relative": 20
+  },
+  {
+    "branch_id": "3838c4e235f9",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "3895f0244276",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "39b2ab1c6c65",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": 37,
+    "relative": 16
+  },
+  {
+    "branch_id": "3a341c15f165",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "3afd3909a4ab",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "3bb61cf4c932",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "3d4d039efc26",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "3d7cd120ef4d",
+    "tag": "v6_formal_v16",
+    "adoption": 30,
+    "first_event": 37,
+    "relative": 7
+  },
+  {
+    "branch_id": "3f46e4911799",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "3f5f0b8654af",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "3fd4200a9d1c",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "41292263befe",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "43a0b7029dbe",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "447021dcbf84",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "4472f5244e00",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "44ba72ec6e2f",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "452cc57c7094",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "483bd153ead0",
+    "tag": "v6_formal_v16",
+    "adoption": 30,
+    "first_event": 30,
+    "relative": 0
+  },
+  {
+    "branch_id": "4a25ee5bed86",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 34,
+    "relative": 15
+  },
+  {
+    "branch_id": "4b1729ee6e95",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 42,
+    "relative": 19
+  },
+  {
+    "branch_id": "4b335dc36b9b",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "4c5baf57756b",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "4ce511dda5bd",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": 35,
+    "relative": 14
+  },
+  {
+    "branch_id": "4e2abeeb421a",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5070f7952732",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": 36,
+    "relative": 16
+  },
+  {
+    "branch_id": "50a5eee30f9a",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "524030456bc8",
+    "tag": "v6_formal_v16",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "527a5d8639d8",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "53d1f131be36",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "54e43cd9f7aa",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 37,
+    "relative": 18
+  },
+  {
+    "branch_id": "55b4318e81ff",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "567488ea1071",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5701614d4d11",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "582e4c5c84a8",
+    "tag": "v6_formal_v16",
+    "adoption": 12,
+    "first_event": 36,
+    "relative": 24
+  },
+  {
+    "branch_id": "586606ebfa83",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": 36,
+    "relative": 25
+  },
+  {
+    "branch_id": "587ea04c80a3",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5951c93e2214",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5ae5f51f2829",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5b75b9ec7475",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5bc889f01449",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5e887b3815af",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5eef8fd43b5f",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "5fbb320202b8",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "62c2ddb77195",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "6698ce404383",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": 34,
+    "relative": 12
+  },
+  {
+    "branch_id": "670c8d33caa8",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "6b6041104e30",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "6eecb93a936a",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "6f095cc60e55",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "70b04f45b2b1",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "724fac34a048",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "726bf52a7ce6",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "738135d7125a",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "7552a7f8cce9",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": 44,
+    "relative": 22
+  },
+  {
+    "branch_id": "76d2e91ec2a1",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": 36,
+    "relative": 8
+  },
+  {
+    "branch_id": "772ef1788d8a",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "773a1a73536d",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "777ce7d59c11",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "77f1ad3dfbd2",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "79a21624670e",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "7b84c437386b",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "7bf8d3626538",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": 35,
+    "relative": 11
+  },
+  {
+    "branch_id": "7eb23961f395",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": 35,
+    "relative": 17
+  },
+  {
+    "branch_id": "7eb37833456f",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "7f23f53d85e8",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "81cb9bf8fc8b",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 26,
+    "relative": 3
+  },
+  {
+    "branch_id": "8247402f284d",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": 35,
+    "relative": 20
+  },
+  {
+    "branch_id": "82cda9c36522",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8357577a08de",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 42,
+    "relative": 19
+  },
+  {
+    "branch_id": "839f6f560d26",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "84d660033226",
+    "tag": "v6_formal_v16",
+    "adoption": 30,
+    "first_event": 37,
+    "relative": 7
+  },
+  {
+    "branch_id": "872fafa91bd6",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": 34,
+    "relative": 12
+  },
+  {
+    "branch_id": "874b5b5fc45f",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8825e7da75ea",
+    "tag": "v6_formal_v16",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "88f646184b02",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "89a492168601",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "8a0b129ca9cc",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 34,
+    "relative": 15
+  },
+  {
+    "branch_id": "8b4d3829f43a",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8c0c20b455c3",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 26,
+    "relative": 3
+  },
+  {
+    "branch_id": "8cdaa4db7670",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8d44b2106f72",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 37,
+    "relative": 14
+  },
+  {
+    "branch_id": "8d90ecd5b19d",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8ed1bbb78447",
+    "tag": "v6_formal_v16",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8ed41f111768",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "8ef5fa4edf8b",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "905a968b42fa",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": 37,
+    "relative": 16
+  },
+  {
+    "branch_id": "90f2d1fb2889",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "93c7a3f92239",
+    "tag": "v6_formal_v16",
+    "adoption": 25,
+    "first_event": 26,
+    "relative": 1
+  },
+  {
+    "branch_id": "93c8b1781b5e",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "93c950d3890a",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "95fb2e964879",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": 44,
+    "relative": 22
+  },
+  {
+    "branch_id": "9636178d76a8",
+    "tag": "v6_formal_v16",
+    "adoption": 16,
+    "first_event": 37,
+    "relative": 21
+  },
+  {
+    "branch_id": "978e1215da96",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "984d82c3b5ac",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "9b24045e7d42",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "9d44601b60ee",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "9e76005f8234",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "9faefa30cc47",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a0b9f6babd36",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a140c9777410",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 35,
+    "relative": 9
+  },
+  {
+    "branch_id": "a1f9bf07f711",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "a34277353bd5",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a4060e6486a8",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a53bbb668b20",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a5da90671bdf",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "a77210b026c5",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": 37,
+    "relative": 13
+  },
+  {
+    "branch_id": "a87e4697c302",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 34,
+    "relative": 15
+  },
+  {
+    "branch_id": "a8a9ca8de462",
+    "tag": "v6_formal_v16",
+    "adoption": 30,
+    "first_event": 30,
+    "relative": 0
+  },
+  {
+    "branch_id": "a9d58f9d5f05",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "aac38dc54e14",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "abb1958e8c8e",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "abd0bf3912c1",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "abe1e663d5a7",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "acb0d2d710a1",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "acd746c8f0a8",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "afe4fcbb0593",
+    "tag": "v6_formal_v16",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "aff6404ef33a",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b393fa748004",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b4103c50dd99",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b50e564b0aad",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b538444f6d15",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "b55011ab784c",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": 34,
+    "relative": 12
+  },
+  {
+    "branch_id": "b5b04f6d08be",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 37,
+    "relative": 11
+  },
+  {
+    "branch_id": "b6dff932503b",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "bafdb559daf5",
+    "tag": "v6_formal_v16",
+    "adoption": 12,
+    "first_event": 36,
+    "relative": 24
+  },
+  {
+    "branch_id": "bb4f2e360ad6",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "bc01867a0b33",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "bdc81fc8af31",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "bdee3d052ad1",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "be14720708c0",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c0a60076962e",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c187be455478",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 34,
+    "relative": 15
+  },
+  {
+    "branch_id": "c24d693402b3",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c24dc32096ae",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c27a62898933",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 37,
+    "relative": 11
+  },
+  {
+    "branch_id": "c29765ad98e5",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c37f0276ca8b",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": 37,
+    "relative": 13
+  },
+  {
+    "branch_id": "c38af4b84810",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c43bd70f69b0",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "c82a5a49901a",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c85c389142d3",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": 35,
+    "relative": 7
+  },
+  {
+    "branch_id": "c88663cb98f5",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c8ca054ad315",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c9b5b40dd11d",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "c9c85ae5d72f",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 37,
+    "relative": 14
+  },
+  {
+    "branch_id": "cb50b34c7989",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 35,
+    "relative": 16
+  },
+  {
+    "branch_id": "cf442c1b5f69",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d12a0618dc6f",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d17d09ec0056",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d37ac2cd6acb",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 26,
+    "relative": 3
+  },
+  {
+    "branch_id": "d402086daa3f",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d844da9eca44",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d93bd5f60705",
+    "tag": "v6_formal_v16",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "d94f9b78f92f",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": 37,
+    "relative": 18
+  },
+  {
+    "branch_id": "da697250fc83",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "db21bc448e38",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "dc20076761a7",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": 35,
+    "relative": 13
+  },
+  {
+    "branch_id": "dd4dfd5203df",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "ddbd96244e0e",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "df64cc712fce",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": 37,
+    "relative": 9
+  },
+  {
+    "branch_id": "e14c0a208fe3",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "e2be5714fe44",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "e2dbe92529b4",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "e3abeadbbd0c",
+    "tag": "v6_formal_v16",
+    "adoption": 24,
+    "first_event": 37,
+    "relative": 13
+  },
+  {
+    "branch_id": "e40dd96b8d24",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "e413443d5db9",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "e7fc13335178",
+    "tag": "v6_formal_v16",
+    "adoption": 23,
+    "first_event": 37,
+    "relative": 14
+  },
+  {
+    "branch_id": "e9416b372d51",
+    "tag": "v6_formal_v16",
+    "adoption": 9,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "ecb5e06cc2b8",
+    "tag": "v6_formal_v16",
+    "adoption": 21,
+    "first_event": 37,
+    "relative": 16
+  },
+  {
+    "branch_id": "ecd883ec1f0f",
+    "tag": "v6_formal_v16",
+    "adoption": 12,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "ee3644fcfb27",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": 35,
+    "relative": 15
+  },
+  {
+    "branch_id": "ef4b7b400d32",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "f09741cac732",
+    "tag": "v6_formal_v16",
+    "adoption": 20,
+    "first_event": 34,
+    "relative": 14
+  },
+  {
+    "branch_id": "f4e1ca0c6dd6",
+    "tag": "v6_formal_v16",
+    "adoption": 28,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "f639b36fdbe7",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "f8b7a38382c5",
+    "tag": "v6_formal_v16",
+    "adoption": 30,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "f94adc878b90",
+    "tag": "v6_formal_v16",
+    "adoption": 19,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fa98d4d5d34f",
+    "tag": "v6_formal_v16",
+    "adoption": 18,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "faac6d5998d4",
+    "tag": "v6_formal_v16",
+    "adoption": 16,
+    "first_event": 37,
+    "relative": 21
+  },
+  {
+    "branch_id": "fc0777f1122c",
+    "tag": "v6_formal_v16",
+    "adoption": 26,
+    "first_event": 26,
+    "relative": 0
+  },
+  {
+    "branch_id": "fcc10fea514c",
+    "tag": "v6_formal_v16",
+    "adoption": 22,
+    "first_event": 44,
+    "relative": 22
+  },
+  {
+    "branch_id": "fe2edba46631",
+    "tag": "v6_formal_v16",
+    "adoption": 15,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fe87bac170b6",
+    "tag": "v6_formal_v16",
+    "adoption": 11,
+    "first_event": null,
+    "relative": null
+  },
+  {
+    "branch_id": "fef4b60f0e83",
+    "tag": "v6_formal_v16",
+    "adoption": 16,
+    "first_event": null,
+    "relative": null
+  }
+]
