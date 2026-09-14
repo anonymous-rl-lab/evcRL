@@ -4,7 +4,7 @@
 
 `theory_lp.json` and `theory_lp_v16.json` are supplied results. Paired objectives reproduce exactly at the saved reference horizons. The higher-speed reference horizon is 13.5000135000135 s while the action grid has 27 half-second steps; the common offset cancels in the paired contrast. The auditor uses saved horizons explicitly.
 
-From the paper root, after extracting the supplied v6 archive:
+From the analysis folder, after extracting the supplied v6 archive:
 
 ```bash
 python verification/audit_v6.py --root /absolute/path/to/extracted/evcRL_v6_closure --out /absolute/path/to/new_audit_results.json
