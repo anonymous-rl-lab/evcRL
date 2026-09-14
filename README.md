@@ -120,6 +120,10 @@ TIV_BASE=/path/TIV_v19_Reproducibility python3 scripts/short_route_frozen_actor.
 - 过程记录：渲染器缺陷修复（停在停止线上灯箱被隐藏）、记忆稳健性规则（终点偏置、停车余量、幻影灯过期、停稳锁存）、两次 v4b 编码器重训未过闭环门 2（`runs/_failed/`）、v4s 执行层候选（分支 `v4s-executor`）。
 - 一键：`cd TIV_visual_development && bash runs/run_v4_gated.sh`（门 1–4 + 种子 0）；多种子 `bash runs/run_seeds_local.sh v4r_cpu.json v4r_cpu_s1.json v4r_cpu_s2.json`；重评估 `python3 visual_dev/reevaluate.py --tag v4_pilot --runs v4r --pretrain pretrain_v4`；失败归因 `python3 visual_dev/v4_violation_analysis.py`；完整交付包 `bash runs/make_delivery.sh <目录>`。
 
+### 8.3 v5 时机实验：执行条件收紧后是否必须更早知道（`TIV_visual_development/reports/REPORT_v5_timing_zh.md`）
+
+冻结三个 v4r 仅监督权重（检测器、编码器、actor、记忆全部冻结），从同一份冻结接近状态（含视觉记忆、图像历史、随机流）复制 36 条短程分支：信号情境（需停车/允许通行）× jerk 上限（2/4 m/s³，三处参数统一）× 视觉条件（正常/中等延迟/较晚可见，整灯在指定位置前不出现在图像里）。延迟位置由备份制动距离推导并在烟测后冻结（jerk 2 需采纳距离 ≥ 109.3 m，jerk 4 ≥ 98.1 m）。结果：正常可见两种条件都平顺；中等延迟（采纳距离 109 m）时 jerk 2 在采纳后的第一个决策即应急制动、jerk 4 保持平顺（3/3 权重）；较晚可见两者都应急；事后扫描显示边界正好差一帧（11 m ≈ 0.5 s），与解析阈值一致。36 条分支 0 违规。评价接口为“2 s 命令 → 4 子步执行 → 状态与累计代价”，不用旧 critic。脚本 `visual_dev/v5_timing_experiment.py`（freeze / select / run / sweep / summarize）。
+
 ### 8.1 交接包原状态（接入前）
 
 `visual_z_framework/` 的 11 项契约测试在本环境全部通过（含 `TIV_BASE` 下的 v19 四个源码哈希核对与真实 actor 权重迁移）。它是接口原型：无摄像头渲染器、无预训练骨干、无视觉数据，`SceneCameraNotConnected.capture` 明确抛出 `NotImplementedError`。因此本次**没有也不能**启动 F/S/J 三臂视觉训练；v19 环境本身没有 RGB 传感器，接入需先按交接文档实现同步只读渲染器。该框架对原 13 维观测的处理（屏蔽真值灯色/倒计时通道 7、8，保留上一实际加速度通道 1）与本目录核对的观测定义一致。
