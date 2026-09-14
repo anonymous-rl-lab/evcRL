@@ -344,14 +344,17 @@ def summarize6(a):
             ap_ = approach_metrics(early['stop']['recs'], early['stop']['timeline']['t0'], jk); lines.append(f"| early | – | {early['stop']['timeline']['adopt']['d_line']:.0f} / {early['pass']['timeline']['adopt']['d_line']:.0f} | {'是' if ap_['smooth_highspeed'] else '否'} | – | +0.0 (基准 {early['pass']['outcome']['time_s']:.1f} s) | +0.0 | – | – |")
         out.append('\n'.join(lines))
     # 闭环边界汇总：按策略×冻结×jerk：测得的“高速段平顺”最小采纳距离（min / cons）、通行支首次出现时间惩罚的采纳距离，对照 LP 的共同准备可行边界与无额外代价边界
-    bl = ['', '## 边界汇总（测量 vs LP）', '', '| 策略 | 冻结 | jerk | 停车支平顺的最小采纳 d：min / cons | 通行支惩罚 ≥0.5 s 开始的采纳 d：min / cons | LP 共同准备可行的最小分辨 d | LP 无额外代价的最小分辨 d |', '|---|---|---|---|---|---|---|']
+    bl = ['', '## 边界汇总（测量 vs LP）', '', '| 策略 | 冻结 | jerk | 停车支高速段平顺首次丢失的目标采纳 d：min / cons（None=全部平顺） | 通行支惩罚 ≥0.5 s 开始的目标采纳 d：min / cons | LP 共同准备可行的最小分辨 d | LP 无额外代价的最小分辨 d |', '|---|---|---|---|---|---|---|']
     for pol, jk, fz in keys:
         sel = [r for r in rows if r['policy'] == pol and r['jerk'] == jk and r.get('frozen', 'frozen_state') == fz]; v0 = sel[0]['recs'][0]['v'] if sel else 22.2
         early = {r['situation']: r for r in sel if r['info'] == 'early'}
         def bmin(info):
-            ds = sorted({r['d_adopt_target'] for r in sel if r['info'] == info and r['d_adopt_target'] is not None})
-            ok = [d_ for d_ in ds if any(approach_metrics(r['recs'], r['timeline']['t0'], jk)['smooth_highspeed'] for r in sel if r['info'] == info and r['d_adopt_target'] == d_ and r['situation'] == 'stop')]
-            return min(ok) if ok else None
+            """停车支高速段平顺首次丢失的目标采纳距离（从大到小扫描，第一个“否”）；全部平顺 → None（用 '全部' 表示）。"""
+            ds = sorted({r['d_adopt_target'] for r in sel if r['info'] == info and r['d_adopt_target'] is not None}, reverse=True)
+            for d_ in ds:
+                st = next((r for r in sel if r['info'] == info and r['d_adopt_target'] == d_ and r['situation'] == 'stop'), None)
+                if st is not None and not approach_metrics(st['recs'], st['timeline']['t0'], jk)['smooth_highspeed']: return d_
+            return None
         def bpen(info):
             ds = sorted({r['d_adopt_target'] for r in sel if r['info'] == info and r['d_adopt_target'] is not None}, reverse=True)
             for d_ in ds:
@@ -362,7 +365,7 @@ def summarize6(a):
         if L:
             rr = [r for r in L['rows'] if r['jerk'] == jk]; feas = [L['d0'] - L['v0'] * r['delta'] for r in rr if r.get('delayed') == 'ok']; free = [L['d0'] - L['v0'] * r['delta'] for r in rr if r.get('delayed') == 'ok' and r['penalty_s'] < 1e-6]
             lp_feas = min(feas) if feas else None; lp_free = min(free) if free else None
-        f_ = lambda x: '–' if x is None else '%.0f' % x
+        f_ = lambda x: '全部' if x is None else '%.0f' % x
         bl.append(f"| {pol.split('/')[1] if '/' in pol else pol} | {fz} | {jk:.0f} | {f_(bmin('min'))} / {f_(bmin('cons'))} | {f_(bpen('min'))} / {f_(bpen('cons'))} | {f_(lp_feas)} | {f_(lp_free)} |")
     out.append('\n'.join(bl))
     md = '\n\n'.join(out); open(OUT / a.tag / 'closure.md', 'w').write(md); print(md)
