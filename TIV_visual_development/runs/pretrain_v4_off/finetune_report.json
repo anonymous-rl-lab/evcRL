@@ -1,0 +1,559 @@
+{
+ "before": {
+  "off": {
+   "n": 105,
+   "det_rate": 0.5523809523809524,
+   "off_rate": 0.9238095238095239,
+   "by_50m": {
+    "0-50": {
+     "n": 35,
+     "det": 0.6,
+     "off": 0.8
+    },
+    "50-100": {
+     "n": 19,
+     "det": 0.5263157894736842,
+     "off": 0.9473684210526315
+    },
+    "100-150": {
+     "n": 22,
+     "det": 0.45454545454545453,
+     "off": 1.0
+    },
+    "150-200": {
+     "n": 24,
+     "det": 0.5833333333333334,
+     "off": 1.0
+    },
+    "200-250": {
+     "n": 5,
+     "det": 0.6,
+     "off": 1.0
+    }
+   }
+  },
+  "v4": {
+   "traffic_light": {
+    "n": 485,
+    "recall": 0.845360824742268,
+    "false_alarm": 0.007547169811320755,
+    "dist_mae": 10.50965242298638,
+    "by_distance": {
+     "0-50": {
+      "n": 128,
+      "recall": 0.7421875,
+      "dist_mae": 4.4502451055928285,
+      "dist_rel": 0.2017947720701708
+     },
+     "50-100": {
+      "n": 124,
+      "recall": 0.8064516129032258,
+      "dist_mae": 10.30137249469757,
+      "dist_rel": 0.14713827760611342
+     },
+     "100-200": {
+      "n": 199,
+      "recall": 0.949748743718593,
+      "dist_mae": 13.235968655379361,
+      "dist_rel": 0.08665508586427231
+     },
+     "200-330": {
+      "n": 34,
+      "recall": 0.7647058823529411,
+      "dist_mae": 13.632649348332333,
+      "dist_rel": 0.06594710422822589
+     },
+     "330-400": {
+      "n": 0,
+      "recall": null,
+      "dist_mae": null,
+      "dist_rel": null
+     }
+    }
+   },
+   "curve_sign": {
+    "n": 305,
+    "recall": 0.8032786885245902,
+    "false_alarm": 0.010256410256410256,
+    "dist_mae": 14.089919697021951,
+    "by_distance": {
+     "0-50": {
+      "n": 37,
+      "recall": 0.5675675675675675,
+      "dist_mae": 7.462324738502502,
+      "dist_rel": 0.27671964651791464
+     },
+     "50-100": {
+      "n": 52,
+      "recall": 0.5769230769230769,
+      "dist_mae": 10.900171891848247,
+      "dist_rel": 0.14279835325578627
+     },
+     "100-200": {
+      "n": 72,
+      "recall": 0.7638888888888888,
+      "dist_mae": 11.14345573945479,
+      "dist_rel": 0.0740946945265416
+     },
+     "200-330": {
+      "n": 144,
+      "recall": 0.9652777777777778,
+      "dist_mae": 16.945512833355142,
+      "dist_rel": 0.06437960304527712
+     },
+     "330-400": {
+      "n": 0,
+      "recall": null,
+      "dist_mae": null,
+      "dist_rel": null
+     }
+    }
+   },
+   "end_marker": {
+    "n": 207,
+    "recall": 0.8067632850241546,
+    "false_alarm": 0.0130475302889096,
+    "dist_mae": 32.474685588996564,
+    "by_distance": {
+     "0-50": {
+      "n": 16,
+      "recall": 0.0,
+      "dist_mae": null,
+      "dist_rel": null
+     },
+     "50-100": {
+      "n": 23,
+      "recall": 0.30434782608695654,
+      "dist_mae": 6.872341156005859,
+      "dist_rel": 0.09581247080453166
+     },
+     "100-200": {
+      "n": 57,
+      "recall": 0.9473684210526315,
+      "dist_mae": 20.2863119619864,
+      "dist_rel": 0.12388314722183004
+     },
+     "200-330": {
+      "n": 69,
+      "recall": 0.9565217391304348,
+      "dist_mae": 26.058370156721637,
+      "dist_rel": 0.10245802052284327
+     },
+     "330-400": {
+      "n": 42,
+      "recall": 0.9523809523809523,
+      "dist_mae": 63.996320724487305,
+      "dist_rel": 0.17645662343771312
+     }
+    }
+   },
+   "release_sign": {
+    "n": 85,
+    "recall": 0.47058823529411764,
+    "false_alarm": 0.0,
+    "dist_mae": 30.923596942424773,
+    "by_distance": {
+     "0-50": {
+      "n": 18,
+      "recall": 0.0,
+      "dist_mae": null,
+      "dist_rel": null
+     },
+     "50-100": {
+      "n": 10,
+      "recall": 0.0,
+      "dist_mae": null,
+      "dist_rel": null
+     },
+     "100-200": {
+      "n": 23,
+      "recall": 0.391304347826087,
+      "dist_mae": 14.471590942806667,
+      "dist_rel": 0.0927180677462391
+     },
+     "200-330": {
+      "n": 34,
+      "recall": 0.9117647058823529,
+      "dist_mae": 35.69998578102358,
+      "dist_rel": 0.12910927583630993
+     },
+     "330-400": {
+      "n": 0,
+      "recall": null,
+      "dist_mae": null,
+      "dist_rel": null
+     }
+    }
+   },
+   "light_color": {
+    "n": 485,
+    "teacher_roi_known_acc": 0.8969072164948454,
+    "runtime_roi_known_acc": 0.7628865979381443,
+    "runtime_detected_rate": 0.8515463917525773,
+    "mean_roi_iou": 0.5166000062042905,
+    "by_distance": {
+     "0-20": {
+      "n": 106,
+      "runtime_known_acc": 0.6037735849056604,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "20-50": {
+      "n": 65,
+      "runtime_known_acc": 0.5538461538461539,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "50-100": {
+      "n": 106,
+      "runtime_known_acc": 0.8207547169811321,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "100-150": {
+      "n": 95,
+      "runtime_known_acc": 0.8947368421052632,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "150-215": {
+      "n": 113,
+      "runtime_known_acc": 0.8672566371681416,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     }
+    }
+   }
+  }
+ },
+ "after": {
+  "off": {
+   "n": 105,
+   "det_rate": 0.5714285714285714,
+   "off_rate": 0.9047619047619048,
+   "by_50m": {
+    "0-50": {
+     "n": 35,
+     "det": 0.6571428571428571,
+     "off": 0.7714285714285715
+    },
+    "50-100": {
+     "n": 19,
+     "det": 0.6842105263157895,
+     "off": 1.0
+    },
+    "100-150": {
+     "n": 22,
+     "det": 0.36363636363636365,
+     "off": 1.0
+    },
+    "150-200": {
+     "n": 24,
+     "det": 0.5416666666666666,
+     "off": 0.9583333333333334
+    },
+    "200-250": {
+     "n": 5,
+     "det": 0.6,
+     "off": 0.8
+    }
+   }
+  },
+  "v4": {
+   "traffic_light": {
+    "n": 485,
+    "recall": 0.8329896907216495,
+    "false_alarm": 0.007547169811320755,
+    "dist_mae": 9.926615597588,
+    "by_distance": {
+     "0-50": {
+      "n": 128,
+      "recall": 0.7109375,
+      "dist_mae": 4.609041837545542,
+      "dist_rel": 0.202217373466307
+     },
+     "50-100": {
+      "n": 124,
+      "recall": 0.8387096774193549,
+      "dist_mae": 8.483858592235125,
+      "dist_rel": 0.12282535084749019
+     },
+     "100-200": {
+      "n": 199,
+      "recall": 0.9246231155778895,
+      "dist_mae": 13.116753360499507,
+      "dist_rel": 0.08636512204041476
+     },
+     "200-330": {
+      "n": 34,
+      "recall": 0.7352941176470589,
+      "dist_mae": 11.805039291381837,
+      "dist_rel": 0.05717101619059419
+     },
+     "330-400": {
+      "n": 0,
+      "recall": null,
+      "dist_mae": null,
+      "dist_rel": null
+     }
+    }
+   },
+   "curve_sign": {
+    "n": 305,
+    "recall": 0.780327868852459,
+    "false_alarm": 0.010256410256410256,
+    "dist_mae": 14.595413121606121,
+    "by_distance": {
+     "0-50": {
+      "n": 37,
+      "recall": 0.4864864864864865,
+      "dist_mae": 7.872465342283249,
+      "dist_rel": 0.29376083325477276
+     },
+     "50-100": {
+      "n": 52,
+      "recall": 0.5576923076923077,
+      "dist_mae": 11.82000678161095,
+      "dist_rel": 0.15838486310814007
+     },
+     "100-200": {
+      "n": 72,
+      "recall": 0.7222222222222222,
+      "dist_mae": 11.329292444082407,
+      "dist_rel": 0.07605390178644424
+     },
+     "200-330": {
+      "n": 144,
+      "recall": 0.9652777777777778,
+      "dist_mae": 17.26691038145436,
+      "dist_rel": 0.06615445224821992
+     },
+     "330-400": {
+      "n": 0,
+      "recall": null,
+      "dist_mae": null,
+      "dist_rel": null
+     }
+    }
+   },
+   "end_marker": {
+    "n": 207,
+    "recall": 0.8502415458937198,
+    "false_alarm": 0.015843429636533086,
+    "dist_mae": 31.213012542236935,
+    "by_distance": {
+     "0-50": {
+      "n": 16,
+      "recall": 0.0,
+      "dist_mae": null,
+      "dist_rel": null
+     },
+     "50-100": {
+      "n": 23,
+      "recall": 0.5217391304347826,
+      "dist_mae": 6.340538918972015,
+      "dist_rel": 0.09163618006945802
+     },
+     "100-200": {
+      "n": 57,
+      "recall": 0.9649122807017544,
+      "dist_mae": 20.079434282129462,
+      "dist_rel": 0.12036265169885914
+     },
+     "200-330": {
+      "n": 69,
+      "recall": 0.9855072463768116,
+      "dist_mae": 27.82177002289716,
+      "dist_rel": 0.1097666987356711
+     },
+     "330-400": {
+      "n": 42,
+      "recall": 0.9761904761904762,
+      "dist_mae": 59.05254861785144,
+      "dist_rel": 0.16259038850914118
+     }
+    }
+   },
+   "release_sign": {
+    "n": 85,
+    "recall": 0.43529411764705883,
+    "false_alarm": 0.0,
+    "dist_mae": 28.405037918606318,
+    "by_distance": {
+     "0-50": {
+      "n": 18,
+      "recall": 0.0,
+      "dist_mae": null,
+      "dist_rel": null
+     },
+     "50-100": {
+      "n": 10,
+      "recall": 0.0,
+      "dist_mae": null,
+      "dist_rel": null
+     },
+     "100-200": {
+      "n": 23,
+      "recall": 0.391304347826087,
+      "dist_mae": 18.37311538060506,
+      "dist_rel": 0.12733667115294048
+     },
+     "200-330": {
+      "n": 34,
+      "recall": 0.8235294117647058,
+      "dist_mae": 31.629584448678152,
+      "dist_rel": 0.11427921309052656
+     },
+     "330-400": {
+      "n": 0,
+      "recall": null,
+      "dist_mae": null,
+      "dist_rel": null
+     }
+    }
+   },
+   "light_color": {
+    "n": 485,
+    "teacher_roi_known_acc": 0.9443298969072165,
+    "runtime_roi_known_acc": 0.8164948453608247,
+    "runtime_detected_rate": 0.8350515463917526,
+    "mean_roi_iou": 0.6233762142046825,
+    "by_distance": {
+     "0-20": {
+      "n": 106,
+      "runtime_known_acc": 0.6981132075471698,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "20-50": {
+      "n": 65,
+      "runtime_known_acc": 0.6307692307692307,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "50-100": {
+      "n": 106,
+      "runtime_known_acc": 0.8867924528301887,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "100-150": {
+      "n": 95,
+      "runtime_known_acc": 0.9052631578947369,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     },
+     "150-215": {
+      "n": 113,
+      "runtime_known_acc": 0.8938053097345132,
+      "red_to_green": 0,
+      "yellow_to_green": 0
+     }
+    }
+   }
+  }
+ },
+ "dev_signal_metrics": {
+  "roi_head": {
+   "n": 485,
+   "acc": 0.9443298969072165,
+   "red_to_green": 0,
+   "green_to_nongreen": 18,
+   "unknown_rate": 0.0,
+   "known_acc": 0.9443298969072165,
+   "unknown_recall": null,
+   "n_known": 485,
+   "n_unknown": 0
+  },
+  "z_head": {
+   "n": 118,
+   "acc": 0.9491525423728814,
+   "red_to_green": 0,
+   "green_to_nongreen": 5,
+   "unknown_rate": 0.0,
+   "known_acc": 0.9491525423728814,
+   "unknown_recall": null,
+   "n_known": 118,
+   "n_unknown": 0
+  }
+ },
+ "dev_roi_head_by_distance": {
+  "0-5m": {
+   "n": 88,
+   "known_acc": 0.9204545454545454,
+   "green_recall": 0.8076923076923077,
+   "green_p_median": 0.7943053841590881,
+   "yellow_to_green": 0.0,
+   "red_to_green": 0.0,
+   "n_yellow": 8,
+   "n_green": 26,
+   "n_red": 54
+  },
+  "5-20m": {
+   "n": 18,
+   "known_acc": 0.7777777777777778,
+   "green_recall": 0.42857142857142855,
+   "green_p_median": 0.40423062443733215,
+   "yellow_to_green": null,
+   "red_to_green": 0.0,
+   "n_yellow": 0,
+   "n_green": 7,
+   "n_red": 11
+  },
+  "20-50m": {
+   "n": 65,
+   "known_acc": 0.8461538461538461,
+   "green_recall": 0.8461538461538461,
+   "green_p_median": 0.8964245915412903,
+   "yellow_to_green": 0.0,
+   "red_to_green": 0.0,
+   "n_yellow": 8,
+   "n_green": 39,
+   "n_red": 18
+  },
+  "50-100m": {
+   "n": 106,
+   "known_acc": 0.9905660377358491,
+   "green_recall": 1.0,
+   "green_p_median": 0.9818317890167236,
+   "yellow_to_green": 0.0,
+   "red_to_green": 0.0,
+   "n_yellow": 19,
+   "n_green": 27,
+   "n_red": 60
+  },
+  "100-200m": {
+   "n": 208,
+   "known_acc": 0.9759615384615384,
+   "green_recall": 0.9659090909090909,
+   "green_p_median": 0.9963906407356262,
+   "yellow_to_green": 0.0,
+   "red_to_green": 0.0,
+   "n_yellow": 19,
+   "n_green": 88,
+   "n_red": 101
+  },
+  "200-450m": {
+   "n": 0,
+   "known_acc": null,
+   "green_recall": null,
+   "green_p_median": null,
+   "yellow_to_green": null,
+   "red_to_green": null,
+   "n_yellow": 0,
+   "n_green": 0,
+   "n_red": 0
+  }
+ },
+ "args": {
+  "steps": 1200,
+  "lr": 3e-05,
+  "n_off": 1200,
+  "batch": 16,
+  "seed": 707,
+  "out": "pretrain_v4_off",
+  "init": "runs/pretrain_v4_off/encoder_round1.pt",
+  "off_frac": 0.35
+ },
+ "wall_s": 282.4055407820001
+}

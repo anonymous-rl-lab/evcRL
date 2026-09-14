@@ -26,12 +26,12 @@ def compact(seqs):
             L = f['labels']; L['heat'] = L['heat'].astype(np.uint8); L['heat_valid'] = L['heat_valid'].astype(np.uint8); L['box_valid'] = L['box_valid'].astype(np.uint8)
 
 
-def make_sequences(n, seed, tag, coverage='v2', world=None):
+def make_sequences(n, seed, tag, coverage='v2', world=None, hide=()):
     """生成 n 个 4 帧序列。coverage='v2'：原采样（60% x∈[2200,3000]，v∈[4,22]，相位均匀）。
     coverage='v3'：分层覆盖——30% 原区间；25% 近线 x∈[2900,3000]、v∈[0,12]；10% 停在线上 x∈[2994,3000]、v∈[0,2]；
     20% 全路线；15% 相位定向（x∈[2500,3000]，相位落在绿末/黄/红初 [26,38) s），使近距离与黄灯不再是覆盖缺口。"""
     world = world or ('v4' if coverage in ('v4', 'v4b') else 'v2')
-    cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=seed, world=world); rng = np.random.default_rng(seed + 1)
+    cam = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=seed, world=world); rng = np.random.default_rng(seed + 1); cam.hide = set(hide)   # v6：可生成灭灯（light_color 隐藏）序列
     seqs = []; xs = S.R.SIGNALS[0]; ca, cb, _ = S.R.CURVES[0]
     for i in range(n):
         eid = f'{tag}{i:05d}'; cam.new_episode(eid)
