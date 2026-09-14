@@ -12,6 +12,7 @@ Code and experiment records of the manuscript *Environment-Aware Reinforcement L
 | P-C — Sec. VI-A, Supp. F.1–F.4 (Tables III, S2–S4, Fig. S2) | `comfort/` | archived complete-executor development package (r0/r1/r2), settled baseline traces, extracted frozen actors A/B | `python comfort/reproduce.py [--rollout]` |
 | P-T — Sec. VI-B, Supp. F.5–F.8 (Table IV, S5, Fig. 3) | `timing/` | self-contained timing-use experiment: frozen actor A, paired color/timing records | `python timing/code/audit.py`; `python timing/verify_tables.py` |
 | Reference context — Sec. VI-F, Supp. I | `long_route/` | frozen 20 km simulator and TD3 trainer, eight archived seeds (curves, selected checkpoints, references), gates, checkpoint replay, retraining scripts | `bash long_route/scripts/run_gates.sh`; `python long_route/scripts/replay_selected_checkpoints.py` |
+| Frozen supplementary validation (post-v27): R1 paper_v25 vs guard_v26 (54), R2 constant command (9), R3 timing-use on 18 extension conditions (36) | `validation_frozen/` | protocol lock, thin runners derived from the archived evaluators, 99 raw episode records, independent recomputation, pair/event tables, figures, `REPORT_zh.md`, replaceable manuscript paragraphs | `python validation_frozen/metrics.py`; resume command in `validation_frozen/README.md` |
 | Record calculators, figures — Supp. J | `analysis/` | verification calculators with their frozen inputs and outputs, formula checks, figure generators and figures, sampled LP scans | calculators listed in `analysis/verification/VERIFICATION_v27.md` |
 
 Seed indices 0/1/2 of the visual study are training seeds 7/8/9 and run directories `visual/runs/v4r`, `v4r_s1`, `v4r_s2`. Arms F/S/J/JH are `frozen`, `supervised`, `joint`, `joint_head`.
@@ -32,6 +33,7 @@ The archived 20 km code reads `EVSIM_ROUTE` at import: the visual, comfort and t
 | `timing/code/audit.py`, `timing/code/analyze.py pilot`, `timing/verify_tables.py` | source/weight identity intact; Tables IV and S5 and the condition-7 event match (`timing/reports/table_checks.json`) |
 | `analysis/verification/*`: framework, diagnostics, target-memory calculators, preparation checks | all pass; regenerated outputs identical to the delivered paper package |
 | `long_route/scripts/run_gates.sh` | check_env, six verify.py checks, eight regression tests pass (`long_route/results/gates.txt`) |
+| `validation_frozen/`: 99 frozen-inference episodes; `paper_v25` arm vs archived S records; two complete runs | all 99 completed, no driving or technical failure; baseline exact for 27/27; runs bit-identical (`validation_frozen/baseline_check.json`, `REPORT_zh.md`) |
 | `software/EvcRL`: 26 contract tests; camera `paper_v25` vs archived `VisionEnv`, structured 4/20 km vs archived `env20` | pass; bit-identical (`software/EvcRL/SOFTWARE_VERIFICATION.json`) |
 
 The manuscript and this repository refer to EvcRL 0.0.1, the hardened release (26 tests, pinned `paper_v25` rule identity, bit-exact against the archived simulators). Its packaged rules are those of the 0.1.0 draft the paper package originally shipped; only the packaging and its verification changed (`software/EvcRL/CHANGELOG.md`).
