@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "Please cite the accompanying research manuscript when using this local software release."
+title: "EvcRL: Environment-Aware Electric Vehicle Eco-Driving"
+version: 0.0.1
+date-released: 2026-09-14
+authors:
+  - family-names: Peng
+    given-names: Ziran
+    affiliation: Hunan University of Technology

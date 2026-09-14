@@ -1,0 +1,51 @@
+{
+  "package": "evcrl 0.0.1",
+  "archived_research_sources": {
+    "repository": "https://github.com/anonymous-rl-lab/evcRL",
+    "commit": "05dd44250d613ca499672089d0adce7102391a35",
+    "files": {
+      "TIV_visual_development/visual_dev/vision_state.py": "2d00ae56860e1c590e5605a123fa4c8b1cd37e07a9279feee729e75456018ceb",
+      "TIV_visual_development/visual_dev/renderer.py": "e93f267f8a8dfa27e185539df0241bddb7f1d370aac9a5a32f4bb06f6aabd573",
+      "TIV_visual_development/visual_dev/pipeline.py": "56d45d9220322251059b443ac57087cd21e0e1d126350e79953617cafa8d086b",
+      "TIV_visual_development/v19_deps/code/curve_layer.py": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0",
+      "TIV_visual_development/v19_deps/code/env20.py": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba",
+      "TIV_visual_development/v19_deps/code/route20.py": "fde16d41f3c52d09f7b52b837a0ef1ba4237142ca0f45c3cbc64bc005cb41d2a",
+      "TIV_visual_development/v19_deps/code/study.py": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+      "TIV_visual_development/v19_deps/code/plant.py": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4",
+      "TIV_visual_development/v19_deps/code/models.py": "b026d0e5839a34042b8eaa6a705735ef8784523ae072072251c74fe83bbf97e1",
+      "TIV_visual_development/v19_deps/code/effcal.py": "5f09b711f4aa55543984bd99f8f339d97be7a6672d44d2ce6953b8658d0be551",
+      "TIV_visual_development/v19_deps/code/scn/arterial_mini_profile.npy": "9d3059edab41689af07262573187afd6cafb52afeafe044b4881d9d0a0f1d537",
+      "evsim_v9/scn/arterial_profile.npy": "4a935c5ef28f98094dce8c1c98716c3ad3e23c46d60e283702f8c989820c07d0",
+      "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  },
+  "derivation": {
+    "memory.py": "vision_state.VisionMemory with route_length/propagation/guard per instance, get_state/set_state; v6 colorless_track and light_stop_target not packaged (paper_v25 rules only)",
+    "execution.py": "curve_layer functions as an Executor instance (jerk 2/3/4 at dt 0.5)",
+    "backend.py": "env20.Route20 with route and parameters bound per instance (parameters() namespace, no module mutation)",
+    "route.py": "route20 geometry; profile_limit loads the exported SUMO profiles bundled in data/ (bit-identical to env20.v_limit)",
+    "camera.py": "renderer.SceneCamera; RENDER_CELL_ASSIGN environment variable replaced by the constant 'floor'",
+    "plant.py / models.py / effcal.py": "unchanged archived plant, energy and efficiency models (relative imports)",
+    "env.py": "new Gymnasium adapter: command held for repeat substeps, execution record, terminated/truncated split, snapshots, identities",
+    "profiles.py / oracle.py": "new: frozen rule profiles and identities; truth-based oracle detector (archived pipeline 'oracle' perception rule)"
+  },
+  "packaged_modules": {
+    "__init__.py": "33d8a688f624dd94028c1d92b3619969ae0b1bb9816065f229c4232c653f18b3",
+    "_version.py": "b172e1ee0dca0b84021717191814e91b6b1c47b866981b0c8eae8ba91a6d9118",
+    "backend.py": "f87ba2794d1a0adaa1b61b4b21fff1e29aad46ffba08bfca1678aed451277e52",
+    "camera.py": "450084726ec547ae3019cb70204073384a05f3d35899e5c87590d1f4db55dc67",
+    "cli.py": "703b0f0d7014bcba2783d6df14a5c9ed4a16c4c2d397dd9617c3a0dfb10f2c62",
+    "effcal.py": "89b17e93f5496ca9a29d0177b93521aae51b00dbc003dc5075aa82d712d16276",
+    "env.py": "6b04a63b74af8e974f0d061b3bf7bfd6af8c9c573a3e10c107ceb23be9fe188e",
+    "execution.py": "37be3b7325e4d42a3103a836b16bf48684ffaa799cdc3486c807ea3c2987379a",
+    "memory.py": "6b3c899989c2328dc14383e77b71cf7a00e928c67703394080073624a79f2b37",
+    "models.py": "3201d04d319f187cacac163529a2516e65a78d7b7c192d97b4503580f99bdcc9",
+    "oracle.py": "598c464e65bc3990e289208de1201b96cff9f1386aa32723f00293dea566b12a",
+    "plant.py": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4",
+    "profiles.py": "848807e1fe99b8c3fdce10088afe6f2d77486f41508d32b2375c1a778af174fe",
+    "route.py": "d12dc21ca7116cb876b9430a1680ee410f6c9fc92f2afe795b75d17896f6ea1e",
+    "arterial_mini_profile.npy": "9d3059edab41689af07262573187afd6cafb52afeafe044b4881d9d0a0f1d537",
+    "arterial_profile.npy": "4a935c5ef28f98094dce8c1c98716c3ad3e23c46d60e283702f8c989820c07d0"
+  },
+  "equivalence_against_archive": "verification/equivalence_vs_archive (bit-exact: 4 km camera+oracle for signal offsets 0/40/70 s, 4 km structured, 20 km structured)"
+}

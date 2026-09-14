@@ -1,0 +1,172 @@
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=77
+* Getting build dependencies for sdist...
+running egg_info
+creating src/evcrl.egg-info
+writing src/evcrl.egg-info/PKG-INFO
+writing dependency_links to src/evcrl.egg-info/dependency_links.txt
+writing entry points to src/evcrl.egg-info/entry_points.txt
+writing requirements to src/evcrl.egg-info/requires.txt
+writing top-level names to src/evcrl.egg-info/top_level.txt
+writing manifest file 'src/evcrl.egg-info/SOURCES.txt'
+reading manifest file 'src/evcrl.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'src/evcrl.egg-info/SOURCES.txt'
+* Installed build dependency versions:
+  - setuptools==84.0.0
+* Building sdist...
+running sdist
+running egg_info
+writing src/evcrl.egg-info/PKG-INFO
+writing dependency_links to src/evcrl.egg-info/dependency_links.txt
+writing entry points to src/evcrl.egg-info/entry_points.txt
+writing requirements to src/evcrl.egg-info/requires.txt
+writing top-level names to src/evcrl.egg-info/top_level.txt
+reading manifest file 'src/evcrl.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'src/evcrl.egg-info/SOURCES.txt'
+running check
+creating evcrl-0.0.1
+creating evcrl-0.0.1/src/evcrl
+creating evcrl-0.0.1/src/evcrl.egg-info
+creating evcrl-0.0.1/src/evcrl/data
+creating evcrl-0.0.1/tests
+copying files to evcrl-0.0.1...
+copying CHANGELOG.md -> evcrl-0.0.1
+copying CITATION.cff -> evcrl-0.0.1
+copying DISTRIBUTION_STATUS.md -> evcrl-0.0.1
+copying LICENSE -> evcrl-0.0.1
+copying MANIFEST.in -> evcrl-0.0.1
+copying README.md -> evcrl-0.0.1
+copying SOURCE_PROVENANCE.json -> evcrl-0.0.1
+copying pyproject.toml -> evcrl-0.0.1
+copying src/evcrl/__init__.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/_version.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/backend.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/camera.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/cli.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/effcal.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/env.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/execution.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/memory.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/models.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/oracle.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/plant.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/profiles.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl/route.py -> evcrl-0.0.1/src/evcrl
+copying src/evcrl.egg-info/PKG-INFO -> evcrl-0.0.1/src/evcrl.egg-info
+copying src/evcrl.egg-info/SOURCES.txt -> evcrl-0.0.1/src/evcrl.egg-info
+copying src/evcrl.egg-info/dependency_links.txt -> evcrl-0.0.1/src/evcrl.egg-info
+copying src/evcrl.egg-info/entry_points.txt -> evcrl-0.0.1/src/evcrl.egg-info
+copying src/evcrl.egg-info/requires.txt -> evcrl-0.0.1/src/evcrl.egg-info
+copying src/evcrl.egg-info/top_level.txt -> evcrl-0.0.1/src/evcrl.egg-info
+copying src/evcrl/data/arterial_mini_profile.npy -> evcrl-0.0.1/src/evcrl/data
+copying src/evcrl/data/arterial_profile.npy -> evcrl-0.0.1/src/evcrl/data
+copying tests/expected_identities.json -> evcrl-0.0.1/tests
+copying tests/test_contract.py -> evcrl-0.0.1/tests
+Writing evcrl-0.0.1/setup.cfg
+Creating tar archive
+removing 'evcrl-0.0.1' (and everything under it)
+* Building wheel from sdist
+* Creating isolated environment: venv+pip...
+* Installing packages in isolated environment:
+  - setuptools>=77
+* Getting build dependencies for wheel...
+running egg_info
+writing src/evcrl.egg-info/PKG-INFO
+writing dependency_links to src/evcrl.egg-info/dependency_links.txt
+writing entry points to src/evcrl.egg-info/entry_points.txt
+writing requirements to src/evcrl.egg-info/requires.txt
+writing top-level names to src/evcrl.egg-info/top_level.txt
+reading manifest file 'src/evcrl.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'src/evcrl.egg-info/SOURCES.txt'
+* Installed build dependency versions:
+  - setuptools==84.0.0
+* Building wheel...
+running bdist_wheel
+running build
+running build_py
+creating build/lib/evcrl
+copying src/evcrl/cli.py -> build/lib/evcrl
+copying src/evcrl/camera.py -> build/lib/evcrl
+copying src/evcrl/effcal.py -> build/lib/evcrl
+copying src/evcrl/__init__.py -> build/lib/evcrl
+copying src/evcrl/backend.py -> build/lib/evcrl
+copying src/evcrl/execution.py -> build/lib/evcrl
+copying src/evcrl/oracle.py -> build/lib/evcrl
+copying src/evcrl/route.py -> build/lib/evcrl
+copying src/evcrl/plant.py -> build/lib/evcrl
+copying src/evcrl/profiles.py -> build/lib/evcrl
+copying src/evcrl/env.py -> build/lib/evcrl
+copying src/evcrl/memory.py -> build/lib/evcrl
+copying src/evcrl/_version.py -> build/lib/evcrl
+copying src/evcrl/models.py -> build/lib/evcrl
+running egg_info
+writing src/evcrl.egg-info/PKG-INFO
+writing dependency_links to src/evcrl.egg-info/dependency_links.txt
+writing entry points to src/evcrl.egg-info/entry_points.txt
+writing requirements to src/evcrl.egg-info/requires.txt
+writing top-level names to src/evcrl.egg-info/top_level.txt
+reading manifest file 'src/evcrl.egg-info/SOURCES.txt'
+reading manifest template 'MANIFEST.in'
+adding license file 'LICENSE'
+writing manifest file 'src/evcrl.egg-info/SOURCES.txt'
+creating build/lib/evcrl/data
+copying src/evcrl/data/arterial_mini_profile.npy -> build/lib/evcrl/data
+copying src/evcrl/data/arterial_profile.npy -> build/lib/evcrl/data
+installing to build/bdist.linux-x86_64/wheel
+running install
+running install_lib
+creating build/bdist.linux-x86_64/wheel
+creating build/bdist.linux-x86_64/wheel/evcrl
+copying build/lib/evcrl/cli.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/camera.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/effcal.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/__init__.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/backend.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/execution.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/oracle.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/route.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/plant.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/profiles.py -> build/bdist.linux-x86_64/wheel/./evcrl
+creating build/bdist.linux-x86_64/wheel/evcrl/data
+copying build/lib/evcrl/data/arterial_mini_profile.npy -> build/bdist.linux-x86_64/wheel/./evcrl/data
+copying build/lib/evcrl/data/arterial_profile.npy -> build/bdist.linux-x86_64/wheel/./evcrl/data
+copying build/lib/evcrl/env.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/memory.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/_version.py -> build/bdist.linux-x86_64/wheel/./evcrl
+copying build/lib/evcrl/models.py -> build/bdist.linux-x86_64/wheel/./evcrl
+running install_egg_info
+Copying src/evcrl.egg-info to build/bdist.linux-x86_64/wheel/./evcrl-0.0.1-py3.11.egg-info
+running install_scripts
+creating build/bdist.linux-x86_64/wheel/evcrl-0.0.1.dist-info/WHEEL
+creating '/tmp/claude-0/-home-user-PaD/97d619f6-5192-55f9-8ce3-1687d24a8b93/scratchpad/evcrl_pkg/EvcRL_v0_0_1/dist/.tmp-fwc1t9c7/evcrl-0.0.1-py3-none-any.whl' and adding 'build/bdist.linux-x86_64/wheel' to it
+adding 'evcrl/__init__.py'
+adding 'evcrl/_version.py'
+adding 'evcrl/backend.py'
+adding 'evcrl/camera.py'
+adding 'evcrl/cli.py'
+adding 'evcrl/effcal.py'
+adding 'evcrl/env.py'
+adding 'evcrl/execution.py'
+adding 'evcrl/memory.py'
+adding 'evcrl/models.py'
+adding 'evcrl/oracle.py'
+adding 'evcrl/plant.py'
+adding 'evcrl/profiles.py'
+adding 'evcrl/route.py'
+adding 'evcrl/data/arterial_mini_profile.npy'
+adding 'evcrl/data/arterial_profile.npy'
+adding 'evcrl-0.0.1.dist-info/licenses/LICENSE'
+adding 'evcrl-0.0.1.dist-info/METADATA'
+adding 'evcrl-0.0.1.dist-info/WHEEL'
+adding 'evcrl-0.0.1.dist-info/entry_points.txt'
+adding 'evcrl-0.0.1.dist-info/top_level.txt'
+adding 'evcrl-0.0.1.dist-info/RECORD'
+removing build/bdist.linux-x86_64/wheel
+Successfully built evcrl-0.0.1.tar.gz and evcrl-0.0.1-py3-none-any.whl

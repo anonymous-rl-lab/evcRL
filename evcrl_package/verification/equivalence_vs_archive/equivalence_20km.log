@@ -1,0 +1,8 @@
+  ended orig done=True t=791.0 x=20000.5 | pkg reason=settled t=791.0 x=20000.5
+  substeps 1582/1582  max|diff| v,a,r = 0.000e+00   obs = 0.000e+00   final x 20000.538083 vs 20000.538083 e_batt 12512144.650949 vs 12512144.650949
+  ended orig done=True t=824.0 x=20000.4 | pkg reason=settled t=824.0 x=20000.4
+  substeps 1648/1648  max|diff| v,a,r = 0.000e+00   obs = 0.000e+00   final x 20000.438223 vs 20000.438223 e_batt 13116934.794194 vs 13116934.794194
+  ended orig done=True t=851.5 x=20000.5 | pkg reason=settled t=851.5 x=20000.5
+  substeps 1703/1703  max|diff| v,a,r = 0.000e+00   obs = 0.000e+00   final x 20000.527524 vs 20000.527524 e_batt 14322542.118936 vs 14322542.118936
+{"structured_20km": true}
+exit 0

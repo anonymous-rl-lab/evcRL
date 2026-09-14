@@ -1,0 +1,46 @@
+  ended: orig done=True at t=230.5; pkg terminated=True truncated=False reason=settled t=230.5
+structured-mini x/v/a/r final            n=    4 max|diff|=0.000e+00 OK
+structured-mini substep reward           n=  461 max|diff|=0.000e+00 OK
+structured-mini substep v                n=  461 max|diff|=0.000e+00 OK
+structured-mini substep a                n=  461 max|diff|=0.000e+00 OK
+structured-mini obs (13-dim, per decision) n= 1495 max|diff|=0.000e+00 OK
+  ended: orig=settled t=259.0 x=4018.0 | pkg reason=settled t=259.0 x=4018.0
+  substeps orig=518 pkg=518
+camera-oracle x (decision boundaries)    n=  129 max|diff|=0.000e+00 OK
+camera-oracle v                          n=  518 max|diff|=0.000e+00 OK
+camera-oracle a                          n=  518 max|diff|=0.000e+00 OK
+camera-oracle reward                     n=  518 max|diff|=0.000e+00 OK
+camera-oracle e_batt (decision boundaries) n=  129 max|diff|=0.000e+00 OK
+camera-oracle applied                    n=  518 max|diff|=0.000e+00 OK
+camera-oracle fallback                   n=  518 max|diff|=0.000e+00 OK
+  memory snapshots identical at decision boundaries: checking last
+camera-oracle final rgb frame            n=46080 max|diff|=0.000e+00 OK
+  ended: orig=settled t=305.5 x=4017.1 | pkg reason=settled t=305.5 x=4017.1
+  substeps orig=611 pkg=611
+camera-oracle x (decision boundaries)    n=  152 max|diff|=0.000e+00 OK
+camera-oracle v                          n=  611 max|diff|=0.000e+00 OK
+camera-oracle a                          n=  611 max|diff|=0.000e+00 OK
+camera-oracle reward                     n=  611 max|diff|=0.000e+00 OK
+camera-oracle e_batt (decision boundaries) n=  152 max|diff|=0.000e+00 OK
+camera-oracle applied                    n=  611 max|diff|=0.000e+00 OK
+camera-oracle fallback                   n=  611 max|diff|=0.000e+00 OK
+  memory snapshots identical at decision boundaries: checking last
+camera-oracle final rgb frame            n=46080 max|diff|=0.000e+00 OK
+  ended: orig=settled t=293.0 x=4017.8 | pkg reason=settled t=293.0 x=4017.8
+  substeps orig=586 pkg=586
+camera-oracle x (decision boundaries)    n=  146 max|diff|=0.000e+00 OK
+camera-oracle v                          n=  586 max|diff|=0.000e+00 OK
+camera-oracle a                          n=  586 max|diff|=0.000e+00 OK
+camera-oracle reward                     n=  586 max|diff|=0.000e+00 OK
+camera-oracle e_batt (decision boundaries) n=  146 max|diff|=0.000e+00 OK
+camera-oracle applied                    n=  586 max|diff|=0.000e+00 OK
+camera-oracle fallback                   n=  586 max|diff|=0.000e+00 OK
+  memory snapshots identical at decision boundaries: checking last
+camera-oracle final rgb frame            n=46080 max|diff|=0.000e+00 OK
+{
+ "structured_mini": true,
+ "camera_oracle_off0": true,
+ "camera_oracle_off40": true,
+ "camera_oracle_off70": true
+}
+exit 0
