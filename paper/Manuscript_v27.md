@@ -107,7 +107,7 @@ The P-V base executor is byte-identical to the release-aware base used in P-C. V
 
 ### D. A reusable environment interface
 
-The locally installable EvcRL 0.1.0 source and wheel provide Gymnasium camera and structured-input environments with per-instance configuration. Camera mode returns RGB and ego quantities; an optional detector receives RGB only. The public action is the held command in (2), logged separately from applied substeps. Snapshots preserve environment state and camera randomness. Historical task deadlines remain distinct from external truncation. The original memory profile and experimental alternatives are explicit. Supplementary Section C documents installation and API checks; pretrained drivers and a public package-index release are outside this local distribution.
+The locally installable EvcRL 0.0.1 source and wheel provide Gymnasium camera and structured-input environments with per-instance configuration. Camera mode returns RGB and ego quantities; an optional detector receives RGB only. The public action is the held command in (2), logged separately from applied substeps. Snapshots preserve environment state and camera randomness. Historical task deadlines remain distinct from external truncation. The original memory profile and experimental alternatives are explicit. Supplementary Section C documents installation and API checks; pretrained drivers and a public package-index release are outside this local distribution.
 
 ## IV. COMFORT-ORIENTED COMMANDS AND RELEASE-AWARE EXECUTION
 
