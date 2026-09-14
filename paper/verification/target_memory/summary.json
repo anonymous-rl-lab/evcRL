@@ -1,0 +1,54 @@
+{
+  "accounting": {
+    "n": 195,
+    "classes": {
+      "highspeed_update": 36,
+      "freeze_crossing": 92,
+      "creep": 32,
+      "adoption_step": 15,
+      "before_adoption": 16,
+      "highspeed_already_negative": 4
+    },
+    "positive_propagated": 191,
+    "positive_noncreep": 159,
+    "noncreep": 163,
+    "identity_max": 1.3322676295501878e-14,
+    "creep_propagation_residual": 3.7470027081099033e-16,
+    "flag_count": 99,
+    "actual_exceedances": 99,
+    "post_adoption_flags": 88,
+    "post_adoption_actual_exceedances": 88,
+    "timing": {
+      "none": 235,
+      "at": 17,
+      "after": 174,
+      "before": 6
+    },
+    "timing_by_speed": {
+      "v6_formal_v16": {
+        "after": 73,
+        "none": 144,
+        "at": 11
+      },
+      "v6_formal_v22": {
+        "none": 91,
+        "at": 6,
+        "after": 101,
+        "before": 6
+      }
+    }
+  },
+  "memory_replay": {
+    "episodes": 27,
+    "records": 12081,
+    "original_mismatch_records": 0,
+    "local_guard_rejections": 3,
+    "recursive_guard_rejections": 4,
+    "m1_phase_differences": 0,
+    "m2_phase_differences": 2,
+    "scientific_vehicle_rollouts": 0,
+    "new_training_steps": 0,
+    "gate_pass": true,
+    "scope": "recursive memory under fixed recorded motion/detections; not changed policy trajectories"
+  }
+}

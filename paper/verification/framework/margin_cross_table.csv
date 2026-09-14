@@ -1,0 +1,17 @@
+tag,margin,category,n,later_override,full_approach_override
+v6_formal_v22,m_true,negative,0,0,0
+v6_formal_v22,m_true,nonnegative,204,111,113
+v6_formal_v22,m_true,infeasible,0,0,0
+v6_formal_v22,m_true,missing,0,0,0
+v6_formal_v22,m_est,negative,0,0,0
+v6_formal_v22,m_est,nonnegative,204,111,113
+v6_formal_v22,m_est,infeasible,0,0,0
+v6_formal_v22,m_est,missing,0,0,0
+v6_formal_v16,m_true,negative,0,0,0
+v6_formal_v16,m_true,nonnegative,228,84,84
+v6_formal_v16,m_true,infeasible,0,0,0
+v6_formal_v16,m_true,missing,0,0,0
+v6_formal_v16,m_est,negative,0,0,0
+v6_formal_v16,m_est,nonnegative,228,84,84
+v6_formal_v16,m_est,infeasible,0,0,0
+v6_formal_v16,m_est,missing,0,0,0

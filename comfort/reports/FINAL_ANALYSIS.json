@@ -1,0 +1,250 @@
+{
+  "baseline": {
+    "A": {
+      "n": 9,
+      "settled": 9,
+      "red": 0,
+      "physical": 0,
+      "mean": {
+        "Ij": 86.77573368598694,
+        "jerk_rms": 0.559971595806528,
+        "time_s": 270.8888888888889,
+        "E_Wh": 450.8205490754261,
+        "overspeed_time": 0.5
+      },
+      "peak_jerk": 6.483158241727168,
+      "peak_overspeed": 0.6123531402640694
+    },
+    "B": {
+      "n": 9,
+      "settled": 9,
+      "red": 0,
+      "physical": 0,
+      "mean": {
+        "Ij": 60.69005201629271,
+        "jerk_rms": 0.4420283283780747,
+        "time_s": 303.1666666666667,
+        "E_Wh": 363.3874896324901,
+        "overspeed_time": 0.0
+      },
+      "peak_jerk": 6.809463250963123,
+      "peak_overspeed": 0.0
+    }
+  },
+  "versions": {
+    "frozen_s7": {
+      "A": {
+        "n": 9,
+        "settled": 8,
+        "red": 1,
+        "physical": 0,
+        "mean": {
+          "Ij": 66.50293085230095,
+          "jerk_rms": 0.5112412092964419,
+          "time_s": 252.94444444444446,
+          "E_Wh": 437.9764130603978,
+          "overspeed_time": 0.3333333333333333
+        },
+        "peak_jerk": 7.738191819190979,
+        "peak_overspeed": 0.7459436886346147,
+        "fallback_steps": 26
+      },
+      "B": {
+        "n": 9,
+        "settled": 9,
+        "red": 0,
+        "physical": 0,
+        "mean": {
+          "Ij": 36.67732823328522,
+          "jerk_rms": 0.3435405653612098,
+          "time_s": 303.5,
+          "E_Wh": 360.72733531054786,
+          "overspeed_time": 0.0
+        },
+        "peak_jerk": 2.952021618569396,
+        "peak_overspeed": 9.979324033793091e-10,
+        "fallback_steps": 11
+      }
+    },
+    "frozen_s7_r1": {
+      "A": {
+        "n": 9,
+        "settled": 9,
+        "red": 0,
+        "physical": 0,
+        "mean": {
+          "Ij": 64.3341682688935,
+          "jerk_rms": 0.4836827671194733,
+          "time_s": 271.0,
+          "E_Wh": 446.5393758745106,
+          "overspeed_time": 0.3333333333333333
+        },
+        "peak_jerk": 2.0000000000000004,
+        "peak_overspeed": 0.7437605497784432,
+        "fallback_steps": 0
+      },
+      "B": {
+        "n": 9,
+        "settled": 9,
+        "red": 0,
+        "physical": 0,
+        "mean": {
+          "Ij": 34.24920919286967,
+          "jerk_rms": 0.3316894381369213,
+          "time_s": 303.55555555555554,
+          "E_Wh": 360.96958405930684,
+          "overspeed_time": 0.0
+        },
+        "peak_jerk": 2.0000000000000004,
+        "peak_overspeed": 9.979324033793091e-10,
+        "fallback_steps": 0
+      }
+    },
+    "frozen_s7_r2": {
+      "A": {
+        "n": 9,
+        "settled": 9,
+        "red": 0,
+        "physical": 0,
+        "mean": {
+          "Ij": 63.78091777367317,
+          "jerk_rms": 0.48100440418678364,
+          "time_s": 271.0,
+          "E_Wh": 446.43207177854265,
+          "overspeed_time": 0.0
+        },
+        "peak_jerk": 2.0000000000000004,
+        "peak_overspeed": 9.862652916581283e-10,
+        "fallback_steps": 0
+      },
+      "B": {
+        "n": 9,
+        "settled": 9,
+        "red": 0,
+        "physical": 0,
+        "mean": {
+          "Ij": 34.24920919286967,
+          "jerk_rms": 0.3316894381369213,
+          "time_s": 303.55555555555554,
+          "E_Wh": 360.96958405930684,
+          "overspeed_time": 0.0
+        },
+        "peak_jerk": 2.0000000000000004,
+        "peak_overspeed": 9.979324033793091e-10,
+        "fallback_steps": 0
+      }
+    }
+  },
+  "final_effects": {
+    "A": {
+      "changes": {
+        "Ij": -0.26499131653008556,
+        "jerk_rms": -0.141019994962437,
+        "time_s": 0.00041017227235440323,
+        "E_Wh": -0.00973442161384086
+      },
+      "guards": {
+        "complete": true,
+        "no_red": true,
+        "no_physical": true,
+        "lower_Ij": true,
+        "lower_RMS": true,
+        "jerk_peak": true,
+        "time": true,
+        "energy": true,
+        "overspeed_time": true,
+        "overspeed_peak": true,
+        "no_fallback": true
+      },
+      "development_pass": true
+    },
+    "B": {
+      "changes": {
+        "Ij": -0.43567012953498196,
+        "jerk_rms": -0.24961949983164555,
+        "time_s": 0.001282756093091253,
+        "E_Wh": -0.006653794206367913
+      },
+      "guards": {
+        "complete": true,
+        "no_red": true,
+        "no_physical": true,
+        "lower_Ij": true,
+        "lower_RMS": true,
+        "jerk_peak": true,
+        "time": true,
+        "energy": true,
+        "overspeed_time": true,
+        "overspeed_peak": true,
+        "no_fallback": true
+      },
+      "development_pass": true
+    }
+  },
+  "secondary_original_cut": {
+    "A": {
+      "original": {
+        "Ij": 77.86137616330205,
+        "jerk_rms": 0.5308290175607302,
+        "jerk_p95": 1.2082654853877972,
+        "jerk_max": 5.285712811953903,
+        "time_s": 270.3888888888889,
+        "E_Wh": 450.7935787911884,
+        "R": -37.860614961760426,
+        "overspeed_time_s": 0.5,
+        "overspeed_max": 5.036600573142367
+      },
+      "new": {
+        "n": 9,
+        "settled": 0,
+        "red": 0,
+        "physical": 0,
+        "mean": {
+          "Ij": 61.87915778028157,
+          "jerk_rms": 0.47407724497927756,
+          "time_s": 270.22222222222223,
+          "E_Wh": 446.3901180030618,
+          "overspeed_time": 0.0
+        },
+        "peak_jerk": 2.0000000000000004,
+        "peak_overspeed": 9.862652916581283e-10
+      },
+      "note": "Original arrival cut, prior to added settling tail; settled count not used for this secondary cut."
+    },
+    "B": {
+      "original": {
+        "Ij": 49.08260473778821,
+        "jerk_rms": 0.38916329946960243,
+        "jerk_p95": 0.11894552056363675,
+        "jerk_max": 5.484827453897863,
+        "time_s": 302.5,
+        "E_Wh": 363.35152925350644,
+        "R": -37.280655053126225,
+        "overspeed_time_s": 0.0,
+        "overspeed_max": 0.0
+      },
+      "new": {
+        "n": 9,
+        "settled": 0,
+        "red": 0,
+        "physical": 0,
+        "mean": {
+          "Ij": 32.20498758087642,
+          "jerk_rms": 0.32148011030246054,
+          "time_s": 302.6666666666667,
+          "E_Wh": 360.9216368873287,
+          "overspeed_time": 0.0
+        },
+        "peak_jerk": 2.0000000000000004,
+        "peak_overspeed": 9.979324033793091e-10
+      },
+      "note": "Original arrival cut, prior to added settling tail; settled count not used for this secondary cut."
+    }
+  },
+  "new_training_steps": 0,
+  "independent_training_seeds": 1,
+  "source_actor_variants": 2,
+  "formal_evaluation_started": false,
+  "evaluation_traces_checked": 54,
+  "scalar_checks": 270
+}

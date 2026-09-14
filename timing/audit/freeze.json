@@ -1,0 +1,19 @@
+{
+  "source_hash": "0f18ca5afd7e0864bd51728480641998254812608d2fa0c0d572a6fb9313d909",
+  "files": {
+    "code/analyze.py": "f8f069d05be0d9b2c0012f4cfff81d5441c974e311f59b778dc59f9b06903016",
+    "code/audit.py": "8ad9f56bc43dc63549fae163c755caa43f7b0d6875f79f0391782dbcbac1aa83",
+    "code/probe.py": "43602519a7b1c135d61dcaa933349152e84513152faa83743136ab9c63e70391",
+    "deps/curve_layer.py": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0",
+    "deps/effcal.py": "5f09b711f4aa55543984bd99f8f339d97be7a6672d44d2ce6953b8658d0be551",
+    "deps/env20.py": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba",
+    "deps/models.py": "b026d0e5839a34042b8eaa6a705735ef8784523ae072072251c74fe83bbf97e1",
+    "deps/plant.py": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4",
+    "deps/route20.py": "fde16d41f3c52d09f7b52b837a0ef1ba4237142ca0f45c3cbc64bc005cb41d2a",
+    "deps/scn/arterial_mini_profile.npy": "9d3059edab41689af07262573187afd6cafb52afeafe044b4881d9d0a0f1d537",
+    "deps/study.py": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+    "protocol/PROTOCOL.md": "aa6f0b310b42baf59fc4b9d5395a0d1686d27a32bd632a3a4c7789c0ed4f6ba3",
+    "protocol/provenance.json": "4d3b71ab46879b3af8630e7af65948b7e4b282b3f762cc359f1776896ee6fc49",
+    "weights/actor_A.pt": "bfd534b1ba55ce722c7e08266c0e1e6f5c9ee773ad52c8e0e3e2c9934f81afac"
+  }
+}

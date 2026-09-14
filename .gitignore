@@ -1,26 +1,20 @@
 __pycache__/
 *.py[cod]
 .venv/
-TIV_visual_development/runs/**/*.pt
-TIV_visual_development/runs/**/*.npz
-TIV_visual_development/runs/**/*.tmp
-evsim_v9/out/*
-!evsim_v9/out/.gitkeep
-evsim_v9/logs/*
-!evsim_v9/logs/.gitkeep
-# 视觉实验归档权重与固定审计样本（小文件，明确入库；池/回放/断点仍忽略）
-!TIV_visual_development/runs/pretrain/encoder.pt
-!TIV_visual_development/runs/pretrain/audit_set.npz
-!TIV_visual_development/runs/common/common_nets.pt
-!TIV_visual_development/runs/pilot_v2/*/final_nets.pt
-!TIV_visual_development/runs/pilot_v2/*/evaluation_traces/*.npz
-!TIV_visual_development/runs/smoke_v2/joint/final_nets.pt
-!TIV_visual_development/runs/pretrain_v4/encoder.pt
-!TIV_visual_development/runs/pretrain_v4/audit_set.npz
-!TIV_visual_development/runs/pretrain_v4b/encoder.pt
-!TIV_visual_development/runs/pretrain_v4b/audit_set.npz
-!TIV_visual_development/runs/v4b/common/common_nets.pt
-!TIV_visual_development/runs/v4/common/common_nets.pt
-!TIV_visual_development/runs/v4r/common/common_nets.pt
-!TIV_visual_development/runs/v4*/v4_pilot/*/final_nets.pt
-!TIV_visual_development/runs/v4*/v4_pilot/*/evaluation_traces/*.npz
+# large regenerable assets of the visual study (image pools, replay stores, resume checkpoints)
+visual/runs/**/*.pt
+visual/runs/**/*.npz
+visual/runs/**/*.pkl
+visual/runs/**/*.tmp
+# archived weights and fixed audit samples that ARE part of the delivered records
+!visual/runs/pretrain_v4/encoder.pt
+!visual/runs/pretrain_v4/audit_set.npz
+!visual/runs/v4r/common/common_nets.pt
+!visual/runs/v4r*/v4_pilot/*/final_nets.pt
+!visual/runs/v4r*/v4_pilot/*/evaluation_traces/*.npz
+!visual/runs/v5_timing/frozen_state.pkl
+!visual/runs/v5_timing/frozen_state_v16.pkl
+long_route/evsim_v9/out/*
+!long_route/evsim_v9/out/.gitkeep
+long_route/evsim_v9/logs/*
+!long_route/evsim_v9/logs/.gitkeep

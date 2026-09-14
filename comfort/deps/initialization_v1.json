@@ -1,0 +1,26 @@
+[
+  {
+    "seed": 7,
+    "source_file": "ckpt_bench_s7_1000000steps.pt",
+    "selected_step": 1000000,
+    "sha256": "4509de2de392231dedead29910780d252c86f5dcb74470d2cee3360428b6c1dd"
+  },
+  {
+    "seed": 0,
+    "source_file": "ckpt_bench_s0_4500000steps.pt",
+    "selected_step": 4500000,
+    "sha256": "8c6f52325dcb336ccf0a45072f043243d52bad92e7fcc405d9a35d198379f225"
+  },
+  {
+    "seed": 1,
+    "source_file": "ckpt_bench_s1_4000002steps.pt",
+    "selected_step": 4000002,
+    "sha256": "ce51cc265f222c75c2b9d622de4b12d8e350466091aecd31344d9d4070e02966"
+  },
+  {
+    "seed": 2,
+    "source_file": "ckpt_bench_s2_5000000steps.pt",
+    "selected_step": 5000000,
+    "sha256": "74cbf9e92d573e09c9490a4e5f85b34a444aec1a7c84505e87e1e0e0cc206565"
+  }
+]

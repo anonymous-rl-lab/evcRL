@@ -1,0 +1,194 @@
+{
+  "frozen_shipped": {
+    "wall_s": 3.5025214990000677,
+    "metrics": {
+      "Ij": 93.20864975375343,
+      "time_s": 240.0,
+      "E_Wh": 526.1393672426404,
+      "R": -38.14101722073508,
+      "end_x": 4019.277542223481,
+      "end_v": 0.017779372571170265,
+      "arrived": true,
+      "settled": true,
+      "violations": 0
+    },
+    "delta_vs_current": {
+      "Ij": 0.05148548616259063,
+      "time_s": -0.5,
+      "E_Wh": -0.02273159205265074,
+      "R": 0.040818337313901054,
+      "end_x": -0.034461517364889005,
+      "end_v": 0.01777857790126461,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "delta_vs_previous": {
+      "Ij": -0.0002059346474254653,
+      "time_s": 0.0,
+      "E_Wh": -0.0001406810273465453,
+      "R": 5.064516983566136e-06,
+      "end_x": 0.00013718815807806095,
+      "end_v": -2.2019509521298275e-08,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "memory_keys": [
+      "age",
+      "committed",
+      "conf",
+      "d_line",
+      "dur",
+      "hold",
+      "observed",
+      "observed_conf",
+      "phase",
+      "seen"
+    ]
+  },
+  "frozen_no_bypass_in_memory": {
+    "wall_s": 3.0295723489998636,
+    "metrics": {
+      "Ij": 93.15695796029911,
+      "time_s": 240.5,
+      "E_Wh": 526.1619581595194,
+      "R": -38.18183049374272,
+      "end_x": 4019.31214093914,
+      "end_v": 7.946699056571305e-07,
+      "arrived": true,
+      "settled": true,
+      "violations": 0
+    },
+    "delta_vs_current": {
+      "Ij": -0.00020630729173376494,
+      "time_s": 0.0,
+      "E_Wh": -0.00014067517372495786,
+      "R": 5.064306257906992e-06,
+      "end_x": 0.0001371982943965122,
+      "end_v": 0.0,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "delta_vs_previous": {
+      "Ij": -0.05189772810174986,
+      "time_s": 0.5,
+      "E_Wh": 0.022450235851579237,
+      "R": -0.04080820849065958,
+      "end_x": 0.03473590381736358,
+      "end_v": -0.01777859992077413,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "memory_keys": [
+      "age",
+      "committed",
+      "conf",
+      "d_line",
+      "dur",
+      "hold",
+      "observed",
+      "observed_conf",
+      "phase",
+      "seen"
+    ]
+  },
+  "joint_head_shipped": {
+    "wall_s": 2.8579204530001334,
+    "metrics": {
+      "Ij": 94.61181040578305,
+      "time_s": 239.5,
+      "E_Wh": 502.08916757781435,
+      "R": -37.235210032801426,
+      "end_x": 4017.699068837078,
+      "end_v": 0.04432553036334885,
+      "arrived": true,
+      "settled": true,
+      "violations": 0
+    },
+    "delta_vs_current": {
+      "Ij": 3.2528779826179743e-05,
+      "time_s": 0.0,
+      "E_Wh": -1.3256968259156565e-05,
+      "R": 4.772508503947392e-07,
+      "end_x": 5.7035303143493365e-05,
+      "end_v": 2.028307216628278e-09,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "delta_vs_previous": {
+      "Ij": 3.2528779826179743e-05,
+      "time_s": 0.0,
+      "E_Wh": -1.3256968259156565e-05,
+      "R": 4.772508503947392e-07,
+      "end_x": 5.7035303143493365e-05,
+      "end_v": 2.028307216628278e-09,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "memory_keys": [
+      "age",
+      "committed",
+      "conf",
+      "d_line",
+      "dur",
+      "hold",
+      "observed",
+      "observed_conf",
+      "phase",
+      "seen"
+    ]
+  },
+  "joint_head_no_bypass_in_memory": {
+    "wall_s": 2.9146667690001777,
+    "metrics": {
+      "Ij": 94.76458750114807,
+      "time_s": 240.5,
+      "E_Wh": 502.1720130558568,
+      "R": -37.318192470010956,
+      "end_x": 4017.737089109664,
+      "end_v": 0.00013858431396363002,
+      "arrived": true,
+      "settled": true,
+      "violations": 0
+    },
+    "delta_vs_current": {
+      "Ij": 0.1528096241448509,
+      "time_s": 1.0,
+      "E_Wh": 0.08283222107417032,
+      "R": -0.08298195995867985,
+      "end_x": 0.03807730788912522,
+      "end_v": -0.044186944021078006,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "delta_vs_previous": {
+      "Ij": 0.1528096241448509,
+      "time_s": 1.0,
+      "E_Wh": 0.08283222107417032,
+      "R": -0.08298195995867985,
+      "end_x": 0.03807730788912522,
+      "end_v": -0.044186944021078006,
+      "arrived": 0.0,
+      "settled": 0.0,
+      "violations": 0.0
+    },
+    "memory_keys": [
+      "age",
+      "committed",
+      "conf",
+      "d_line",
+      "dur",
+      "hold",
+      "observed",
+      "observed_conf",
+      "phase",
+      "seen"
+    ]
+  }
+}

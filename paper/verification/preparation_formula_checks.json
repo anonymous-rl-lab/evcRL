@@ -1,0 +1,30 @@
+{
+  "status": "PASS",
+  "vehicle_model": {
+    "cases": 432,
+    "lp_solves": 864,
+    "complete_trajectories": 1008,
+    "max_abs_formula_or_optimizer_error": 3.9968028886505635e-15,
+    "max_abs_trip_time_error": 2.842170943040401e-14,
+    "max_abs_energy_identity_error_J": 1.3387762010097504e-09,
+    "worked_example": [
+      {
+        "information": "early",
+        "red_time": 58.8,
+        "green_time": 40.0,
+        "mean_time": 49.4,
+        "q_red": 0.6,
+        "q_green": 0.0
+      },
+      {
+        "information": "delayed",
+        "red_time": 58.8,
+        "green_time": 40.8,
+        "mean_time": 49.8,
+        "q_red": 0.6,
+        "q_green": 0.6
+      }
+    ]
+  },
+  "scope": "Independent optimization and exact integration for the declared analytical executor; no vehicle-RL experiment or unrestricted driving optimum."
+}

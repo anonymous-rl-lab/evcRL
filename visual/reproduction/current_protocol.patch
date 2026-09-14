@@ -1,0 +1,11 @@
+--- a/visual_dev/pipeline.py
++++ b/visual_dev/pipeline.py
+@@ -527,7 +527,7 @@
+                                    lamp_px_d=float(latest['lamp_px_d']), d=float(latest['light_distance_m']), roi_nonempty=int(lm['roi_pixels'] > 0), visible=int(latest['visible']), occluded=int(latest['occluded'])))
+             cmd = S.command(u)
+             for _ in range(4):
+-                if env.x >= 3999 and env.v <= .3: cmd = 0.
++                # Current protocol: retain the held actor command.
+                 _, r, d, info = env.step(cmd); cap()
+                 overshoot = env.x > S.R.LENGTH + 100.   # v4：无地图时可能冲过终点；驶出终点 100 m 视为失败终止
+                 settled_now = info['arrived'] and env.v <= (0.05 if world == 'v4' else 1e-6) and abs(env.a) <= (0.05 if world == 'v4' else 1e-6)   # v4：感知执行层停车有蠕动，0.05 m/s 视为静止

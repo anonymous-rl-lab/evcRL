@@ -1,0 +1,930 @@
+{
+  "TIV_comfort_v1/code/study.py": {
+    "bytes": 22924,
+    "sha256": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13"
+  },
+  "TIV_comfort_v1/code/env20.py": {
+    "bytes": 28531,
+    "sha256": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba"
+  },
+  "TIV_comfort_v1/code/route20.py": {
+    "bytes": 9397,
+    "sha256": "fde16d41f3c52d09f7b52b837a0ef1ba4237142ca0f45c3cbc64bc005cb41d2a"
+  },
+  "TIV_comfort_v1/code/models.py": {
+    "bytes": 7328,
+    "sha256": "b026d0e5839a34042b8eaa6a705735ef8784523ae072072251c74fe83bbf97e1"
+  },
+  "TIV_comfort_v1/code/plant.py": {
+    "bytes": 11208,
+    "sha256": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4"
+  },
+  "TIV_comfort_v1/code/effcal.py": {
+    "bytes": 4640,
+    "sha256": "5f09b711f4aa55543984bd99f8f339d97be7a6672d44d2ce6953b8658d0be551"
+  },
+  "TIV_comfort_v1/code/scn/arterial_mini_profile.npy": {
+    "bytes": 12944,
+    "sha256": "9d3059edab41689af07262573187afd6cafb52afeafe044b4881d9d0a0f1d537"
+  },
+  "TIV_comfort_v1/protocol/PROTOCOL.md": {
+    "bytes": 17319,
+    "sha256": "937fd5ac7c0d8580bbd21cc34d6c0606e348c3b963761be5be94216ce5175ea9"
+  },
+  "TIV_comfort_v1/protocol/initialization.json": {
+    "bytes": 751,
+    "sha256": "61b8321708a522b2f1d863aa5a5c1cc29423f36cb5f29d17f225c10cf2546f06"
+  },
+  "TIV_comfort_v1/initial/s0.pt": {
+    "bytes": 68651,
+    "sha256": "8c6f52325dcb336ccf0a45072f043243d52bad92e7fcc405d9a35d198379f225"
+  },
+  "TIV_comfort_v1/initial/s1.pt": {
+    "bytes": 68651,
+    "sha256": "ce51cc265f222c75c2b9d622de4b12d8e350466091aecd31344d9d4070e02966"
+  },
+  "TIV_comfort_v1/initial/s2.pt": {
+    "bytes": 68651,
+    "sha256": "74cbf9e92d573e09c9490a4e5f85b34a444aec1a7c84505e87e1e0e0cc206565"
+  },
+  "TIV_comfort_v1/initial/s7.pt": {
+    "bytes": 68651,
+    "sha256": "4509de2de392231dedead29910780d252c86f5dcb74470d2cee3360428b6c1dd"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/resume.pt": {
+    "bytes": 19461970,
+    "sha256": "37235a5f317eb9cccbcdd07ec574cde31406a43957368e36239d4b3ed759ce28"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluations/step_300000_development.json": {
+    "bytes": 16329,
+    "sha256": "4099d2a63f9b2c335719e5d514058a24e21924f679e19bb84050d5dcc66cdc25"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_00.npz": {
+    "bytes": 27398,
+    "sha256": "3828ee3ec0b0c3f59307d8c296f5cd8e5e845a7b37a37377002bd3c3194101a6"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_01.npz": {
+    "bytes": 24678,
+    "sha256": "bb16e463d5f38b4d9d8b9aaf1551b56c9d54efc2f9f98046c0032ac3ee65ea33"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_02.npz": {
+    "bytes": 29426,
+    "sha256": "017d0bb609cca1f21d0d944fd2ae7946990ba1c2debfb081049075c1ddd30dce"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_03.npz": {
+    "bytes": 27357,
+    "sha256": "9e8fb8bcaa18ab9ca95ea8ed2a2e453621a4ee7fb9a673280f8e65da869b508f"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_04.npz": {
+    "bytes": 25444,
+    "sha256": "fef5c4ab8ad2f94090d4b98d23d52f60aa7923c4e7ffd6b3553342cfdc638000"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_05.npz": {
+    "bytes": 31915,
+    "sha256": "23d63386db1f3d1c068b6ec06b2689e0e3a62bba959132110dec2268579e1b84"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_06.npz": {
+    "bytes": 29431,
+    "sha256": "1eb558e3040a93e53f26b38fa408d3cabad250f63bd115641927ebbb456683c1"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_07.npz": {
+    "bytes": 34092,
+    "sha256": "c05ab3e524e5c9a04021db6072f97934d09bf2d198ad020f850d4055694505b3"
+  },
+  "TIV_comfort_v1/runs/development/s7/A/evaluation_traces/step_300000_development_08.npz": {
+    "bytes": 34385,
+    "sha256": "ca84f9fa59aad1edba63be631427e013494335d816b2a0ca62cee190885e042c"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/resume.pt": {
+    "bytes": 19454738,
+    "sha256": "517b6ae0ac7199362bc4e9d605b883db3c8f171d57cb2a63ba739fa515f82217"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluations/step_300000_development.json": {
+    "bytes": 16514,
+    "sha256": "b2a0ef30c9d1ef6664bfe6b2c2d06ffdb54ac968512db05b9036497b1d32aebd"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_00.npz": {
+    "bytes": 28061,
+    "sha256": "b513f669d191710ca130db3951a8f54a02831a9582af454b1e17cddcbab44047"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_01.npz": {
+    "bytes": 31329,
+    "sha256": "e8ce951b3533c0831af02ce54de2b1bcf9a8c357f40265e3a55ef962a506856b"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_02.npz": {
+    "bytes": 30993,
+    "sha256": "341f1e1aca2c7d1e6005fb08967dbac417612a604953c2037a7260786459efd7"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_03.npz": {
+    "bytes": 32138,
+    "sha256": "680f58cc018d0106c190515cec07d3c6299e7c2eed0602ac289e9819e6badeab"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_04.npz": {
+    "bytes": 35006,
+    "sha256": "5f53fef3a04ee42bdf75bca21e48f66cf024a29e45d6507b705b74f8b3cb791f"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_05.npz": {
+    "bytes": 32657,
+    "sha256": "f2b97c3d562414ae6d12ac9078ac2e73df2bbde432249855111047dc0a92b1df"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_06.npz": {
+    "bytes": 31454,
+    "sha256": "44ed698e3874ca99f139b4361ff229a9d1e4f56314aa46cf2487ef9a36a0c597"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_07.npz": {
+    "bytes": 34340,
+    "sha256": "14ae5e29e6c5cdf2311de900e8ce47f7bf1e2a2c3df8b7c4d96d453e6ba03b32"
+  },
+  "TIV_comfort_v1/runs/development/s7/B/evaluation_traces/step_300000_development_08.npz": {
+    "bytes": 33711,
+    "sha256": "44c6afe791635985cd99fbda940a25c6ec8e93b8bc2e1096149dabc1ada01417"
+  },
+  "TIV_comfort_v2/DEPENDENCIES.json": {
+    "bytes": 4780,
+    "sha256": "a4f38164c19757b868d379d8229992d850579a4d88b95d91070df575a0539ba8"
+  },
+  "TIV_comfort_v2/README.md": {
+    "bytes": 2726,
+    "sha256": "d2e904acdcdbaa064bc27e8d23976b1860248853f79e9df35931f5265bcad0cc"
+  },
+  "TIV_comfort_v2/audit/layer_audit.json": {
+    "bytes": 555,
+    "sha256": "0506da1e617aa924d8bf91a840e57dad123a2946a44c9406fe04e6e65ff6a00f"
+  },
+  "TIV_comfort_v2/audit/layer_audit.log": {
+    "bytes": 447,
+    "sha256": "a0d5091d201e31b400f3b39d1ab2f70defe4e556c2a7f27db93a70196575c598"
+  },
+  "TIV_comfort_v2/audit/layer_audit_r1.log": {
+    "bytes": 555,
+    "sha256": "3ffd9a59f0bdaf5b3e335671ae06962c0f152bb7c7a7c28f173d3eb0e0de238a"
+  },
+  "TIV_comfort_v2/audit/layer_audit_r2.log": {
+    "bytes": 555,
+    "sha256": "0506da1e617aa924d8bf91a840e57dad123a2946a44c9406fe04e6e65ff6a00f"
+  },
+  "TIV_comfort_v2/code/curve_layer.py": {
+    "bytes": 5329,
+    "sha256": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0"
+  },
+  "TIV_comfort_v2/code/curve_witness.py": {
+    "bytes": 4926,
+    "sha256": "a4e41aae7aaf7005b6c845a84cb7897702a28bf39a4033a817ae4275a7210949"
+  },
+  "TIV_comfort_v2/code/diagnose.py": {
+    "bytes": 3856,
+    "sha256": "f5060b28f5aa6eefb41d4db042d59729ce39e4f61ec4ca93eb9f6282ac486709"
+  },
+  "TIV_comfort_v2/code/rollout_layer.py": {
+    "bytes": 4811,
+    "sha256": "8f712c4c8b897e9950a5bb4c95c94e7f95c306e84722e328c4ee25307664f56a"
+  },
+  "TIV_comfort_v2/code/summarize.py": {
+    "bytes": 4470,
+    "sha256": "ae97243702bbd760c37d53e5b4f7d32560fb3cea623b2d842fca468d4b970567"
+  },
+  "TIV_comfort_v2/code/test_layer.py": {
+    "bytes": 4659,
+    "sha256": "79ea22fef033192c8ae129f183a8aead1838f5b9227e73ee160536d97960096f"
+  },
+  "TIV_comfort_v2/code/write_report.py": {
+    "bytes": 10313,
+    "sha256": "706279010534989022683e79de402afc758e7c570817bccbdb2d925c5e187855"
+  },
+  "TIV_comfort_v2/protocol/IMPLEMENTATION_FIXES.md": {
+    "bytes": 2456,
+    "sha256": "be2d0dcc480835ca55550a58eedf4e0c3055646e0c6ade6eb6c7b8da57be49b6"
+  },
+  "TIV_comfort_v2/protocol/PROBE_v2.md": {
+    "bytes": 2750,
+    "sha256": "55d9d2220dfe69a35728f212fe04f5ca9479abff6c22d03e850d97fa67e615ea"
+  },
+  "TIV_comfort_v2/reports/FINAL_ANALYSIS.json": {
+    "bytes": 6586,
+    "sha256": "8643426cd7e4fe846676bf0e8ca1a485388d5dd36aa06d59222ecb3d406764f5"
+  },
+  "TIV_comfort_v2/reports/RESULTS_v2.md": {
+    "bytes": 9532,
+    "sha256": "de9512eec23d5d41dda2ece84b1cc15b13bd31211e8a6215cd099635363c3fff"
+  },
+  "TIV_comfort_v2/reports/curve_witness.json": {
+    "bytes": 19359,
+    "sha256": "9819562a9c75d429057a5ccb813a2ed34c38405fa5220219ebcf5cd777f50f6f"
+  },
+  "TIV_comfort_v2/reports/curve_witness.log": {
+    "bytes": 987,
+    "sha256": "7e1019107b1f04e8811822fe77176a40acac1ed58763c346d54758a7c8720476"
+  },
+  "TIV_comfort_v2/reports/diagnosis.json": {
+    "bytes": 46534,
+    "sha256": "75106d8c21d06b5dbd2265979f35c29319028c3e5ca44d649cfc362a2cc0a7df"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_00_stop0.npz": {
+    "bytes": 1211,
+    "sha256": "e2b8dc725b1401143218045d5646b485136c8d486415a7cf6caa705e6467e7ae"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_01_stop0.npz": {
+    "bytes": 1102,
+    "sha256": "3ec6f053d2396fb60a05b4a80998774f3f58206f5809a5ac5fafa8a0fc2c57cc"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_02_stop0.npz": {
+    "bytes": 1300,
+    "sha256": "ad6a3fb18ac580ca267b06b85d46c946710b22e2ee4566c51ebeae881cf80ce1"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_02_stop1.npz": {
+    "bytes": 1235,
+    "sha256": "5203180de99d9f407ddcb2cc859d3f75457c91223c7fd9ef757e1ff4e2548fba"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_03_stop0.npz": {
+    "bytes": 1300,
+    "sha256": "906fb06b9cb01157ae440e3155fefa7b92376f5f2fee5a8ab7c7ff49e32fa297"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_04_stop0.npz": {
+    "bytes": 1256,
+    "sha256": "76eeaa1ab519fd31e58c0bacf06dd072cee1dc766d9b4026e242596181e82b24"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_05_stop0.npz": {
+    "bytes": 1289,
+    "sha256": "43e55d61990c4636fa5ca7600c978b726a6f926242891d38bca7bfb6c81820bf"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_06_stop0.npz": {
+    "bytes": 1292,
+    "sha256": "411f9e8697812dc427569d07897e4b82dddb2838b395ccc5fef7bcadb473c44c"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_07_stop0.npz": {
+    "bytes": 1129,
+    "sha256": "6d4ca4f7fec2952133a6ea4eb5a467b1a8074dbd77ec2e41fccbe703677406f8"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_07_stop1.npz": {
+    "bytes": 1290,
+    "sha256": "d0b8ac2e14f8f79cbf0ab3471209091afe3f76de711b8ed9e00f2725de689af6"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/A_08_stop0.npz": {
+    "bytes": 1288,
+    "sha256": "c60ad06d21b0f8b18f613136c3ecee5f0cb0464ed450abf8e7220a6a5ebc20e2"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_00_stop0.npz": {
+    "bytes": 1297,
+    "sha256": "876588e86728a8cd10fb7c965c1808ea1149dc2f80bc2163dc81cba98a6c5148"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_01_stop0.npz": {
+    "bytes": 1301,
+    "sha256": "2fa9b829f6afdd50bdc4328359b1a880c5c82dc9b4018a84a0f62336f8081497"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_01_stop1.npz": {
+    "bytes": 1280,
+    "sha256": "9b8e56c7d886556fcb42cd17d4cf0801306f7ff52eb940360095156f074a9abc"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_02_stop0.npz": {
+    "bytes": 1289,
+    "sha256": "d2d794edfdf3e7c7f97e79f3dc08a38cc0b8a292db3c908366b9dfafb9c78535"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_02_stop1.npz": {
+    "bytes": 1278,
+    "sha256": "ec27612143eca97a51f08510c0007504ae148e5d67e97bcf5a3e5317a86305b2"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_03_stop0.npz": {
+    "bytes": 1290,
+    "sha256": "0affb0db93b83c739f12a2f1f9049793e2f847ea3e6e57076a0bdd3d22b67ddd"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_04_stop0.npz": {
+    "bytes": 1296,
+    "sha256": "90e2d7d4d43e54afddf9cd0da451a0eb7070b36346c8c45efdb70de25beab1af"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_04_stop1.npz": {
+    "bytes": 1302,
+    "sha256": "6bb3b6cf4aeafc26d1bcb3481aee98bf3ccd08bf4ea2c9c7b5087318752c01db"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_05_stop0.npz": {
+    "bytes": 1294,
+    "sha256": "54d067b031b76489b04f64171a4382737ab55dd45ca44207c36ea4bb656c3792"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_06_stop0.npz": {
+    "bytes": 1286,
+    "sha256": "4998aabaf5b2118379119ae397593622a653b92f37a3c88174a3ac5f38ccb984"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_07_stop0.npz": {
+    "bytes": 1295,
+    "sha256": "b488f82c6402dc3be4beaa467fe592eabb52e00d113c8afcc51c708d5837f2c2"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_07_stop1.npz": {
+    "bytes": 1292,
+    "sha256": "74d3521e00975bc8cac79b97fc29898a563f3d558ff3843cc7f1b7ab8f0bac23"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_08_stop0.npz": {
+    "bytes": 1297,
+    "sha256": "09edfd41591001a63856106b0f990a930b25bb3e3a768a3efe0d214e240a936e"
+  },
+  "TIV_comfort_v2/reports/fixed_time_witnesses/B_08_stop1.npz": {
+    "bytes": 1292,
+    "sha256": "59ce823ed30307b1cb1eea28a1e5a174e9d676e138cb5744976065d5d21f0741"
+  },
+  "TIV_comfort_v2/reports/layer_pilot.log": {
+    "bytes": 3479,
+    "sha256": "a3b7b40ed67ee407a8988a037bf317e6157eed0e05611aa8f889cdccb5578f59"
+  },
+  "TIV_comfort_v2/reports/layer_pilot_r1.log": {
+    "bytes": 3455,
+    "sha256": "b3095df5a3adddf205756ca004a7eb482590fdd7e470d402e8d10838aa522360"
+  },
+  "TIV_comfort_v2/reports/layer_pilot_r2.log": {
+    "bytes": 3459,
+    "sha256": "1eff01ed16d60365281c5b628e9bc56ef8286f1b13e4218f716ff5965166f257"
+  },
+  "TIV_comfort_v2/reports/layer_smoke.log": {
+    "bytes": 451,
+    "sha256": "337b107cb69b4af50b2e183018cae9b9853b99b0637732a1f12f61431fa5e00b"
+  },
+  "TIV_comfort_v2/reports/layer_smoke_r1.log": {
+    "bytes": 421,
+    "sha256": "b495a666a368c631add4a2cb1b4e259b02e5750fa212b20af654b16b0d729f41"
+  },
+  "TIV_comfort_v2/reports/layer_smoke_r2.log": {
+    "bytes": 421,
+    "sha256": "34ac33a8ad23f5d52b5451e09c4161943890c2416064a1a239a52677bf41c856"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_00.npz": {
+    "bytes": 27441,
+    "sha256": "07d5fad5e53f5c45b4b165eb76c0427b7d6baf1785ca5d7ac66d99cf1bbdc297"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_01.npz": {
+    "bytes": 24719,
+    "sha256": "6544ab0d1b56aff022cdcf556bd567db9019c5060d7f1d8441133735909b7755"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_02.npz": {
+    "bytes": 29467,
+    "sha256": "fb748a7607a17e78e0a7296d838fcf4dafdf5849253685454a9b53ee7a59f926"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_03.npz": {
+    "bytes": 27400,
+    "sha256": "a7c49b37610b6700e268a1edf5070ed8a0ee43fe5503a1f4199932bdfc631946"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_04.npz": {
+    "bytes": 25487,
+    "sha256": "55d5ec292d6bee98fb5b71b5a90a07b22020bbd0ba1bd52ae41f37ba3fbd3e47"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_05.npz": {
+    "bytes": 31958,
+    "sha256": "cbd0f28c5576b73bfee837413c328762cc4452c0d5a3a354f9304c9554ad4a1a"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_06.npz": {
+    "bytes": 29475,
+    "sha256": "b96e9626f766a33bb0dcbf282eeb7fbc9c37057a857765dd97ff774745c1e9e3"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_07.npz": {
+    "bytes": 34134,
+    "sha256": "85cd1d8389203b7e04507207daf23cfd237dd6172b1c00d99fb76968c3ddae86"
+  },
+  "TIV_comfort_v2/reports/settled_traces/A_08.npz": {
+    "bytes": 34426,
+    "sha256": "d2f0f2bb6d70c25cc4a680977b63cceee0db3cfa6608d4b14a7b1e0cf4c2e991"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_00.npz": {
+    "bytes": 28106,
+    "sha256": "def4dcbfdd5aa1a8147eed45303ac15bbcd870db2700c8ab9048618f5400dcf4"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_01.npz": {
+    "bytes": 31368,
+    "sha256": "73d703da454826a6a5e830af279a55f8ac3d0502b7575a2e3e2db7a08dd5b527"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_02.npz": {
+    "bytes": 31031,
+    "sha256": "7efcdec37b005dcd25f9ff2d1a59dd1af246a318cbc223036ed18be0ff52df8f"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_03.npz": {
+    "bytes": 32238,
+    "sha256": "d09e08181889a2f46b7baf65d7b9d7109deb7c1031b3f5931a51325b728d2733"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_04.npz": {
+    "bytes": 35047,
+    "sha256": "a3273c7647453e3dcfd839ceef2a881fa252df80658ee6c9cbde51e950498f15"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_05.npz": {
+    "bytes": 32700,
+    "sha256": "7dca0d0777e1cd5d3e48a853e93916d4a6c08312a1ae841dbd477cc5707f95a3"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_06.npz": {
+    "bytes": 31552,
+    "sha256": "5eb1c9215a697c4dfa405bb0d1c42951bbbd58232dd0c072888ce345f7484905"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_07.npz": {
+    "bytes": 34438,
+    "sha256": "59c3065f9b4ec1b47d273bddb14a65115b11bbc9f0e97583aa1b1e591a5d99a5"
+  },
+  "TIV_comfort_v2/reports/settled_traces/B_08.npz": {
+    "bytes": 33750,
+    "sha256": "d23e90723f7eeb20e0708bc39b3cf9f5d01bb0a3853955669ceaafd03565cc60"
+  },
+  "TIV_comfort_v2/reports/summary.log": {
+    "bytes": 3748,
+    "sha256": "242ed89d7a4811077dc87dd2f415915768d5fac04a30f1e4c8f77e620bae0d93"
+  },
+  "TIV_comfort_v2/reports/velocity_profiles.pdf": {
+    "bytes": 23701,
+    "sha256": "5ae5859d1999234288349251a3aad4187bf8ffb9cc4de826ee17a0d2971ee1f9"
+  },
+  "TIV_comfort_v2/reports/velocity_profiles.png": {
+    "bytes": 220110,
+    "sha256": "cd27a11364644e4da4ad466b010e13810e095b45a1a80d3c39b08f7481f5b39b"
+  },
+  "TIV_comfort_v2/requirements.txt": {
+    "bytes": 63,
+    "sha256": "843a43994165de82f2ee77ae187f67456cc62fd67dd54e37a25dc1c2c13d1389"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_00.npz": {
+    "bytes": 27891,
+    "sha256": "25b5197d46e5d1e17250526b7b7331299254c2e63849c749a9ed280601db1a4c"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_00_layer.json": {
+    "bytes": 143903,
+    "sha256": "0ed3d866d24252a6d50ace5b9a4257cd12071760a163e2fa680289bb28c988a3"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_01.npz": {
+    "bytes": 25231,
+    "sha256": "972ac8e09d68b4704a02ecf1396f41e0b94603a277bd98265953276b524e8e43"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_01_layer.json": {
+    "bytes": 128165,
+    "sha256": "95e023dbcf11fcdd604f4923c9a24208c784d3e85f61b0d7a645756de11b7879"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_02.npz": {
+    "bytes": 30438,
+    "sha256": "ce378a1c25831536d117dd9fb89388f7c46a15dcfed576489dedccb5ba77a3ad"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_02_layer.json": {
+    "bytes": 155914,
+    "sha256": "f5bd338a8a78f742cc24579b853cda42d7b4f19be8c250c931a05fd045de2dc0"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_03.npz": {
+    "bytes": 28087,
+    "sha256": "6c4f216612bba1ff0c7269f551f47633b7f4f2939116b1c5b6dd6717b1d40303"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_03_layer.json": {
+    "bytes": 144845,
+    "sha256": "9af36619841d7cb8b9c88a529c245207897b39f03364474479c941c1f43277f3"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_04.npz": {
+    "bytes": 26010,
+    "sha256": "e8eace0cf5ccf2358b224b88781ea0bcd702b03e83beb1afd22322c1d58ad5e3"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_04_layer.json": {
+    "bytes": 132028,
+    "sha256": "e160a28959f25422ffb34241d9986dbfa3971a6a7d5977a22d8c4ad12439182b"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_05.npz": {
+    "bytes": 32625,
+    "sha256": "cfaadb06d9f2b854693a544edfa1c593b5eb60a984b540efcd16fed227a49002"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_05_layer.json": {
+    "bytes": 166912,
+    "sha256": "cd6ffaa97df261ad1045ece546f3e35f4d803d4dc59d27b13b1cec6d8f21a6aa"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_06.npz": {
+    "bytes": 29750,
+    "sha256": "88f3336cd3a5b005279dd932c4cacdf75442240211f5763b29e71978363c02aa"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_06_layer.json": {
+    "bytes": 154923,
+    "sha256": "5e5048ad8fc28a0e543ed4297b017d1081ddb479b3ecb93f5e3092c2f632d5d9"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_07.npz": {
+    "bytes": 20713,
+    "sha256": "ceb574aea1557897243c4b9dbb49c394872cd0519f8aa085ecdf67998c96f923"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_07_layer.json": {
+    "bytes": 105042,
+    "sha256": "8a7352c043eda18ebf5a2f9706bf0114e0d1ace09f863dcf215469a0aab05c1f"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_08.npz": {
+    "bytes": 34681,
+    "sha256": "61ee0fe87753de8cdc7c555003e89fe835e13b9f75e36b009eb78e0bfb2cbf0e"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/A_08_layer.json": {
+    "bytes": 181116,
+    "sha256": "bbda8f0b86ee96264fa6a3bd92497cc9e7534bdffd50c2d4a8a3142aa72487ec"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_00.npz": {
+    "bytes": 28452,
+    "sha256": "b8154b476c1810dfff13a2fc908daad5a61760230cea8b81cc948e4f2188750e"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_00_layer.json": {
+    "bytes": 149583,
+    "sha256": "26077039e249a151d5e66eeb95f8d1976b8b53de63dc619c4e71eb843b348f3b"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_01.npz": {
+    "bytes": 32872,
+    "sha256": "4af797dcf381f53404d2754b1172478b69dfa20d011e4761cdd56e90a6a4fcc2"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_01_layer.json": {
+    "bytes": 183355,
+    "sha256": "27bf2ee5cc315c791543ae8d2dcb4a041ff9a6726edaba805bc15df97404ba22"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_02.npz": {
+    "bytes": 32266,
+    "sha256": "21b190da0d66347d18675d0cd7920790feb64f87dd38d3dbdd6e067f02e18407"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_02_layer.json": {
+    "bytes": 168675,
+    "sha256": "9d2e49b49071b83f59b227c7ee775b288af2030ec023e4be7323c4108fa46e68"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_03.npz": {
+    "bytes": 32609,
+    "sha256": "d2a4611daef35761afa23158c02e280bd96e10499f7c54742e64c7546d2c5866"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_03_layer.json": {
+    "bytes": 173430,
+    "sha256": "dc816b27cdb878af6a3e0452c5e939f05e214386301dae49fe56d1dbd88e295d"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_04.npz": {
+    "bytes": 36297,
+    "sha256": "1f6786734d6f4ffbdf18a638c02b4a1a7d2b0adf6843b88000019e7776113db2"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_04_layer.json": {
+    "bytes": 191618,
+    "sha256": "4fa958c019ac7310aaa812afaaf5e65a54701d9a9ae3b035bcf53a8c4cd82d30"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_05.npz": {
+    "bytes": 33529,
+    "sha256": "70bc3c3906cb3f41676f820f6d425d1cd8b54f69fddbc516f5ea1a989f45d7d5"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_05_layer.json": {
+    "bytes": 177769,
+    "sha256": "d0a9b0a238ea309f306524fc7eb9ecea87e7d7aa188a78f8a17a60c46277e52b"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_06.npz": {
+    "bytes": 31893,
+    "sha256": "1cf1708c654e7481c2a1ace5ee08f71dd942fa44c7032456057b689a65e3edc2"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_06_layer.json": {
+    "bytes": 168182,
+    "sha256": "8e6777d078d91dd1c97de0cd08b95bf565bcf563a3c7c5e61e07a30a648a9fc1"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_07.npz": {
+    "bytes": 35705,
+    "sha256": "2b51a8e318359dad6b7c9ed7adebf753208d471de01aedd46070e7d612a89c87"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_07_layer.json": {
+    "bytes": 190187,
+    "sha256": "c20f02dca6553ba10f0696217a14700ddef8098f2e8e81ce321ba1963ea516c7"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_08.npz": {
+    "bytes": 34403,
+    "sha256": "1bab6121d8f976953ecdfa95697dc01af71e2cb198d6d0c02231b86313239ead"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/B_08_layer.json": {
+    "bytes": 179025,
+    "sha256": "586de1b1252ad25dffaacbf86773268ab383c51a83fe081d34a764b0f926b3cb"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/pilot_stage.json": {
+    "bytes": 154,
+    "sha256": "9422a0243c4df6ea3711fcfb3e785cc385125c5ea510e9c201ea712a06d0a552"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/progress.json": {
+    "bytes": 33616,
+    "sha256": "ab41320c9ad51eb84f6ac642d804fbcb7e7e10ff5349ed6b2622894f94db3e46"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/smoke_stage.json": {
+    "bytes": 153,
+    "sha256": "3d010a88ee03b4f65a053a675b80f3bb6328281f1d827d172c515f3c1a636da5"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/source_r0/PROBE_v2.md": {
+    "bytes": 2750,
+    "sha256": "55d9d2220dfe69a35728f212fe04f5ca9479abff6c22d03e850d97fa67e615ea"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/source_r0/curve_layer.py": {
+    "bytes": 3174,
+    "sha256": "9dedc307e1d7d40f6358e91056bac7fd7a7cb30b56c13199744f5c1a4abf7444"
+  },
+  "TIV_comfort_v2/runs/frozen_s7/source_r0/rollout_layer.py": {
+    "bytes": 4137,
+    "sha256": "ece1198d1c8f5d40ffbc5d04256744d875e49c8bbc9c6ec1eb87f1d9490595c9"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_00.npz": {
+    "bytes": 28015,
+    "sha256": "c07ff3b5a940fb0f42813bb67194c2133b2b2dc7231e7a62943564cbdd3aea62"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_00_layer.json": {
+    "bytes": 159207,
+    "sha256": "ee94ac004f2a549ad0fe9d0425a2bb15671b38385fb5863f69217d3a47adb889"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_01.npz": {
+    "bytes": 25307,
+    "sha256": "d7051c24974e6c0f68eb43946c36cd3080a5cc427315ce812073efb3ca8eb3a4"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_01_layer.json": {
+    "bytes": 138196,
+    "sha256": "5bd8d2036dfe2f746f27e18c7bdb2935620dd79249892e5101ec8898a4558085"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_02.npz": {
+    "bytes": 29804,
+    "sha256": "607cfed3450f75cf7893125a055124252429b57a08b434dacac4014b977778a4"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_02_layer.json": {
+    "bytes": 164973,
+    "sha256": "8820b6e4a15a894ce8e34a52a0eec11b4143196f00b768b82f8eba4ce970f951"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_03.npz": {
+    "bytes": 27467,
+    "sha256": "3c633f69a3ea163d03844a2f4a9a309cd557ae407176a3d32cc544d0c9c867f4"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_03_layer.json": {
+    "bytes": 156740,
+    "sha256": "ea2f5c2cb353ba75d86ae57c76f23dfa78808a5239ec34f824d1586e86c64823"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_04.npz": {
+    "bytes": 25461,
+    "sha256": "99cdac828335454512cf839cfd5a8e82a80a4b3c1a4ccdf9a8dce0ec37eb3e82"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_04_layer.json": {
+    "bytes": 140561,
+    "sha256": "1488d5983318113730c5b6322200b50f330314a2484b32b42d7a20033cc292df"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_05.npz": {
+    "bytes": 32050,
+    "sha256": "30f137480d8e255a30e864c5d03e6e6e07148f37c5f8a37a7de96fa1a2272737"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_05_layer.json": {
+    "bytes": 178970,
+    "sha256": "6e406ec53a6a4343949a139d9c481543f498c97cdd7912b28541654b0c0cf416"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_06.npz": {
+    "bytes": 29668,
+    "sha256": "0cd25d526cf4b4981e32965469bffde5b1e4619c86e4a5b2c436105ee0e0c1d8"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_06_layer.json": {
+    "bytes": 169687,
+    "sha256": "ea7f1e3e1e79a6b09661b613d9c78abb9a0f870f7043787819eafb985cff60ea"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_07.npz": {
+    "bytes": 34416,
+    "sha256": "1657ff32ba235284f2c9cb20dd9fd327bf6f056f3b1faa513a4b2773ac8628b6"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_07_layer.json": {
+    "bytes": 202481,
+    "sha256": "3c30b6301d2187b5a8f66987aea36caa10d414915047428927b542b9de34dc74"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_08.npz": {
+    "bytes": 34677,
+    "sha256": "cbd06df57e87a532d7cd0eccb16f8b69cbef8fb82c943554ce2c06c3b516c64c"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/A_08_layer.json": {
+    "bytes": 196141,
+    "sha256": "33d42d07d8bb62c76168c53555f771cb2f8771cd5ae6a1a55e7f252b2b050855"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_00.npz": {
+    "bytes": 28259,
+    "sha256": "7263bb6426a4ce018a6820e65b0092467f148cece32b800e82a90871373f84ba"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_00_layer.json": {
+    "bytes": 162820,
+    "sha256": "a482d0838a4ab15efde00ccf5b6a87a8af7cbb05c4d49596099020aa3a4c2a6e"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_01.npz": {
+    "bytes": 31489,
+    "sha256": "2c8ebec5e3ca38381fbb9bd0ddeb8b3f4303848db5da029fcd7977c1dc84bd82"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_01_layer.json": {
+    "bytes": 186339,
+    "sha256": "d01b87bd29b07c17a53e31db33539e7381d0f3ded12b60d5ec8e96b96b8eea13"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_02.npz": {
+    "bytes": 31285,
+    "sha256": "f2f89ce86606c0931b232ef93e0a5e77d4665d0baa55c97065d94c02436d9f93"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_02_layer.json": {
+    "bytes": 178202,
+    "sha256": "394c9adb4920213a30a6d1684e9e8b7166506aaae5148e4b50d462ead3a49951"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_03.npz": {
+    "bytes": 32609,
+    "sha256": "c131a33c17c5cf45a9f78191b42a4953a5b605b1c0d2a58ec664939ed2cac7f9"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_03_layer.json": {
+    "bytes": 189964,
+    "sha256": "f4a5b276aa9c41dd3e82610dbe43f5e9a81bf9ca7cb7c450f6b60ab318c704f6"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_04.npz": {
+    "bytes": 35542,
+    "sha256": "305ff0e377cf1fb84f4dd9ca151991d5cc037865e04c2c458e4acbae1c9219d7"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_04_layer.json": {
+    "bytes": 201907,
+    "sha256": "0c1e10a88e096cbc41ff5ea8153524b34934b88b6c9a182330cfda08a216f546"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_05.npz": {
+    "bytes": 33544,
+    "sha256": "d975145a62f5fa2649fce2460eec431d2fd4570bd305177c4bf44a9f73c3c456"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_05_layer.json": {
+    "bytes": 190296,
+    "sha256": "9498202cfe4ee5f0eb5783abf0757748b9159fca78319d4d47d66c853e6ed03e"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_06.npz": {
+    "bytes": 31935,
+    "sha256": "6320d96dd28dad03056dbc167dac173c20fc457e4b8919c4cbf3fc8423aa6ab1"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_06_layer.json": {
+    "bytes": 183234,
+    "sha256": "72b001b44549216d6eae197a170decc8bdea8185134b7e287955d8ad960f8538"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_07.npz": {
+    "bytes": 34947,
+    "sha256": "5f529e9112c92ae80f5db3bd9551550b7433fc3d361a239815ecbaf9c20f742f"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_07_layer.json": {
+    "bytes": 198319,
+    "sha256": "c938fd5840539330682f758d6aedb97ae40ea9cd73a8c6d42c4d2f8dc6aa98bd"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_08.npz": {
+    "bytes": 34325,
+    "sha256": "4b9c85136edffab862ef37d89ee2bccc7f0d6465e88128ca8e90b5b3f2b1abc4"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/B_08_layer.json": {
+    "bytes": 191214,
+    "sha256": "d7889684a1c035d54bb253c3d2f8107c994ef6759d19e72d4d24ee953b8d8df5"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/pilot_stage.json": {
+    "bytes": 154,
+    "sha256": "29c426d7a1da7e4dc9b8a6cd8ad39d321357205c74e04539c4b1bcc17fdab930"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/progress.json": {
+    "bytes": 33405,
+    "sha256": "a561533f7a976e7e100c8c51ff0745e50614ad670925196d08952daae2e62af7"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/smoke_stage.json": {
+    "bytes": 154,
+    "sha256": "3959d263cfeb02a056bb833cd1595f140d9d7e9981575c6115fb5f017bcbaacd"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/source_r1/IMPLEMENTATION_FIXES.md": {
+    "bytes": 1554,
+    "sha256": "52064f56bcd4f7f1540bf3d0c2421c77976e6034c8fb57d92b8fa7a67d437356"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/source_r1/PROBE_v2.md": {
+    "bytes": 2750,
+    "sha256": "55d9d2220dfe69a35728f212fe04f5ca9479abff6c22d03e850d97fa67e615ea"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/source_r1/curve_layer.py": {
+    "bytes": 5235,
+    "sha256": "06f3cab99214bc95f1224574933987ce2a4a7f49603d09fc637eb490d76d6f03"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r1/source_r1/rollout_layer.py": {
+    "bytes": 4805,
+    "sha256": "0670caa5ce036f2470bc8e9618233c63f97518ba33256ddff8f5ce0f922cb8fd"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_00.npz": {
+    "bytes": 28015,
+    "sha256": "c07ff3b5a940fb0f42813bb67194c2133b2b2dc7231e7a62943564cbdd3aea62"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_00_layer.json": {
+    "bytes": 159207,
+    "sha256": "ee94ac004f2a549ad0fe9d0425a2bb15671b38385fb5863f69217d3a47adb889"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_01.npz": {
+    "bytes": 25210,
+    "sha256": "552ab46bef1c9d0a6ac90eba03a6c5865bcce0bb55d453136e8bf353e409317b"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_01_layer.json": {
+    "bytes": 138019,
+    "sha256": "65d5b2c6eea3b7e8616b75edf2e06e1fea205850f4497ebaf6b1d08286edcf8e"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_02.npz": {
+    "bytes": 29804,
+    "sha256": "607cfed3450f75cf7893125a055124252429b57a08b434dacac4014b977778a4"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_02_layer.json": {
+    "bytes": 164973,
+    "sha256": "8820b6e4a15a894ce8e34a52a0eec11b4143196f00b768b82f8eba4ce970f951"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_03.npz": {
+    "bytes": 27467,
+    "sha256": "3c633f69a3ea163d03844a2f4a9a309cd557ae407176a3d32cc544d0c9c867f4"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_03_layer.json": {
+    "bytes": 156740,
+    "sha256": "ea2f5c2cb353ba75d86ae57c76f23dfa78808a5239ec34f824d1586e86c64823"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_04.npz": {
+    "bytes": 25461,
+    "sha256": "99cdac828335454512cf839cfd5a8e82a80a4b3c1a4ccdf9a8dce0ec37eb3e82"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_04_layer.json": {
+    "bytes": 140560,
+    "sha256": "1d7ed7b0ff94e1371c23d9fa5433d38a690fb36680779ffb4f0ba0c8e03de7f1"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_05.npz": {
+    "bytes": 32050,
+    "sha256": "30f137480d8e255a30e864c5d03e6e6e07148f37c5f8a37a7de96fa1a2272737"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_05_layer.json": {
+    "bytes": 178970,
+    "sha256": "6e406ec53a6a4343949a139d9c481543f498c97cdd7912b28541654b0c0cf416"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_06.npz": {
+    "bytes": 29668,
+    "sha256": "0cd25d526cf4b4981e32965469bffde5b1e4619c86e4a5b2c436105ee0e0c1d8"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_06_layer.json": {
+    "bytes": 169687,
+    "sha256": "ea7f1e3e1e79a6b09661b613d9c78abb9a0f870f7043787819eafb985cff60ea"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_07.npz": {
+    "bytes": 34510,
+    "sha256": "2e7a2dc54a9fd0a80b7025c9c166086fed7007999b2516b861e7ff0175da429f"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_07_layer.json": {
+    "bytes": 202776,
+    "sha256": "2f7d3696169b641a20feff7bd9e740ef33233b90fdce0b1ba91d68879167e451"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_08.npz": {
+    "bytes": 34677,
+    "sha256": "cbd06df57e87a532d7cd0eccb16f8b69cbef8fb82c943554ce2c06c3b516c64c"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/A_08_layer.json": {
+    "bytes": 196141,
+    "sha256": "33d42d07d8bb62c76168c53555f771cb2f8771cd5ae6a1a55e7f252b2b050855"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_00.npz": {
+    "bytes": 28259,
+    "sha256": "7263bb6426a4ce018a6820e65b0092467f148cece32b800e82a90871373f84ba"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_00_layer.json": {
+    "bytes": 162820,
+    "sha256": "a482d0838a4ab15efde00ccf5b6a87a8af7cbb05c4d49596099020aa3a4c2a6e"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_01.npz": {
+    "bytes": 31489,
+    "sha256": "2c8ebec5e3ca38381fbb9bd0ddeb8b3f4303848db5da029fcd7977c1dc84bd82"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_01_layer.json": {
+    "bytes": 186339,
+    "sha256": "d01b87bd29b07c17a53e31db33539e7381d0f3ded12b60d5ec8e96b96b8eea13"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_02.npz": {
+    "bytes": 31285,
+    "sha256": "f2f89ce86606c0931b232ef93e0a5e77d4665d0baa55c97065d94c02436d9f93"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_02_layer.json": {
+    "bytes": 178202,
+    "sha256": "394c9adb4920213a30a6d1684e9e8b7166506aaae5148e4b50d462ead3a49951"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_03.npz": {
+    "bytes": 32609,
+    "sha256": "c131a33c17c5cf45a9f78191b42a4953a5b605b1c0d2a58ec664939ed2cac7f9"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_03_layer.json": {
+    "bytes": 189964,
+    "sha256": "f4a5b276aa9c41dd3e82610dbe43f5e9a81bf9ca7cb7c450f6b60ab318c704f6"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_04.npz": {
+    "bytes": 35542,
+    "sha256": "305ff0e377cf1fb84f4dd9ca151991d5cc037865e04c2c458e4acbae1c9219d7"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_04_layer.json": {
+    "bytes": 201907,
+    "sha256": "0c1e10a88e096cbc41ff5ea8153524b34934b88b6c9a182330cfda08a216f546"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_05.npz": {
+    "bytes": 33544,
+    "sha256": "d975145a62f5fa2649fce2460eec431d2fd4570bd305177c4bf44a9f73c3c456"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_05_layer.json": {
+    "bytes": 190296,
+    "sha256": "9498202cfe4ee5f0eb5783abf0757748b9159fca78319d4d47d66c853e6ed03e"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_06.npz": {
+    "bytes": 31935,
+    "sha256": "6320d96dd28dad03056dbc167dac173c20fc457e4b8919c4cbf3fc8423aa6ab1"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_06_layer.json": {
+    "bytes": 183234,
+    "sha256": "72b001b44549216d6eae197a170decc8bdea8185134b7e287955d8ad960f8538"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_07.npz": {
+    "bytes": 34947,
+    "sha256": "5f529e9112c92ae80f5db3bd9551550b7433fc3d361a239815ecbaf9c20f742f"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_07_layer.json": {
+    "bytes": 198317,
+    "sha256": "5e5e0e718e0f952f6a5e0b124070a43b7df3b29fa6322c115be7abad7e97f7fe"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_08.npz": {
+    "bytes": 34325,
+    "sha256": "4b9c85136edffab862ef37d89ee2bccc7f0d6465e88128ca8e90b5b3f2b1abc4"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/B_08_layer.json": {
+    "bytes": 191214,
+    "sha256": "d7889684a1c035d54bb253c3d2f8107c994ef6759d19e72d4d24ee953b8d8df5"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/pilot_stage.json": {
+    "bytes": 154,
+    "sha256": "096829518f93727e12bbb23100ef07089b0a1f1842a895c5f2c73722f2d64615"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/progress.json": {
+    "bytes": 33413,
+    "sha256": "646bf0dad3ef60c081273ffa8175d6ca43dd78b93d0db58b78147f4af21fdac1"
+  },
+  "TIV_comfort_v2/runs/frozen_s7_r2/smoke_stage.json": {
+    "bytes": 152,
+    "sha256": "239557fc0f432ef675199147334256b87f20b22131ab38f96772c1aac8175e75"
+  }
+}
