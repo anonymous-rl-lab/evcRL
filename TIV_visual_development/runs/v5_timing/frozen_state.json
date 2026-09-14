@@ -1,0 +1,44 @@
+{
+ "eid": "frz",
+ "t": 136.0,
+ "x": 2746.805073502069,
+ "v": 22.22222222222222,
+ "a": 0.0,
+ "soc": 0.837447946343213,
+ "T": 288.15,
+ "policy": "runs/v4r/v4_pilot/supervised/final_nets.pt",
+ "cond": 0,
+ "camera_seed": 1000,
+ "x_freeze": 2740.0,
+ "identity": {
+  "sources": "74f8c57a4913562067046c58c7fea6c315a34937ea0b8ff444f9304678fd4e4e",
+  "config": "1e81f54779aaa8beab9627ae5f05c18f67b7603915d5c047cf77801c6b21b621"
+ },
+ "memory_snapshot": {
+  "curve": {
+   "d_est": null,
+   "announced": false,
+   "active": false,
+   "age": null,
+   "release_d": null,
+   "traveled_since_entry": 0.0
+  },
+  "sig": {
+   "d_line": null,
+   "phase": "unknown",
+   "conf": 0.0,
+   "age": null,
+   "dur": 0.0,
+   "seen": false,
+   "hold": false,
+   "observed": "unknown",
+   "observed_conf": 0.0,
+   "committed": false
+  },
+  "end": {
+   "d_est": null,
+   "age": null
+  }
+ },
+ "frozen_at": "2026-09-14T01:42:56Z"
+}

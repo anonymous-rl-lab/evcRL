@@ -182,6 +182,7 @@ class SceneCamera:
                     objects.append((d, lambda d=d: self._draw_sign(dr, d, labels)))
         light = None
         for k, xs in enumerate(self.signals):
+            if 'traffic_light' in hide: break          # v5 时机实验：整个信号灯（灯箱+停止线+标签+ROI）在指定时刻前不可见——两条图像路径同时不可见
             d = xs + LIGHT_AHEAD - x; d_line = xs - x
             color = force_color or signal_color(sim_time, pose['offsets'][k])
             if 'light_color' in hide: color = 'off'
@@ -214,7 +215,7 @@ class SceneCamera:
                     ci, cj = labels['_light_cell']; labels['box_valid'][0, ci, cj] = 0.; labels['boxes'][:, ci, cj] = 0.
         # 由地图距离投影的 ROI（不用真值框），裁剪到画面；association_valid 要求 ROI 与画面相交
         roi = np.zeros((1, H, W), np.float32); d_map = None
-        for xs in self.signals:
+        for xs in ([] if 'traffic_light' in hide else self.signals):
             if (0.5 < xs + LIGHT_AHEAD - x and xs - x < LIGHT_RANGE_M) if v4 else (0.5 < xs + LIGHT_AHEAD - x <= VISIBLE_LAMP_M): d_map = xs + LIGHT_AHEAD - x
         if d_map is not None:
             u, v = project(LIGHT_LATERAL, LIGHT_BASE + HOUSING[1] / 2, d_map)
