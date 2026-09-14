@@ -1,0 +1,23 @@
+{
+ "scope": "Task book section 1.6: three consistency contrasts checked against the repository state used for the 99 episodes",
+ "version_import_package": {
+  "pyproject_version": "0.0.1",
+  "evcrl.__version__": "0.0.1",
+  "wheel": "software/EvcRL/dist/evcrl-0.0.1-py3-none-any.whl",
+  "imported_module_path": "software/EvcRL/src/evcrl (sys.path insertion; no index install)",
+  "task_book_note": "the task book inspected an earlier paper package carrying 0.1.0; the repository and the paper sources were already updated to 0.0.1 before this run (commit cd08a0f), so no version discrepancy remains in the repository",
+  "pip_install_from_index": "not used"
+ },
+ "profile_behaviour_model_interface_assets": {
+  "paper_v25_reproduces_archived_S_records": "yes, exact (baseline_check.json: 27/27 traces and metrics identical)",
+  "guard_v26_rules": "software/EvcRL/src/evcrl/profiles.py (propagation consistent + inward 15 m crossing guard; all other thresholds identical to paper_v25)",
+  "policy_input": "87 = 13 legacy + 64 Z + 4 meta + 6 extra; extra_dim 6 in all three checkpoints; original encoder->adapter->actor path",
+  "assets": "detector runs/pretrain_v4/encoder.pt shared by S0/S1/S2 (same sha256 in all three checkpoint configs); checkpoints v4r/v4r_s1/v4r_s2 final_nets.pt; P-T actor timing/weights/actor_A.pt; hashes in protocol_lock.json"
+ },
+ "text_vs_records": {
+  "manuscript_text": "not distributed in the repository (analysis/ keeps calculators and records only); the earlier repository copy stated EvcRL 0.0.1 and twenty-six software tests",
+  "archived_visual_records_vs_paper_tables": "visual/tables.py regenerates Tables V, S6, S7 exactly from the records",
+  "historical_constant_probe": "Table V row 'Constant u=1, historical' (R -39.246, I_j 100.954, protocol not aligned) is superseded by R2 (same current protocol, same detector/memory/executor): R -39.288, I_j 101.008",
+  "manifest": "validation_frozen/MANIFEST_SHA256.json"
+ }
+}

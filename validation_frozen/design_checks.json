@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "scope": "task_design_only_no_vehicle_execution",
+  "unique_jobs": 99,
+  "counts": {
+    "R1": 54,
+    "R2": 9,
+    "R3": 36
+  },
+  "all_references_resolve": true,
+  "R1_pairs": 27,
+  "R2_reused_reference_pairs": 9,
+  "R3_pairs": 18,
+  "original_condition_enumeration_preserved": true,
+  "camera_seed_arithmetic_checked": true,
+  "new_vehicle_rollouts": 0,
+  "training_steps": 0
+}

@@ -1,0 +1,76 @@
+{
+ "status": "PASS",
+ "visual_identity": "PASS",
+ "pt_freeze_matches": true,
+ "working_tree_clean_outside_validation": true,
+ "assets_present": {
+  "S0": true,
+  "S1": true,
+  "S2": true,
+  "detector": true,
+  "actor_A": true
+ },
+ "checkpoint_configs": {
+  "S0": {
+   "seed": 7,
+   "camera_seed_training": 77,
+   "pretrained_encoder": "runs/pretrain_v4/encoder.pt",
+   "det_thr": {
+    "traffic_light": 0.4,
+    "curve_sign": 0.5,
+    "end_marker": 0.55,
+    "release_sign": 0.2
+   },
+   "hold_s": 3.0,
+   "extra_dim": 6,
+   "critic_action": "applied",
+   "assumed_green_remaining": 30.0,
+   "lambda_c": 0.1,
+   "actor_output_scale": 0.4
+  },
+  "S1": {
+   "seed": 8,
+   "camera_seed_training": 78,
+   "pretrained_encoder": "runs/pretrain_v4/encoder.pt",
+   "det_thr": {
+    "traffic_light": 0.4,
+    "curve_sign": 0.5,
+    "end_marker": 0.55,
+    "release_sign": 0.2
+   },
+   "hold_s": 3.0,
+   "extra_dim": 6,
+   "critic_action": "applied",
+   "assumed_green_remaining": 30.0,
+   "lambda_c": 0.1,
+   "actor_output_scale": 0.4
+  },
+  "S2": {
+   "seed": 9,
+   "camera_seed_training": 79,
+   "pretrained_encoder": "runs/pretrain_v4/encoder.pt",
+   "det_thr": {
+    "traffic_light": 0.4,
+    "curve_sign": 0.5,
+    "end_marker": 0.55,
+    "release_sign": 0.2
+   },
+   "hold_s": 3.0,
+   "extra_dim": 6,
+   "critic_action": "applied",
+   "assumed_green_remaining": 30.0,
+   "lambda_c": 0.1,
+   "actor_output_scale": 0.4
+  }
+ },
+ "reporting_prior_usage": {
+  "timing_runs": [
+   "development"
+  ],
+  "reporting_dir_exists": false,
+  "decision": false,
+  "statement": "Reporting conditions never generated and not used for actor/parameter selection (timing/reports/decision.json: reporting_started=false; only runs/development exists). They are prespecified extension conditions of the same 4 km route, one frozen actor."
+ },
+ "jobs": 99,
+ "fingerprint": "81dcd0438ebe3395e246e01c51176ded7e72d27aff6da69367088f2c62cd4fa6"
+}

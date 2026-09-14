@@ -1,0 +1,56 @@
+{
+ "machine": {
+  "cpu_count": 4,
+  "gpu": "none",
+  "price": "unknown (no billing rate available for this container)",
+  "external_compute_charge": 0
+ },
+ "smoke": {
+  "episodes": [
+   "R1_S0_c00_paper_v25",
+   "R1_S0_c00_guard_v26"
+  ],
+  "wall_s_budget": 600,
+  "note": "complete formal-protocol episodes; reused in the formal queue"
+ },
+ "pilot_validation": {
+  "cumulative_wall_s_budget": 3600,
+  "used": "the formal queue itself (single process); no separate timing runs"
+ },
+ "measured": {
+  "R1": {
+   "n": 54,
+   "mean_wall_s": 6.734547822388882,
+   "min": 5.372056530000009,
+   "max": 13.765234480000117,
+   "total_s": 363.6655824089996
+  },
+  "R2": {
+   "n": 9,
+   "mean_wall_s": 6.760221216555591,
+   "total_s": 60.84199094900032
+  },
+  "R3": {
+   "n": 36,
+   "mean_wall_s": 0.35594909024999627,
+   "total_s": 12.814167248999865
+  },
+  "results_bytes": 83942309,
+  "per_episode_log_bytes_R1": 1332417
+ },
+ "formal_estimate": {
+  "R1_54": 363.6655824089996,
+  "R2_9": 60.84199094900032,
+  "R3_36": 12.814167248999865,
+  "total_s": 437.3217406069998
+ },
+ "actual": {
+  "all_99_completed": true,
+  "single_process_sequential": true,
+  "memory": "< 2 GB resident per process (frame store keeps 4 frames)"
+ },
+ "resume": {
+  "unit": "episode (all four raw outputs + DONE flag with protocol fingerprint); R3 additionally resumes inside an episode from decision-boundary snapshots (probe.py)",
+  "command": "cd validation_frozen && OMP_NUM_THREADS=1 python3 run_pv.py --select R1,R2 && OMP_NUM_THREADS=1 python3 run_pt.py && python3 metrics.py"
+ }
+}

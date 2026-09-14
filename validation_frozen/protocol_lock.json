@@ -1,0 +1,312 @@
+{
+ "task": "TIV frozen supplementary validation (99 formal frozen-inference episodes: R1 54, R2 9, R3 36)",
+ "date": "2026-09-14",
+ "new_training_steps": 0,
+ "new_model_selection": false,
+ "parameter_search": false,
+ "source_commit": "652396eb6b512d60cdf7f55a4571aa446e618777",
+ "source_branch": "main",
+ "source_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "source_diff_nonempty": false,
+ "installed_package_version": "0.0.1",
+ "installed_module_path": "/home/user/evcrl/software/EvcRL/src/evcrl/__init__.py",
+ "package_sha256": {
+  "wheel": "9a968aab0e39a80538aa81436189e30fe34f49020476662099588a05e75cef5f",
+  "memory_py": "6b3c899989c2328dc14383e77b71cf7a00e928c67703394080073624a79f2b37"
+ },
+ "simulator_sha256": {
+  "study_py": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+  "env20_py": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba",
+  "models_py": "b026d0e5839a34042b8eaa6a705735ef8784523ae072072251c74fe83bbf97e1",
+  "plant_py": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4",
+  "effcal_py": "5f09b711f4aa55543984bd99f8f339d97be7a6672d44d2ce6953b8658d0be551",
+  "route20_py": "fde16d41f3c52d09f7b52b837a0ef1ba4237142ca0f45c3cbc64bc005cb41d2a"
+ },
+ "executor_sha256": {
+  "curve_layer_py": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0",
+  "pipeline_VisionEnv": "56d45d9220322251059b443ac57087cd21e0e1d126350e79953617cafa8d086b",
+  "jerk_limit": 2.0,
+  "dt": 0.5,
+  "a_comfort": 1.5,
+  "assumed_green_remaining": 30.0
+ },
+ "memory_sha256": {
+  "archived_vision_state_py": "2d00ae56860e1c590e5605a123fa4c8b1cd37e07a9279feee729e75456018ceb",
+  "injected_evcrl_memory_py": "6b3c899989c2328dc14383e77b71cf7a00e928c67703394080073624a79f2b37",
+  "profiles_py": "848807e1fe99b8c3fdce10088afe6f2d77486f41508d32b2375c1a778af174fe",
+  "contract_version": 1,
+  "profile_identity": {
+   "paper_v25": "00e578a1521f533251940b7483628189a1614c35c6b6c6f8c6efddc8cdf13509",
+   "odometry_v26": "a11af925c3c75937dfbded9fbcc75f9526ec4172de4a54b55611db1fb439acc9",
+   "guard_v26": "980a650f1d6fce2d0e39444773a3cc06c5403e1e15dc5a46fd79a2a00cdd640f"
+  },
+  "rules": {
+   "paper_v25": {
+    "det_thr": {
+     "traffic_light": 0.4,
+     "curve_sign": 0.5,
+     "end_marker": 0.55,
+     "release_sign": 0.2
+    },
+    "hold_s": 3.0,
+    "curve_len_max": 1000.0,
+    "release_grace_m": 5.0,
+    "init_votes": 2,
+    "vote_window": 3,
+    "consistency_m": 40.0,
+    "expire_s": 4.0,
+    "light_expire_s": 10.0,
+    "gain": 0.4,
+    "margin_rel": 0.15,
+    "margin_abs": 6.0,
+    "color_freeze_m": 8.0,
+    "dist_freeze_m": 15.0,
+    "expire_far_m": 60.0,
+    "maintain_ratio": 0.5,
+    "end_bias_m": 15.0,
+    "no_light_near_end_m": 100.0,
+    "stationary_expire_s": 10.0,
+    "propagation": "legacy",
+    "guard": false
+   },
+   "guard_v26": {
+    "det_thr": {
+     "traffic_light": 0.4,
+     "curve_sign": 0.5,
+     "end_marker": 0.55,
+     "release_sign": 0.2
+    },
+    "hold_s": 3.0,
+    "curve_len_max": 1000.0,
+    "release_grace_m": 5.0,
+    "init_votes": 2,
+    "vote_window": 3,
+    "consistency_m": 40.0,
+    "expire_s": 4.0,
+    "light_expire_s": 10.0,
+    "gain": 0.4,
+    "margin_rel": 0.15,
+    "margin_abs": 6.0,
+    "color_freeze_m": 8.0,
+    "dist_freeze_m": 15.0,
+    "expire_far_m": 60.0,
+    "maintain_ratio": 0.5,
+    "end_bias_m": 15.0,
+    "no_light_near_end_m": 100.0,
+    "stationary_expire_s": 10.0,
+    "propagation": "consistent",
+    "guard": true
+   }
+  },
+  "treatment": "paper_v25 (legacy propagation v*dt, no guard) versus guard_v26 (displacement-consistent propagation AND inward 15 m crossing guard): a combined change, not an isolated guard effect"
+ },
+ "camera_sha256": "e93f267f8a8dfa27e185539df0241bddb7f1d370aac9a5a32f4bb06f6aabd573",
+ "metric_source_sha256": {
+  "study_episode_metrics": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+  "recompute_script": "validation_frozen/metrics.py (added after runs; hashed in manifest)"
+ },
+ "detector_sha256": "a7f5cf923d8bac02611447d594569b7153838eb7608ba01c7801c8c1a956734a",
+ "detector_path": "/home/user/evcrl/visual/runs/pretrain_v4/encoder.pt",
+ "S0_checkpoint_sha256": "f72de9c54cfc016e0d95b7c723c45b9e8520b07398579757d28d29cf95c9d558",
+ "S1_checkpoint_sha256": "c3e31fba530c90007e2c6b60afd21e9a1587c729a32bed8f22458d06787636b7",
+ "S2_checkpoint_sha256": "2c63c0956d56855fc95116f0e626caf36aebe069e626dc7c9fd6913572c036d7",
+ "checkpoint_paths": {
+  "S0": "/home/user/evcrl/visual/runs/v4r/v4_pilot/supervised/final_nets.pt",
+  "S1": "/home/user/evcrl/visual/runs/v4r_s1/v4_pilot/supervised/final_nets.pt",
+  "S2": "/home/user/evcrl/visual/runs/v4r_s2/v4_pilot/supervised/final_nets.pt"
+ },
+ "checkpoint_configs": {
+  "S0": {
+   "seed": 7,
+   "camera_seed_training": 77,
+   "pretrained_encoder": "runs/pretrain_v4/encoder.pt",
+   "det_thr": {
+    "traffic_light": 0.4,
+    "curve_sign": 0.5,
+    "end_marker": 0.55,
+    "release_sign": 0.2
+   },
+   "hold_s": 3.0,
+   "extra_dim": 6,
+   "critic_action": "applied",
+   "assumed_green_remaining": 30.0,
+   "lambda_c": 0.1,
+   "actor_output_scale": 0.4
+  },
+  "S1": {
+   "seed": 8,
+   "camera_seed_training": 78,
+   "pretrained_encoder": "runs/pretrain_v4/encoder.pt",
+   "det_thr": {
+    "traffic_light": 0.4,
+    "curve_sign": 0.5,
+    "end_marker": 0.55,
+    "release_sign": 0.2
+   },
+   "hold_s": 3.0,
+   "extra_dim": 6,
+   "critic_action": "applied",
+   "assumed_green_remaining": 30.0,
+   "lambda_c": 0.1,
+   "actor_output_scale": 0.4
+  },
+  "S2": {
+   "seed": 9,
+   "camera_seed_training": 79,
+   "pretrained_encoder": "runs/pretrain_v4/encoder.pt",
+   "det_thr": {
+    "traffic_light": 0.4,
+    "curve_sign": 0.5,
+    "end_marker": 0.55,
+    "release_sign": 0.2
+   },
+   "hold_s": 3.0,
+   "extra_dim": 6,
+   "critic_action": "applied",
+   "assumed_green_remaining": 30.0,
+   "lambda_c": 0.1,
+   "actor_output_scale": 0.4
+  }
+ },
+ "PT_actor_A_sha256": "bfd534b1ba55ce722c7e08266c0e1e6f5c9ee773ad52c8e0e3e2c9934f81afac",
+ "visual_source_identity_check": {
+  "status": "PASS",
+  "source_sha256": {
+   "v19_deps/code/curve_layer.py": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0",
+   "v19_deps/code/effcal.py": "5f09b711f4aa55543984bd99f8f339d97be7a6672d44d2ce6953b8658d0be551",
+   "v19_deps/code/env20.py": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba",
+   "v19_deps/code/models.py": "b026d0e5839a34042b8eaa6a705735ef8784523ae072072251c74fe83bbf97e1",
+   "v19_deps/code/plant.py": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4",
+   "v19_deps/code/route20.py": "fde16d41f3c52d09f7b52b837a0ef1ba4237142ca0f45c3cbc64bc005cb41d2a",
+   "v19_deps/code/study.py": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+   "visual_dev/pipeline.py": "56d45d9220322251059b443ac57087cd21e0e1d126350e79953617cafa8d086b",
+   "visual_dev/reevaluate.py": "41045cfaed1bcbd07710d499a6ddb4b352820b5d5ad766e6f1ae8ad11bacf498",
+   "visual_dev/renderer.py": "e93f267f8a8dfa27e185539df0241bddb7f1d370aac9a5a32f4bb06f6aabd573",
+   "visual_dev/vision_state.py": "2d00ae56860e1c590e5605a123fa4c8b1cd37e07a9279feee729e75456018ceb",
+   "visual_z/__init__.py": "96bfdeca42295bf9bf012436b706de6eb71cd3b08b445285268ffaa0a1a0a8cd",
+   "visual_z/checkpoint.py": "97ef42af080d7018735d72bbe35494069793c18672ecdee54c13863d7e165aec",
+   "visual_z/contracts.py": "1490ae975df76f990215636a8c2897eaed274901227d4465f3d7846c744fa90b",
+   "visual_z/learner.py": "c2e3d94bd1713352218871ba2852589833bec499dcf6c183e4324e6413db9e4e",
+   "visual_z/model.py": "d6555c7fb8e17a83e5c8ed646735a392e8f20efb86963237c628369a0aea2065",
+   "visual_z/replay.py": "d80223a1e9ccd4874ebb58a44aef9a01ed19917a3558ce18f7159d1dcefe8206"
+  },
+  "transformed_pipeline_sha256": "2af4376b8ffe56456ee358de0069bc589054853d3118c61ff4b877cbb001cf73",
+  "changed_executable_nodes": 1,
+  "vehicle_rollouts": 0,
+  "training_steps": 0
+ },
+ "all_sources_sha256": {
+  "visual/visual_dev/pipeline.py": "56d45d9220322251059b443ac57087cd21e0e1d126350e79953617cafa8d086b",
+  "visual/visual_dev/vision_state.py": "2d00ae56860e1c590e5605a123fa4c8b1cd37e07a9279feee729e75456018ceb",
+  "visual/visual_dev/renderer.py": "e93f267f8a8dfa27e185539df0241bddb7f1d370aac9a5a32f4bb06f6aabd573",
+  "visual/visual_dev/reevaluate.py": "41045cfaed1bcbd07710d499a6ddb4b352820b5d5ad766e6f1ae8ad11bacf498",
+  "visual/v19_deps/code/curve_layer.py": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0",
+  "visual/v19_deps/code/study.py": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+  "visual/v19_deps/code/env20.py": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba",
+  "visual/v19_deps/code/route20.py": "fde16d41f3c52d09f7b52b837a0ef1ba4237142ca0f45c3cbc64bc005cb41d2a",
+  "visual/v19_deps/code/models.py": "b026d0e5839a34042b8eaa6a705735ef8784523ae072072251c74fe83bbf97e1",
+  "visual/v19_deps/code/plant.py": "4f6d2377e9d0b5927f06bb28828019e9fb62549939b3f548d7ffedd4294356c4",
+  "visual/v19_deps/code/effcal.py": "5f09b711f4aa55543984bd99f8f339d97be7a6672d44d2ce6953b8658d0be551",
+  "visual/v19_deps/code/scn/arterial_mini_profile.npy": "9d3059edab41689af07262573187afd6cafb52afeafe044b4881d9d0a0f1d537",
+  "visual/visual_z/model.py": "d6555c7fb8e17a83e5c8ed646735a392e8f20efb86963237c628369a0aea2065",
+  "visual/visual_z/learner.py": "c2e3d94bd1713352218871ba2852589833bec499dcf6c183e4324e6413db9e4e",
+  "visual/visual_z/contracts.py": "1490ae975df76f990215636a8c2897eaed274901227d4465f3d7846c744fa90b",
+  "visual/visual_z/replay.py": "d80223a1e9ccd4874ebb58a44aef9a01ed19917a3558ce18f7159d1dcefe8206",
+  "visual/visual_z/checkpoint.py": "97ef42af080d7018735d72bbe35494069793c18672ecdee54c13863d7e165aec",
+  "visual/visual_z/__init__.py": "96bfdeca42295bf9bf012436b706de6eb71cd3b08b445285268ffaa0a1a0a8cd",
+  "software/EvcRL/src/evcrl/memory.py": "6b3c899989c2328dc14383e77b71cf7a00e928c67703394080073624a79f2b37",
+  "software/EvcRL/src/evcrl/profiles.py": "848807e1fe99b8c3fdce10088afe6f2d77486f41508d32b2375c1a778af174fe",
+  "software/EvcRL/src/evcrl/execution.py": "37be3b7325e4d42a3103a836b16bf48684ffaa799cdc3486c807ea3c2987379a",
+  "software/EvcRL/src/evcrl/_version.py": "b172e1ee0dca0b84021717191814e91b6b1c47b866981b0c8eae8ba91a6d9118",
+  "timing/code/probe.py": "43602519a7b1c135d61dcaa933349152e84513152faa83743136ab9c63e70391",
+  "timing/code/analyze.py": "f8f069d05be0d9b2c0012f4cfff81d5441c974e311f59b778dc59f9b06903016",
+  "timing/deps/study.py": "cee32154a2c4bc8c93ab419371a042a76a26fa2424da003f62ad3cadd1498f13",
+  "timing/deps/curve_layer.py": "3c20801fa67df955dc85aa314a620d5cfd8ae6320a0cb64eb66fe034eb5764a0",
+  "timing/deps/env20.py": "8220538651c15d8ae8a789927973c8d9177c38f40af85e2e5ad08ea6e89681ba",
+  "validation_frozen/run_pv.py": "81ca5a1d1dbd779582bf0e7dc4d4bca9e3e7fa68be1d9412a6bf88935f0abb78",
+  "validation_frozen/run_pt.py": "371197bbab1f93cd1bca60cf081a5ab11c5995ba44dd1e3af464ac8d11eea0c3"
+ },
+ "policy_input_schema": {
+  "legacy": 13,
+  "z": 64,
+  "meta": 4,
+  "extra": 6,
+  "total": 87,
+  "note": "13 memory-generated legacy channels, 64-dim Z from the 4-frame encoder, 4 metadata, 6 memory extras; extra_dim 6 for all three archived checkpoints"
+ },
+ "image_and_noise_seed_scheme": {
+  "camera_base_seed": 1000,
+  "appearance_seed": "1000*1000 + condition_id",
+  "noise_seed": "1000*1000 + 500 + condition_id",
+  "training_camera_seeds": [
+   77,
+   78,
+   79
+  ],
+  "note": "evaluation seeds only; per-condition streams retain the original condition_id and evalXX identity"
+ },
+ "termination_contract_per_protocol": {
+  "R1_R2": {
+   "protocol": "current",
+   "terminal_true_position_cmd0_branch": false,
+   "settle": "arrived and v<=0.05 and |a|<=0.05",
+   "red_crossing": "terminal",
+   "deadline_s": 600,
+   "overshoot": "x>4100 m terminal",
+   "t_budget": 480,
+   "reward": "archived L reward"
+  },
+  "R3": {
+   "protocol": "archived P-T",
+   "terminal_true_position_cmd0_branch": true,
+   "settle": "arrived and v<=1e-6 and |a|<=1e-6",
+   "red_crossing": "terminal",
+   "deadline_s": 600,
+   "executor_information_range_m": 1000,
+   "actor_input": "13-dim with SPaT in both arms"
+  }
+ },
+ "runtime_versions": {
+  "python": "3.11.15",
+  "numpy": "2.4.6",
+  "torch": "2.14.0+cu130",
+  "scipy": "1.17.1",
+  "evcrl": "0.0.1"
+ },
+ "hardware": {
+  "cpu_count": 4,
+  "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "gpu": "none used",
+  "threads": "torch/OMP single thread per process"
+ },
+ "floating_comparison_tolerances": {
+  "baseline_reproduction": "exact (0.0) on R, time, I_j, energy, violation counts, override counts and full trace against the archived S records; any nonzero difference is reported as non-reproduction with its magnitude",
+  "pair_deltas": "exact differences of recomputed metrics",
+  "trajectory_identity": "1e-9 absolute on trace columns",
+  "override_flag": "abs(a_next-a_prev)>J*dt+1e-7 (archived trace flag); numeric exceedance abs(j)>J+1e-7 reported separately"
+ },
+ "reporting_prior_usage": {
+  "timing_runs": [
+   "development"
+  ],
+  "reporting_dir_exists": false,
+  "decision": false,
+  "statement": "Reporting conditions never generated and not used for actor/parameter selection (timing/reports/decision.json: reporting_started=false; only runs/development exists). They are prespecified extension conditions of the same 4 km route, one frozen actor."
+ },
+ "authorized_runtime_budget": {
+  "smoke_wall_s": 600,
+  "pilot_cumulative_wall_s": 3600,
+  "formal": "estimated from measured per-episode rates; run within the current machine only",
+  "price": "unknown (no billing rate available for this container)",
+  "external_compute": 0
+ },
+ "R3": {
+  "pt_source_hash": "0f18ca5afd7e0864bd51728480641998254812608d2fa0c0d572a6fb9313d909",
+  "pt_freeze_hash": "0f18ca5afd7e0864bd51728480641998254812608d2fa0c0d572a6fb9313d909",
+  "pt_freeze_matches": true,
+  "conditions": "conditions(\"reporting\"): 3 packs x speeds 14/18 x offsets 15/45/75, pack->speed->offset",
+  "entry": "validation_frozen/run_pt.py (archived probe.py reporting stage left gated)"
+ },
+ "fingerprint": "81dcd0438ebe3395e246e01c51176ded7e72d27aff6da69367088f2c62cd4fa6"
+}

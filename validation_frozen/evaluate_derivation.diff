@@ -1,0 +1,125 @@
+--- visual/visual_dev/pipeline.py::evaluate (archived, legacy protocol line present)
++++ validation_frozen/run_pv.py::run_episode (derived, current protocol, profile injection, augmented log)
+@@ -1,59 +1,63 @@
+-def evaluate(learner, conditions, camera_seed=1000, signal_source='truth', perception=None, assumed_green_remaining=30., world='v2', memory_kw=None, hide=()):
+-    """world='v4'：相机 v4 世界，执行层为 VisionEnv（记忆驱动），观测由记忆生成；hide 可含 'curve_sign'/'light_color'/'release_sign'/'end_marker'
+-    用于“驾驶是否依赖视觉”的消融（画面里不画该物体 / 灯色改为灭）。"""
+-    """固定工况闭环评估。v2e：每个工况用独立的相机外观种子（camera_seed*1000+i）与独立噪声流（camera_seed*1000+500+i），
+-    外观不再依赖之前工况采了多少帧——三臂在同一工况下看到的光照/雾/噪声/遮挡逐位相同（v2d 及以前共用一个生成器，
+-    轨迹长度不同的臂从第 3 个工况起外观不同）。"""
+-    rows = []; visual = []; traces = []; store = FrameStore()
+-    from vision_state import VisionMemory
+-    extra_dim = int(getattr(getattr(learner, 'cfg', None), 'extra_dim', 6))   # 记忆附加元信息维数随被评估网络的配置（6=原接口，10=扩展接口）
+-    for i, (soc, temp, v0, off) in enumerate(conditions):
+-        camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=camera_seed * 1000 + i, noise_seed=camera_seed * 1000 + 500 + i, world=world); camera.hide = set(hide)
+-        if world == 'v4':
+-            memory = VisionMemory(**(memory_kw or {})); env = VisionEnv(soc, temp, off, memory=memory, assumed_green_remaining=assumed_green_remaining)
+-        else: memory = None; env = SmoothEnv(soc, temp, off, signal_source=signal_source, assumed_green_remaining=assumed_green_remaining)
+-        env.reset(v0); eid = f"eval{i:02d}"; camera.new_episode(eid); hist = []
+-        def cap():
+-            f = camera.capture(episode_id=eid, sim_time=env.t, pose=dict(x=env.x, v=env.v, offsets=env.offsets))
+-            fid = f"{eid}_{f['meta']['frame_index']:05d}"; store.put(fid, f); hist.append(fid); del hist[:-STACK]
+-            if world == 'v4':
+-                dets, probs = perception.observe(store, hist, eid, env.t); memory.update(dets, probs, env.v, S.E.DT if len(hist) > 1 else 0.)
+-                env.set_perceived(memory.sig['phase'], memory.sig['age'] if memory.sig['seen'] else 0., 'vision_memory'); env.perceived['detail'] = dict(perception.last, memory=memory.snapshot())
+-            elif perception is not None:
+-                env.set_perceived(perception.phase(store, hist, eid, env.t, env), 0., perception.source); env.perceived['detail'] = perception.last
+-            return f
+-        cap(); done = False
+-        while not done and env.t < 600:
+-            if world == 'v4':
+-                rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=memory.legacy(env.v, env.a, env.soc, env.T, env.t_end, env.t, env.t_budget),
+-                           association_valid=memory.light_detected(), extra=memory.extra(extended=extra_dim == 10))
+-            else:
+-                rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=np.asarray(env.obs(), np.float32),
+-                           association_valid=int(store.frames[hist[-1]]['meta']['association_valid']))
+-            obs = obs_from_frames(store, [rec])
+-            with torch.no_grad():
+-                out = learner.encoder(obs); u = float(learner.actor(learner.adapter(obs, out['z']))[0, 0])
+-            latest = store.frames[hist[-1]]['labels']
+-            lm = store.frames[hist[-1]]['meta']
+-            if lm['map_association'] and latest.get('light_distance_m') is not None:
+-                visual.append(dict(pred=int(out['signal'][0, -1].argmax()), pred_z=int(out['signal_z'][0].argmax()), truth=int(latest['signal']), px=float(latest['housing_px_h']),
+-                                   lamp_px_d=float(latest['lamp_px_d']), d=float(latest['light_distance_m']), roi_nonempty=int(lm['roi_pixels'] > 0), visible=int(latest['visible']), occluded=int(latest['occluded'])))
+-            cmd = S.command(u)
+-            for _ in range(4):
+-                if env.x >= 3999 and env.v <= .3: cmd = 0.
+-                _, r, d, info = env.step(cmd); cap()
+-                overshoot = env.x > S.R.LENGTH + 100.   # v4：无地图时可能冲过终点；驶出终点 100 m 视为失败终止
+-                settled_now = info['arrived'] and env.v <= (0.05 if world == 'v4' else 1e-6) and abs(env.a) <= (0.05 if world == 'v4' else 1e-6)   # v4：感知执行层停车有蠕动，0.05 m/s 视为静止
+-                done = bool(info['red_crossing'] or settled_now or env.t >= 600 or overshoot)
+-                if done: break
+-        m = S.episode_metrics(env); m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= (0.05 if world == 'v4' else 1e-6) and abs(env.a) <= (0.05 if world == 'v4' else 1e-6)), overshoot=bool(env.x > S.R.LENGTH + 100.),
+-            fallback_substeps=sum(l['fallback'] for l in env.layer_log), intervened_substeps=sum(l['intervened'] for l in env.layer_log),
+-            mean_abs_command_gap=float(np.mean([abs(l['applied'] - l['command']) for l in env.layer_log])),
+-            signal_source=('vision_memory' if world == 'v4' else signal_source), perception_source=None if perception is None else perception.source, world=world, hide=list(hide),
+-            curve_excess_penalty=float(getattr(env, 'e_curve_pen', 0.)), offroad_substeps=int(getattr(env, 'n_offroad', 0)),
+-            perceived_counts={ph: int(sum(l['perceived'] == ph for l in env.layer_log)) for ph in PHASES},
+-            perceived_green_truth_red_substeps=int(sum(l['perceived'] == 'green' and l['truth_green'] is False for l in env.layer_log)),
+-            perceived_nongreen_truth_green_substeps=int(sum(l['perceived'] != 'green' and l['truth_green'] is True for l in env.layer_log)),
+-            camera_appearance_seed=camera_seed * 1000 + i, camera_appearance={k: (list(v) if isinstance(v, tuple) else v) for k, v in camera.appearance.items()})
+-        rows.append(m); traces.append((np.asarray(env.trace, np.float64), list(env.layer_log))); store.frames.clear(); store.refs.clear()
+-    return rows, visual, traces
++def run_episode(job, learner, cfg, perception, out, fingerprint, extra_dim):
++    i = int(job['condition_id']); cond = S.conditions('development')[i]; soc, temp, v0, off = cond
++    assert (soc, temp, v0, off) == (float(job['soc']), float(job['temperature_K']), float(job['initial_speed_mps']), float(job['signal_offset_s']))
++    app_seed, noise_seed = CAMERA_BASE * 1000 + i, CAMERA_BASE * 1000 + 500 + i
++    assert app_seed == int(job['camera_appearance_seed']) and noise_seed == int(job['camera_noise_seed'])
++    camera = SceneCamera(S.R.CURVES, S.R.SIGNALS, S.R.LENGTH, seed=app_seed, noise_seed=noise_seed, world='v4')
++    memory = make_memory(job['profile'], cfg)
++    env = VisionEnv(soc, temp, off, memory=memory, assumed_green_remaining=float(cfg.get('assumed_green_remaining', 30.)))
++    env.reset(v0); eid = f'eval{i:02d}'; camera.new_episode(eid); store = FrameStore(); hist = []
++    h_before = model_hash(learner); t_wall = time.monotonic()
++
++    def cap(ds, dt):
++        f = camera.capture(episode_id=eid, sim_time=env.t, pose=dict(x=env.x, v=env.v, offsets=env.offsets))
++        fid = f"{eid}_{f['meta']['frame_index']:05d}"; store.put(fid, f); hist.append(fid); del hist[:-STACK]
++        dets, probs = perception.observe(store, hist, eid, env.t); memory.update(dets, probs, env.v, dt, odom_ds=ds)
++        env.set_perceived(memory.sig['phase'], memory.sig['age'] if memory.sig['seen'] else 0., 'vision_memory'); env.perceived['detail'] = dict(perception.last, memory=memory.snapshot())
++        return f
++
++    cap(0., 0.); done = False; sub = []; n_dec = 0; fallback_creep = fallback_move = 0
++    while not done and env.t < 600:
++        rec = dict(frame_ids=list(hist), episode_id=eid, decision_time=float(env.t), legacy=memory.legacy(env.v, env.a, env.soc, env.T, env.t_end, env.t, env.t_budget),
++                   association_valid=memory.light_detected(), extra=memory.extra(extended=extra_dim == 10))
++        obs = obs_from_frames(store, [rec])
++        with torch.no_grad(): out_enc = learner.encoder(obs); u = float(learner.actor(learner.adapter(obs, out_enc['z']))[0, 0])
++        cmd = S.command(u)
++        for j in range(4):
++            pre = dict(t=float(env.t), x=float(env.x), v=float(env.v), a=float(env.a), soc=float(env.soc))
++            _, r, d, info = env.step(cmd); ds = env.x - pre['x']; cap(ds, DT)
++            lay = env.layer_log[-1]; tr = env.trace[-1]; diag = dict(memory.update_diagnostic)
++            jerk = (env.a - pre['a']) / DT
++            if lay['fallback']:
++                if pre['v'] < .5: fallback_creep += 1
++                else: fallback_move += 1
++            sub.append(dict(k=len(sub), decision=n_dec, substep=j, pre=pre, command_u=u, command_a=float(cmd), applied_a=float(env.a),
++                            interval=[lay['lower'], lay['upper']], fallback=bool(lay['fallback']), intervened=bool(lay['intervened']), targets=lay['targets'], v_limit=lay['v_limit'],
++                            perceived_pre=lay['perceived'], truth_green_pre=lay['truth_green'], reward=float(r),
++                            post=dict(t=float(env.t), x=float(env.x), v=float(env.v), a=float(env.a), soc=float(env.soc)), odom_ds=float(ds), jerk=float(jerk),
++                            override_flag=bool(tr[17]), numeric_exceedance=bool(abs(jerk) > J + 1e-7),
++                            judge=dict(red_crossing=bool(info['red_crossing']), arrived=bool(info['arrived']), offroad=bool(info['offroad']), deadline=bool(info['deadline']), truth_green_post=env._truth_green_for_log()),
++                            dets=perception.last['dets'], probs=perception.last['probs'], update=diag, memory=memory.snapshot(), margins=margins(diag, env.v, env.a)))
++            overshoot = env.x > S.R.LENGTH + 100.; settled_now = info['arrived'] and env.v <= .05 and abs(env.a) <= .05
++            done = bool(info['red_crossing'] or settled_now or env.t >= 600 or overshoot)
++            if done: break
++        n_dec += 1
++    m = S.episode_metrics(env); h_after = model_hash(learner)
++    m.update(condition_id=i, settled=bool(info['arrived'] and env.v <= .05 and abs(env.a) <= .05), overshoot=bool(env.x > S.R.LENGTH + 100.),
++             fallback_substeps=int(sum(l['fallback'] for l in env.layer_log)), intervened_substeps=int(sum(l['intervened'] for l in env.layer_log)),
++             fallback_creeping_substeps=fallback_creep, fallback_noncreeping_substeps=fallback_move,
++             override_episode=bool(m['jerk_override_steps'] > 0), numeric_exceedance_steps=int(sum(s['numeric_exceedance'] for s in sub)),
++             guard_rejections=int(sum(1 for s in sub if s['update'].get('range_guard'))), offroad_substeps=int(env.n_offroad), curve_excess_penalty=float(env.e_curve_pen),
++             decisions=n_dec, substeps=len(sub), wall_s=time.monotonic() - t_wall, model_hash_before=h_before, model_hash_after=h_after, model_unchanged=h_before == h_after,
++             fingerprint=fingerprint, job_id=job['job_id'], profile=job['profile'], profile_identity=profile_identity(job['profile']), policy=job['policy'],
++             camera_appearance_seed=app_seed, camera_noise_seed=noise_seed, episode_id=eid, training_steps=0)
++    out.mkdir(parents=True, exist_ok=True)
++    S.save_trace(out / 'trace.npz', env.trace)
++    for name, obj in (('layer.json', env.layer_log), ('summary.json', m)):
++        tmp = out / (name + '.tmp'); tmp.write_text(json.dumps(obj, indent=1)); os.replace(tmp, out / name)
++    tmp = out / 'substeps.json.gz.tmp'
++    with gzip.open(tmp, 'wt') as f: json.dump(sub, f)
++    os.replace(tmp, out / 'substeps.json.gz'); (out / 'DONE').write_text(fingerprint + '\n')
++    return m
++
++

@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "status": "design_only_not_executed",
+  "date": "2026-09-14",
+  "formal_episodes": 99,
+  "counts": {
+    "R1": 54,
+    "R2": 9,
+    "R3": 36
+  },
+  "new_training_steps": 0,
+  "new_model_selection": false,
+  "parameter_search": false,
+  "source_paper": "TIV_v29",
+  "expert_version_string": "0.0.1",
+  "inspected_package_version": "0.1.0",
+  "instruction": "Bind actual assets and code hashes before execution; plan is not a completed runtime lock.",
+  "R1": {
+    "primary_contrast": "paper_v25 versus guard_v26",
+    "effect": "odometry_consistency_plus_prospective_range_guard",
+    "fixed_policies": [
+      "S0",
+      "S1",
+      "S2"
+    ],
+    "training_seeds": [
+      7,
+      8,
+      9
+    ],
+    "camera_base_seed": 1000,
+    "appearance_seed_formula": "1000000 + original_condition_id",
+    "noise_seed_formula": "1000500 + original_condition_id",
+    "historical_baseline_override_episodes": 9,
+    "historical_denominator": 27,
+    "historical_baseline_is_not_the_contemporaneous_control": true,
+    "profile_tuning": false
+  },
+  "R2": {
+    "command_u": 1.0,
+    "positive_command_scale_mps2": 2.6,
+    "profile": "paper_v25",
+    "primary_matched_policy": "S0",
+    "reference_reused_from": "R1",
+    "independent_constant_episodes": 9
+  },
+  "R3": {
+    "actor": "frozen P-T actor A",
+    "actor_receives_original_SPaT_in_both_arms": true,
+    "executor_modes": [
+      "color",
+      "timing"
+    ],
+    "executor_information_range_m": 1000,
+    "reporting_grid_count": 18,
+    "route_change": false,
+    "signal_window_m": [
+      2200,
+      3300
+    ],
+    "window_assignment": "position_midpoint",
+    "heldout_status": "must_check_prior_usage"
+  },
+  "metrics": {
+    "jerk": "(a_next-a_prev)/dt",
+    "Ij": "sum(jerk**2*dt)",
+    "Ij_units": "m^2/s^5",
+    "energy_Wh": "sum(delta_battery_J)/3600",
+    "primary_override": "abs(a_next-a_prev)>J*dt+1e-7; retain original trace flag",
+    "supplementary_numeric_exceedance": "abs(jerk)>J+1e-7; report tolerance-boundary discrepancies",
+    "noncreeping_auxiliary_threshold_mps": 0.5,
+    "noncreeping_auxiliary_state": "pre_step",
+    "all_attempts_in_safety_counts": true,
+    "cost_comparison": "both_completed_matched_pairs",
+    "statistical_scope": "descriptive paired finite-condition results"
+  },
+  "runtime": {
+    "smoke_wall_budget_seconds": 600,
+    "pilot_total_wall_budget_seconds": 3600,
+    "formal_wall_time": "estimate_from_measured_episode_rates",
+    "price": "actual machine rate; unknown if unavailable",
+    "resume_unit": "episode with optional full inference snapshots",
+    "skip_completed_requires": "protocol hash and all raw outputs verified"
+  },
+  "required_lock_fields": [
+    "source_commit",
+    "source_diff_sha256",
+    "installed_package_version",
+    "installed_module_path",
+    "package_sha256",
+    "simulator_sha256",
+    "executor_sha256",
+    "memory_sha256",
+    "camera_sha256",
+    "metric_source_sha256",
+    "detector_sha256",
+    "S0_checkpoint_sha256",
+    "S1_checkpoint_sha256",
+    "S2_checkpoint_sha256",
+    "PT_actor_A_sha256",
+    "policy_input_schema",
+    "image_and_noise_seed_scheme",
+    "termination_contract_per_protocol",
+    "runtime_versions",
+    "hardware",
+    "floating_comparison_tolerances",
+    "reporting_prior_usage",
+    "authorized_runtime_budget"
+  ]
+}
