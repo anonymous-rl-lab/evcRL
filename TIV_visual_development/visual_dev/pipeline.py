@@ -95,8 +95,8 @@ class SmoothEnv(S.StudyEnv):
 class VisionEnv(SmoothEnv):
     """v4：执行层的道路事件信息全部来自 VisionMemory（停车目标、弯道入口目标、限速、前方信号是否可通行），无任何真值调用；
     裁判（Route20.step 的 red_crossing / 弯道超速）仍用真值。"""
-    def __init__(self, *args, memory=None, assumed_green_remaining=30., **kw):
-        self.memory = memory
+    def __init__(self, *args, memory=None, assumed_green_remaining=30., prep_mode='conservative', **kw):
+        self.memory = memory; self.prep_mode = prep_mode   # v6：'conservative'=灯色未知(off)按不可通行准备（停车目标+舒适包络）；'minimal'=灯色未知时只保留“停车仍可行”的约束（无包络减速）
         super().__init__(*args, signal_source='perceived', assumed_green_remaining=assumed_green_remaining, **kw)
 
     def _stop_targets(self):
@@ -116,7 +116,10 @@ class VisionEnv(SmoothEnv):
         fallback = S.E.Route20.project(self, cmd)   # 基类投影：jerk/执行器盒 + a_safe（来自记忆目标）
         targets = [(max(t[0] - self.x, 0.), t[1]) for t in self._stop_targets()]
         limit = self.memory.v_limit() if self.memory is not None else S.R.V_FREE
-        for d_t, v_t in targets:   # 舒适包络：由感知目标推出的速度上限
+        lt_pos = self.memory.light_stop_target(self.x) if (self.memory is not None and self.prep_mode == 'minimal' and self.memory.sig['phase'] in ('off', 'unknown')) else None
+        for t_abs, v_t, *_ in self._stop_targets():   # 舒适包络：由感知目标推出的速度上限（minimal 档：灯色未知的灯目标不加包络，只由 C.project 的可行性约束保证仍能停）
+            d_t = max(t_abs - self.x, 0.)
+            if lt_pos is not None and abs(t_abs - lt_pos) < 1e-9 and v_t == 0.0: continue
             limit = min(limit, math.sqrt(max(v_t * v_t + 2. * self.A_COMFORT * d_t, 0.)))
         result, info = C.project(self.v, self.a, cmd, targets, fallback, vmax=limit)
         result = min(result, C.brake_bound(max(limit - self.v, 0.)))

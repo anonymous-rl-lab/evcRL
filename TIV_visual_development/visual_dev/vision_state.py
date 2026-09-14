@@ -30,6 +30,7 @@ class VisionMemory:
         self.gain = gain; self.margin_rel = margin_rel; self.margin_abs = margin_abs; self.color_freeze_m = color_freeze_m
         self.dist_freeze_m = dist_freeze_m; self.expire_far_m = expire_far_m   # 近线（<15 m）距离只按车速推算不再用视觉更新；轨迹只在目标仍远（>60 m）且长时间未见时过期
         self.stationary_expire_s = stationary_expire_s   # v4r：车已静止且连续该时长无任何灯检出 → 丢弃灯轨迹（幻影灯保护：真实红灯在近距离检出稳定，幻影或被遮的绿灯不会持续检出）
+        self.colorless_track = False   # v6：True 时允许在没有灯色概率的情况下建立/维持灯轨迹（相位 unknown，位置已知）——定理结构“线已知、情境未知”的延迟观察者
         # v4r 参数依据（种子 0 开发工况）：终点估计误差 −11…+36 m，end_bias_m=15 使偏短 ≤14 m 仍到达、偏长 ≤85 m 不算冲出；margin_abs=6 使停止线估计偏长 ≤3 m 时仍停在线前 ≥3 m（灯距 ≥17 m，灯色可靠区）
         self.maintain_ratio = maintain_ratio   # 迟滞：已有轨迹的维持阈值 = 建轨阈值 × maintain_ratio（近距离/绿灯等弱响应下不丢轨迹）
         self.end_bias_m = end_bias_m; self.no_light_near_end_m = no_light_near_end_m   # 终点区（终点估计 < 100 m）不建信号灯轨迹：本世界终点线附近无信号灯，红色立柱易被误检为红灯
@@ -93,8 +94,9 @@ class VisionMemory:
         # 信号灯
         hit, ok = self._vote('traffic_light', dets); lt = dets.get('traffic_light')
         near_end = self.end['d_est'] is not None and self.end['d_est'] < self.no_light_near_end_m
-        if hit and (self.sig['seen'] or (ok and not near_end)) and lt['dist_m'] <= LIGHT_RANGE + LIGHT_AHEAD and color_probs is not None:
+        if hit and (self.sig['seen'] or (ok and not near_end)) and lt['dist_m'] <= LIGHT_RANGE + LIGHT_AHEAD and (color_probs is not None or self.colorless_track):
             new_d = float(lt['dist_m']) - LIGHT_AHEAD
+            if color_probs is None: color_probs = np.array([0., 0., 0., 0., 1.], np.float32)   # v6：灯色信息缺失（感知输出处被延迟）→ 建/维持轨迹但相位 unknown
             if self._accept('traffic_light', self.sig['d_line'] if self.sig['seen'] else None, new_d) or (self.mismatch['traffic_light'] >= 3 and lt['score'] >= self.thr('traffic_light') and ok):
                 near = self.sig['seen'] and self.sig['d_line'] is not None and self.sig['d_line'] < self.dist_freeze_m
                 fused = self.sig['d_line'] if near else self._fuse(self.sig['d_line'] if self.sig['seen'] else None, new_d)   # 近线：距离冻结（推算更准）
@@ -147,6 +149,11 @@ class VisionMemory:
         if self.end['d_est'] is not None:
             out.append((x + self.end['d_est'] + self.end_bias_m, 0.0))   # 终点：固定锚点，偏后 end_bias_m（估计偏短会停在终点线前而不算到达；停在线后无代价）
         return out
+
+    def light_stop_target(self, x):
+        """当前灯轨迹对应的停车目标绝对位置（无轨迹或绿灯时 None），供执行层区分灯目标与其它目标。"""
+        if self.sig['seen'] and self.sig['d_line'] is not None and self.sig['phase'] != 'green': return x + self._margin(self.sig['d_line'])
+        return None
 
     def executor_signal(self, assumed_green_remaining=30.):
         """(前方信号是否可通行, 假定剩余绿灯时间, 停止线距离估计)。"""

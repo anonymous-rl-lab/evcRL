@@ -49,7 +49,7 @@ def scene_feasible(v0, d0, Tm, j, scene):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--v0', type=float, default=22.2222); ap.add_argument('--d0', type=float, default=200.); ap.add_argument('--Tm', type=float, default=None); ap.add_argument('--jerks', default='2,3,4'); ap.add_argument('--deltas', default='0.5:9:0.5'); ap.add_argument('--p', type=float, default=.5); ap.add_argument('--out', default='runs/v5_timing/theory_lp.json')
-    a = ap.parse_args(); Tm = a.Tm or 1.5 * a.d0 / a.v0; lo, hi, st = [float(x) for x in a.deltas.split(':')]; deltas = np.arange(lo, hi + 1e-9, st)
+    a = ap.parse_args(); Tm = a.Tm or 1.5 * a.d0 / a.v0; Tm = round(Tm / DT) * DT; lo, hi, st = [float(x) for x in a.deltas.split(':')]; deltas = np.arange(lo, hi + 1e-9, st)
     out = dict(v0=a.v0, d0=a.d0, Tm=Tm, p=a.p, DT=DT, rows=[])
     print(f"v0={a.v0:.1f} m/s  d0={a.d0:.0f} m  T_m={Tm:.1f} s（N={int(round(Tm/DT))} 步）  p={a.p}")
     for j in [float(x) for x in a.jerks.split(',')]:
