@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "evcrl"
+version = "0.0.1"
+description = "Gymnasium environment for camera-based electric-vehicle eco-driving with sampled smooth execution"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{name = "Ziran Peng", email = "pengziran@hut.edu.cn"}]
+keywords = ["reinforcement-learning", "gymnasium", "eco-driving", "electric-vehicle", "traffic-signal"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = ["numpy>=1.24", "Pillow>=10", "gymnasium>=1.0,<2"]
+
+[project.optional-dependencies]
+analysis = ["scipy>=1.10", "matplotlib>=3.7"]
+torch = ["torch>=2.0"]
+test = ["pytest>=8", "build>=1"]
+
+[project.urls]
+Repository = "https://github.com/anonymous-rl-lab/evcRL"
+
+[project.scripts]
+evcrl-smoke = "evcrl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+evcrl = ["data/*.npy"]

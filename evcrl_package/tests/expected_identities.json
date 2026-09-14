@@ -1,0 +1,8 @@
+{
+  "contract": 1,
+  "profiles": {
+    "paper_v25": "00e578a1521f533251940b7483628189a1614c35c6b6c6f8c6efddc8cdf13509",
+    "odometry_v26": "a11af925c3c75937dfbded9fbcc75f9526ec4172de4a54b55611db1fb439acc9",
+    "guard_v26": "980a650f1d6fce2d0e39444773a3cc06c5403e1e15dc5a46fd79a2a00cdd640f"
+  }
+}

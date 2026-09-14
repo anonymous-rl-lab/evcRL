@@ -1,0 +1,6 @@
+include LICENSE
+include CHANGELOG.md
+include DISTRIBUTION_STATUS.md
+include SOURCE_PROVENANCE.json
+include CITATION.cff
+recursive-include tests *.py *.json

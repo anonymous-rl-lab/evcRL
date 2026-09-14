@@ -1,0 +1,16 @@
+{
+  "time_s": 222.5,
+  "energy_Wh": 469.84377187265983,
+  "return_sum": -34.714375787415776,
+  "settled": true,
+  "termination_reason": "settled",
+  "signal_violation": false,
+  "profile": "paper_v25",
+  "profile_identity": "00e578a1521f533251940b7483628189a1614c35c6b6c6f8c6efddc8cdf13509",
+  "detector_kind": "oracle",
+  "public_steps": 112,
+  "physical_substeps": 445,
+  "terminated": true,
+  "truncated": false,
+  "version": "0.0.1"
+}
